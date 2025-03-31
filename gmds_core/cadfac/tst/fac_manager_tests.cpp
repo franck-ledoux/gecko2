@@ -194,7 +194,7 @@ TEST_CASE("is in test", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/cube_with_holes.vtk";
+    std::string vtk_file = dir + "/PolycubeLike/cube_with_holes.vtk";
 
     gmds::IGMeshIOService ioService(&vol);
     gmds::VTKReader vtkReader(&ioService);

@@ -1,0 +1,61 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"gmds_core/cad/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"gmds_core/cad/libgmds_cad.a"
+			],
+			"targetId" : "gmds_cad::@5004ad69fd94aadf62ef",
+			"targetIndex" : 33,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/gmds/cad",
+			"paths" : 
+			[
+				"gmds_core/cad/inc/gmds/cad/GeomCurve.h",
+				"gmds_core/cad/inc/gmds/cad/GeomEntity.h",
+				"gmds_core/cad/inc/gmds/cad/GeomManager.h",
+				"gmds_core/cad/inc/gmds/cad/GeomMeshLinker.h",
+				"gmds_core/cad/inc/gmds/cad/GeomPoint.h",
+				"gmds_core/cad/inc/gmds/cad/GeomSurface.h",
+				"gmds_core/cad/inc/gmds/cad/GeomVolume.h"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "gmds_core/cad",
+		"source" : "gmds_core/cad"
+	}
+}

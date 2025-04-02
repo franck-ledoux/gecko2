@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libgmds_cad.a CMakeFiles/gmds_cad.dir/src/GeomMeshLinker.cpp.o CMakeFiles/gmds_cad.dir/src/GeomSurface.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libgmds_cad.a

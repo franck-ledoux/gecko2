@@ -1,0 +1,5 @@
+if(EXISTS "/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/ig/tst/test_gmds_ig-b12d07c_tests.cmake")
+  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/ig/tst/test_gmds_ig-b12d07c_tests.cmake")
+else()
+  add_test(test_gmds_ig_NOT_BUILT-b12d07c test_gmds_ig_NOT_BUILT-b12d07c)
+endif()

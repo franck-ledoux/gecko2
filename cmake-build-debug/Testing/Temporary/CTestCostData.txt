@@ -1,0 +1,65 @@
+UtilsTestSuite - ExceptionWhat 1 0.00462992
+UtilsTestSuite - common 1 0.00429896
+UtilsTestSuite - keepFilter 1 0.00415721
+UtilsTestSuite - bitVector 1 0.00404212
+MathTest - VectorAngle 1 0.0119803
+MathTest - VectorOrientedAngle 1 0.0125158
+MathTest - VectorSelfAngle 1 0.0109355
+MathTest - Vector3dOrtho1 1 0.0121282
+MathTest - Vector3dOrtho2 1 0.0118185
+MathTest - Vector3dOrtho3 1 0.0121896
+MathTest - Vector3dOrtho4 1 0.0115893
+MathTest - VectorOrderingAngles 1 0.0109397
+MathTest - numericComparison 1 0.0111981
+PointClass - Setter 1 0.0119551
+PointClass - Setter2 1 0.0113344
+PointClass - SetXYZ 1 0.0112704
+PointClass - Add 1 0.0116499
+PointClass - Minus 1 0.0122163
+PointClass - Multi 1 0.011426
+PointClass - EqualAndDiff 1 0.0114713
+PointClass - STREAM_OUT 1 0.0108253
+PointClass - Comparison 1 0.0114435
+PointClass - Addition 1 0.0112719
+BooleanMarkMesh: testNodeMarks 1 0.012954
+MeshDocClass: buildN2F 1 0.0132361
+MeshDocClass: buildE 1 0.0130156
+EdgeTestSuite: testMeshEdge 1 0.0129849
+EdgeTestSuite: testAccessorIssues 1 0.0131842
+EdgeTestSuite: testAccessorAll 1 0.0137197
+Mesh Node operations 1 0.0129529
+Mesh Node and Face Iteration 1 0.0133211
+Node Variables and Groups 1 0.0132908
+Mesh Accessor Validation 1 0.0135937
+MeshClass: testIOVTK_NF 1 0.013658
+MeshClass: testIOVTK_NR 1 0.0136413
+MeshClass: testIOVTK_NEF 1 0.0135061
+MeshClass: testIOMedit 1 0.0137599
+MeshClass: testIOVTK_several_types 1 0.0130377
+MeshClass: testWriterVTK_NF 1 0.0144795
+MeshClass: testWriterVTK_NR 1 0.015921
+BoundaryExClass: testCubeBoundary 1 0.0197785
+BoundaryExClass: testHalfDisk 1 0.0444574
+BoundaryExClass: testHolesInSquare 1 0.0198037
+BoundaryOpClass: testBoundary2D 1 0.0150501
+GridBuildOpClass: 2D grid generation 1 0.0137329
+GridBuildOpClass: 3D grid generation 1 0.0141137
+SurfaceReorientTestClass: testReorient 1 0.0258474
+FACManager fromSurfMesh 1 0.0259105
+FACManager surf_projection 1 0.0238351
+FACManager project 1 0.0280221
+FACManager boundingbox 1 0.762024
+is in test 1 0.052185
+from surface mesh 1 0.0252322
+connectivity 1 0.023548
+test_convex_curve 1 0.0239232
+cube convex B45 1 1.14431
+single_block 1 0.0285194
+BlockingTestSuite - split_one_block_once 1 0.0322333
+BlockingTestSuite - split_one_block_twice 1 0.0335268
+BlockingTestSuite - split_until 1 0.345688
+BlockingTestSuite - init_from_geom_bounding_box 1 0.0272518
+BlockingTestSuite - single_block_to_mesh 1 0.0277564
+BlockingTestSuite - test_topological_queries 1 0.0290812
+BlockingTestSuite - test_init_from_ig_mesh 1 0.0276931
+---

@@ -1,0 +1,61 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"gmds_core/igalgo/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 48,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"gmds_core/igalgo/libgmds_igalgo.a"
+			],
+			"targetId" : "gmds_igalgo::@455d9d625bdab2bee735",
+			"targetIndex" : 36,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/gmds/igalgo",
+			"paths" : 
+			[
+				"gmds_core/igalgo/inc/gmds/igalgo/BoundaryExtractor2D.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/BoundaryExtractor3D.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/BoundaryOperator.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/BoundaryOperator2D.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/GridBuilder.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/SurfaceReorient.h",
+				"gmds_core/igalgo/inc/gmds/igalgo/THexBuilder.h"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "gmds_core/igalgo",
+		"source" : "gmds_core/igalgo"
+	}
+}

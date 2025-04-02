@@ -1,0 +1,5 @@
+if(EXISTS "/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/cblock/tst/test_cblock-b12d07c_tests.cmake")
+  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/cblock/tst/test_cblock-b12d07c_tests.cmake")
+else()
+  add_test(test_cblock_NOT_BUILT-b12d07c test_cblock_NOT_BUILT-b12d07c)
+endif()

@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libcblock.a CMakeFiles/cblock.dir/src/Blocking.cpp.o CMakeFiles/cblock.dir/src/BlockingClassifier.cpp.o CMakeFiles/cblock.dir/src/Graph.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libcblock.a

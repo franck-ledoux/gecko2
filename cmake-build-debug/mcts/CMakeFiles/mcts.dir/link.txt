@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libmcts.a CMakeFiles/mcts.dir/src/BlockingAction.cpp.o CMakeFiles/mcts.dir/src/BlockingRewardFunction.cpp.o CMakeFiles/mcts.dir/src/BlockingState.cpp.o CMakeFiles/mcts.dir/src/MCTSAgent.cpp.o CMakeFiles/mcts.dir/src/MCTSLoop.cpp.o CMakeFiles/mcts.dir/src/MCTSSelectionFunction.cpp.o CMakeFiles/mcts.dir/src/MCTSTree.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libmcts.a

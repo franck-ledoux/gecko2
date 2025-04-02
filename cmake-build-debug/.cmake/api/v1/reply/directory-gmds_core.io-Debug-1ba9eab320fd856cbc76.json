@@ -1,0 +1,62 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"gmds_core/io/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 49,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"gmds_core/io/libgmds_io.a"
+			],
+			"targetId" : "gmds_io::@f98b574d0aed49e382fc",
+			"targetIndex" : 37,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include/gmds/io",
+			"paths" : 
+			[
+				"gmds_core/io/inc/gmds/io/GMSHWriter.h",
+				"gmds_core/io/inc/gmds/io/IGMeshIOService.h",
+				"gmds_core/io/inc/gmds/io/IMeshIOService.h",
+				"gmds_core/io/inc/gmds/io/IReader.h",
+				"gmds_core/io/inc/gmds/io/IWriter.h",
+				"gmds_core/io/inc/gmds/io/MeditReader.h",
+				"gmds_core/io/inc/gmds/io/VTKReader.h",
+				"gmds_core/io/inc/gmds/io/VTKWriter.h"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "gmds_core/io",
+		"source" : "gmds_core/io"
+	}
+}

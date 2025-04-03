@@ -47,6 +47,6 @@ Pour exécuter ce programme, il faut lui passer en paramètres :
 
 Vous pouvez par exemple tester les fichiers présents dans `gecko2/test_data` comme suit:
 
-```shell
+```shell   
 .gecko2 ../gecko2/test_data/params.json ..gecko2/test_data/AxisAlign/cube_minus_corner.vtk  result
 ```

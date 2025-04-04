@@ -106,7 +106,7 @@ TEST_CASE("cube convex B45", "[Geom Topology test]") {
                                F2N|F2R|F2E|
                                E2F|E2N|N2E|N2R|N2F));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir+"/B45.vtk";
+    std::string vtk_file = dir+"/Curve/B45.vtk";
     IGMeshIOService ioService(&m_vol);
     VTKReader vtkReader(&ioService);
     vtkReader.setCellOptions(gmds::N|gmds::R);

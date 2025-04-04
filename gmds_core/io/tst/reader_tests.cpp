@@ -26,7 +26,7 @@ TEST_CASE("MeshClass: testIOVTK_NR", "[Mesh][VTK]") {
     gmds::Mesh m(gmds::MeshModel(gmds::DIM3 | gmds::R | gmds::N));
 
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/tet_in_box.vtk";
+    std::string vtk_file = dir + "/AxisAlign/tet_in_box.vtk";
 
     gmds::IGMeshIOService ioService(&m);
     gmds::VTKReader vtkReader(&ioService);
@@ -73,7 +73,7 @@ TEST_CASE("MeshClass: testIOVTK_several_types", "[Mesh][VTK]") {
     gmds::Mesh m(gmds::MeshModel(gmds::DIM3 | gmds::R | gmds::N | gmds::R2N));
 
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/several_types.vtk";
+    std::string vtk_file = dir + "/NonAxisAlign/several_types.vtk";
 
     gmds::IGMeshIOService ioService(&m);
     gmds::VTKReader vtkReader(&ioService);

@@ -19,7 +19,7 @@ TEST_CASE("BoundaryExClass: testCubeBoundary", "[BoundaryExtractor][3D]") {
     gmds::Mesh m_surf(gmds::MeshModel(DIM3 | F | E | N | F2N | F2E | E2F | N2E | E2N));
 
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/tet_in_box.vtk";
+    std::string vtk_file = dir + "/AxisAlign/tet_in_box.vtk";
     gmds::IGMeshIOService ioService(&m_vol);
 
     gmds::VTKReader vtkReader(&ioService);

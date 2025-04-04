@@ -19,7 +19,7 @@ TEST_CASE("from surface mesh", "[Geom Topology test]")
                                    E2F|E2N|N2E|N2R));
 
         std::string dir(TEST_SAMPLES_DIR);
-        std::string vtk_file = dir+"/tet_in_box.vtk";
+        std::string vtk_file = dir+"/AxisAlign/tet_in_box.vtk";
         IGMeshIOService ioService(&m_vol);
 
         VTKReader vtkReader(&ioService);

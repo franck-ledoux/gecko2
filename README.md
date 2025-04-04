@@ -76,13 +76,13 @@ de `gecko2_path`.
 A titre d'exemple, vous pouvez exécuter à la racine du projet la ligne de commande suivante si vous avez compilé le projet
 en mode *Release* à l'aide de l'IDE CLion :
 ```shell
-./valid/check.py ./cmake-build-release/gecko2 test_data/AxisAlign test_data/params.json OUT_TESTS
+./valid/check.py cmake-build-release/gecko2 test_data/AxisAlign test_data/params.json OUT_TESTS
 ```
-Au fur et à mesure de l'exécution du programme `./cmake-build-release/gecko2` sur les modèles du répertoire
+Au fur et à mesure de l'exécution du programme `cmake-build-release/gecko2` sur les modèles du répertoire
 `test_data/AxisAlign`, vous obtiendrez les résultats suivants. Chaque ligne indique le résultat obtenu sur le modèle 
 sous la forme `<W|L|D|E>. nom_du_modele [(code d'erreur si E)]`. La lettre `W` indique une victoire,  la lettre `L` 
 indique une défaite, la lettre `D` indique une égalité, et la lettre `E` indique que le programme 
-`./cmake-build-release/gecko2` a quitté en erreur avec le code d'erreur ajouté à la fin.
+`cmake-build-release/gecko2` a quitté en erreur avec le code d'erreur ajouté à la fin.
 
 ```
  E.  cross_3D (-11)

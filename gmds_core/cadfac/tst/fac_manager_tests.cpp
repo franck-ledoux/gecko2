@@ -18,7 +18,7 @@ TEST_CASE("FACManager fromSurfMesh", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/tet_in_box.vtk";
+    std::string vtk_file = dir + "/AxisAlign/tet_in_box.vtk";
 
     gmds::IGMeshIOService ioService(&m_vol);
     gmds::VTKReader vtkReader(&ioService);
@@ -86,7 +86,7 @@ TEST_CASE("FACManager surf_projection", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/tet_in_box.vtk";
+    std::string vtk_file = dir + "/AxisAlign/tet_in_box.vtk";
 
     gmds::IGMeshIOService ioService(&m_vol);
     gmds::VTKReader vtkReader(&ioService);
@@ -116,7 +116,7 @@ TEST_CASE("FACManager project", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/simple_cube.vtk";
+    std::string vtk_file = dir + "/AxisAlign/simple_cube.vtk";
 
     gmds::IGMeshIOService ioService(&m_vol);
     gmds::VTKReader vtkReader(&ioService);
@@ -160,7 +160,7 @@ TEST_CASE("FACManager boundingbox", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/B1_tet.vtk";
+    std::string vtk_file = dir + "/Curve/B1_tet.vtk";
 
     gmds::IGMeshIOService ioService(&m_vol);
     gmds::VTKReader vtkReader(&ioService);
@@ -194,7 +194,7 @@ TEST_CASE("is in test", "[FACManager]") {
                                      F2N | F2R | F2E |
                                      E2F | E2N | N2E));
     std::string dir(TEST_SAMPLES_DIR);
-    std::string vtk_file = dir + "/PolycubeLike/cube_with_holes.vtk";
+    std::string vtk_file = dir + "/AxisAlign/cube_with_holes.vtk";
 
     gmds::IGMeshIOService ioService(&vol);
     gmds::VTKReader vtkReader(&ioService);

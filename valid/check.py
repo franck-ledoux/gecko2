@@ -2,7 +2,6 @@
 import os
 import sys
 import subprocess
-import pandas as pd
 
 def run_mcts_program(executable_path, param, input):
     try:
@@ -10,21 +9,21 @@ def run_mcts_program(executable_path, param, input):
         result = subprocess.run([executable_path, param, input, "result"], check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return result.returncode
     except subprocess.CalledProcessError as e:
-        print(f"Erreur lors de l'exécution du programme : {e}")
+        print(f"Eexcution error during program: {e}")
     except FileNotFoundError:
-        print(f"Le fichier exécutable {executable_path} n'existe pas.")
+        print(f"The program {executable_path} does not exist!")
 
 
 def list_vtk_files(dir):
     # Vérifie si le répertoire existe
     if not os.path.isdir(dir):
-        print(f"Le répertoire {dir} n'existe pas.")
+        print(f"The directory {dir} does not exist.")
         return []
     # Liste tous les fichiers dans le répertoire
     try:
         files = os.listdir(dir)
     except PermissionError:
-        print(f"Permission refusée pour accéder au répertoire {dir}.")
+        print(f"Unallowed access to directory {dir}.")
         return []
 
     # Filtre les fichiers pour ne garder que ceux avec l'extension .vtk

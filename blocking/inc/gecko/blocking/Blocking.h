@@ -1,14 +1,12 @@
 /*----------------------------------------------------------------------------*/
-#ifndef GECKO_GBLOCK_BLOCKING_H_
-#define GECKO_GBLOCK_BLOCKING_H_
-/*----------------------------------------------------------------------------*/
-#include <CGAL/Cell_attribute.h>
-#include <CGAL/Combinatorial_map.h>
+#ifndef GECKO_BLOCKING_BLOCKING_H_
+#define GECKO_BLOCKING_BLOCKING_H_
 /*----------------------------------------------------------------------------*/
 #include <string>
 #include <tuple>
 
 #include <gmds/cad/GeomManager.h>
+#include <gmds/cad/GeomMeshLinker.h>
 #include <gmds/ig/Mesh.h>
 #include <gmds/math/Point.h>
 #include <gmds/utils/CommonTypes.h>
@@ -17,24 +15,8 @@
 using namespace gmds;
 /*----------------------------------------------------------------------------*/
 namespace gecko {
-namespace cblock {
-/*----------------------------------------------------------------------------*/
-class Counter
-{
- public:
-	Counter(int c) : m_counter_global_id(c) {}
-	int get_and_increment_id()
-	{
-		return m_counter_global_id++;
-	}
-	int value()
-	{
-		return m_counter_global_id;
-	}
+namespace blocking {
 
- private:
-	int m_counter_global_id;
-};
 /**@struct CellInfo
  * @brief This structure gather the pieces of data that are shared by any
  * 		 blocking cell. Each cell is defined by:
@@ -54,8 +36,6 @@ struct CellInfo
 	int topo_id;
 	/*** link to the cad manager to have access to geometric cells */
 	cad::GeomManager *geom_manager;
-	/*** link to the counter used to assign a unique id to each entity */
-	Counter *counter;
 	/*** dimension of the geometrical cell we are classified on */
 	int geom_dim;
 	/*** unique id of the geometrical cell */
@@ -69,15 +49,10 @@ struct CellInfo
 	 * @param AGeomDim on-classify geometric cell dimension (4 if not classified)
 	 * @param AGeomId on-classify geometric cell unique id
 	 */
-	CellInfo(Counter *Ac = nullptr, cad::GeomManager *AManager = nullptr, const int ATopoDim = 4, const int AGeomDim = 4, const int AGeomId = NullID) :
-	  topo_dim(ATopoDim), geom_manager(AManager), counter(Ac), geom_dim(AGeomDim), geom_id(AGeomId)
+	CellInfo(cad::GeomManager *AManager = nullptr, const int ATopoDim = 4, const int AGeomDim = 4, const int AGeomId = NullID) :
+	  topo_dim(ATopoDim), geom_manager(AManager), geom_dim(AGeomDim), geom_id(AGeomId)
 	{
-		if (Ac != nullptr) {
-			topo_id = Ac->get_and_increment_id();
-		}
-		else {
-			topo_id = -1;
-		}
+
 	}
 };
 /*----------------------------------------------------------------------------*/
@@ -97,12 +72,11 @@ struct NodeInfo : CellInfo
 	 * @param AGeomId  on-classify geometric cell unique id
 	 * @param APoint   geometric location
 	 */
-	NodeInfo(Counter *Ac = nullptr,
-	         cad::GeomManager *AManager = nullptr,
+	NodeInfo(cad::GeomManager *AManager = nullptr,
 	         const int AGeomDim = 4,
 	         const int AGeomId = NullID,
 	         const math::Point &APoint = math::Point(0, 0, 0)) :
-	  CellInfo(Ac, AManager, 0, AGeomDim, AGeomId), point(APoint)
+	  CellInfo(AManager, 0, AGeomDim, AGeomId), point(APoint)
 	{
 	}
 };
@@ -255,29 +229,7 @@ struct SplitFunctorNode
 		ca2.info().topo_id = ca1.info().counter->get_and_increment_id();
 	}
 };
-/*----------------------------------------------------------------------------*/
-/**@struct CellData
- * @brief This structure provides the expected pieces of information that are
- * require by the CGAL N-G-Map implementation in order to automatically
- * handle attributes during n-G-map modification operations.
- */
-struct CellData
-{
-	template<class CMap> struct Dart_wrapper
-	{
-		using Node_attribute = CGAL::Cell_attribute<CMap, NodeInfo, CGAL::Tag_true, MergeFunctorNode, SplitFunctorNode>;
-		using Edge_attribute = CGAL::Cell_attribute<CMap, CellInfo, CGAL::Tag_true, MergeFunctor, SplitFunctor>;
-		using Face_attribute = CGAL::Cell_attribute<CMap, CellInfo, CGAL::Tag_true, MergeFunctor, SplitFunctor>;
-		using Block_attribute = CGAL::Cell_attribute<CMap, CellInfo, CGAL::Tag_true, MergeFunctor, SplitFunctor>;
-		/** ordered tuple of attributes to indicate to the GMap what attribute corresponds to each cell.*/
-		using Attributes = std::tuple<Node_attribute, Edge_attribute, Face_attribute, Block_attribute>;
-	};
-};
-/*----------------------------------------------------------------------------*/
-/** Definition of my cmap.*/
-using CMap3 = CGAL::Combinatorial_map<3, CellData>;
-/** Definition of the dart type.*/
-using Dart3 = CMap3::Dart_handle;
+
 /*----------------------------------------------------------------------------*/
 /**@class Blocking
  * @brief Provide a curved blocking data structure using the 3-G-Map model
@@ -287,10 +239,10 @@ using Dart3 = CMap3::Dart_handle;
 class  Blocking
 {
  public:
-	using Block = CMap3::Attribute_handle<3>::type;
-	using Face = CMap3::Attribute_handle<2>::type;
-	using Edge = CMap3::Attribute_handle<1>::type;
-	using Node = CMap3::Attribute_handle<0>::type;
+	using Block = gmds::Region;
+	using Face = gmds::Face;
+	using Edge = gmds::Edge;
+	using Node =gmds::Node;
 	/** @brief Constructor that takes a geom model as an input. A
 	 * blocking is always used for partitioning a geometric domain.
 	 * @param[in] AGeomModel the geometric model we want to block
@@ -316,24 +268,20 @@ class  Blocking
 	/**================================================================
 	 *  QUERIES OPERATIONS
 	 *=================================================================*/
-	/**@brief gives access to the underlying cmap structure
-	 * @return the internal 3-C-map
-	 */
-	CMap3 *cmap();
+
 	/**@brief gives access to the associated geom model
 	 * @return the internal geom model
 	 */
 	cad::GeomManager *geom_model() const;
-	/**@brief Gives the number of @p TDim-cells in the blocking structure.
-	 * 		 @p TDIM must be comprised in [0,3].
-	 *
-	 * @tparam TDim the dimension of cells we want the number
-	 * @return the number of @p TDim-cells in the block structure
-	 */
-	template<int TDim> int get_nb_cells() const
-	{
-		return m_cmap.number_of_attributes<TDim>();
-	}
+
+	Mesh& mesh(){return m_mesh;}
+
+	cad::GeomMeshLinker::eLink get_geom_dim(Node& AN);
+	cad::GeomMeshLinker::eLink get_geom_dim(Edge& AE);
+	cad::GeomMeshLinker::eLink get_geom_dim(Face& AF);
+	int get_geom_id(Node& AN);
+	int get_geom_id(Edge& AE);
+	int get_geom_id(Face& AF);
 
 	/**@brief We get the id lists of nodes, edges and faces that make
 	 * the blocking boundary
@@ -348,215 +296,23 @@ class  Blocking
 	 */
 	void reset_classification();
 
-	/** Return the info for the node of id @p ANodeId
-	 * @param[in] ANodeId topological node id
-	 * @return a tuple where the first parameter is the geom_dim, the second its geom_id, and the third is location
-	 */
-	std::tuple<int, int, math::Point> get_node_info(const int ANodeId);
-	/** Return the info for the edge of id @p AEdgeId
-	 * @param[in] AEdgeId topological edge id
-	 * @return a tuple where the first parameter is the geom_dim, the second its geom_id
-	 */
-	std::tuple<int, int> get_edge_info(const int AEdgeId);
-	/** Return the info for the face of id @p AFaceId
-	 * @param[in] AFaceId topological face id
-	 * @return a tuple where the first parameter is the geom_dim, the second its geom_id
-	 */
-	std::tuple<int, int> get_face_info(const int AFaceId);
-	/** Return the info for the block of id @p ABlockId
-	 * @param[in] ABlockId topological block id
-	 * @return a tuple where the first parameter is the geom_dim, the second its geom_id
-	 */
-	std::tuple<int, int> get_block_info(const int ABlockId);
-
-	/** Return the node  of id @p AId
-	 * @param[in] AId topological node id
-	 * @return a node object
-	 */
-	Blocking::Node get_node(const int AId);
-
-	/** Return the edge of id @p AId
-	 * @param[in] AId topological edge id
-	 * @return an edge object
-	 */
-	Blocking::Edge get_edge(const int AId);
-
-	/** Return the face of id @p AId
-	 * @param[in] AId topological face id
-	 * @return a face object
-	 */
-	Blocking::Face get_face(const int AId);
-
-	/** Return the block of id @p AId
-	 * @param[in] AId topological block id
-	 * @return a block object
-	 */
-	Blocking::Block get_block(const int AId);
-
-	/** Return the id node for a node object
-	 * @param[in] ANode a node object
-	 * @return an id node
-	 */
-	int get_node_id(Blocking::Node &ANode);
-
-	/** Return the id edge for an edge object
-	 * @param[in] AEdge an edge object
-	 * @return an id edge
-	 */
-	int get_edge_id(Blocking::Edge &AEdge);
-
-	/** Return the id face for a face object
-	 * @param[in] AFace a face object
-	 * @return an id face
-	 */
-	int get_face_id(Blocking::Face &AFace);
-
-	/** Return the id block for a block object
-	 * @param[in] ABlock a block object
-	 * @return an id block
-	 */
-	int get_block_id(Blocking::Block &ABlock);
-
-	/**@brief Non-optimal method to get all the blocks of the structure. The
-	 * best option is to traverse the block structure through the cmap
-	 * structure (iterators on attributes)
-	 * @return a vector of blocks
-	 */
-	std::vector<Block> get_all_blocks();
-	std::vector<TCellID> get_all_id_blocks();
-	/**@brief Non-optimal method to get all the faces of the structure. The
-	 * best option is to traverse the block structure through the cmap
-	 * structure (iterators on attributes)
-	 * @return a vector of faces
-	 */
-	std::vector<Face> get_all_faces();
-	std::vector<TCellID> get_all_id_faces();
-	/**@brief Non-optimal method to get all the edges of the structure. The
-	 * best option is to traverse the block structure through the cmap
-	 * structure (iterators on attributes)
-	 * @return a vector of edges
-	 */
-	std::vector<Edge> get_all_edges();
-	std::vector<TCellID> get_all_id_edges();
-	/**@brief Non-optimal method to get all the nodes of the structure. The
-	 * best option is to traverse the block structure through the cmap
-	 * structure (iterators on attributes)
-	 * @return a vector of nodes
-	 */
-	std::vector<Node> get_all_nodes();
-	std::vector<TCellID> get_all_id_nodes();
-	/** Returns the edge that connects nodes of ids @p AN1 and @p AN2
-	 *
-	 * @param AN1 a first node id
-	 * @param AN2 a second node id
-	 * @return the edge connecting @p AN1 and @p AN2
-	 */
-	Blocking::Edge get_edge(const int AN1, const int AN2);
-	/** Returns the edge that connects nodes @p AN1 and @p AN2
-	 *
-	 * @param AN1 a first node
-	 * @param AN2 a second node
-	 * @return the edge connecting @p AN1 and @p AN2
-	 */
-	Blocking::Edge get_edge(const Blocking::Node AN1, const Blocking::Node AN2);
-
-	/** Get all the edges adjacent to a node
-	 * @param[in] AN a node
-	 * @return the set of edges adjacent to the node.
-	 */
-	std::vector<Edge> get_edges_of_node(const Node AN);
-	/** Get all the faces adjacent to a node
-	 * @param[in] AN a node
-	 * @return the set of faces adjacent to the node.
-	 */
-	std::vector<Face> get_faces_of_node(const Node AN);
-	/** Get all the blocks adjacent to a node
-	 * @param[in] AN a node
-	 * @return the set of blocks adjacent to the node.
-	 */
-	std::vector<Block> get_blocks_of_node(const Node AN);
-	/** Get all the faces adjacent to an edge
-	 * @param[in] AE an edge
-	 * @return the set of faces adjacent to the edge.
-	 */
-	std::vector<Face> get_faces_of_edge(const Edge AE);
-	/** Get all the blocks adjacent to an edge
-	 * @param[in] AE an edge
-	 * @return the set of blocks adjacent to the edge.
-	 */
-	std::vector<Block> get_blocks_of_edge(const Edge AE);
-	/** Get all the edges adjacent to a face
-	 * @param[in] AF a face
-	 * @return the set of edges adjacent to the face.
-	 */
-	std::vector<Edge> get_edges_of_face(const Face AF);
-	/** Get all the blocks adjacent to a face
-	 * @param[in] AF a face
-	 * @return the set of blocks adjacent to the face.
-	 */
-	std::vector<Block> get_blocks_of_face(const Face AF);
-
-	/** Get all the faces of a block. If it is a hexahedral block,
-	 * we have 6 faces, the first and the second are opposite, idem
-	 * for the third and fourth, and the fifth and sixth.
-	 * @param[in] AB a block
-	 * @return the set of faces of the block.
-	 */
-	std::vector<Face> get_faces_of_block(const Block AB);
-	/** Get all the edges of a block. If it is a hexahedral block,
-	 * we have 12 faces.
-	 * @param[in] AB a block
-	 * @return the set of edges of the block.
-	 */
-	std::vector<Edge> get_edges_of_block(const Block AB);
-	/** Get all the nodes of a block. If it is a hexahedral block,
-	 * we have 8 nodes, given as usual in gecko
-	 * @param[in] AB a block
-	 * @return the set of nodes of the block.
-	 */
-	std::vector<Node> get_nodes_of_block(const Block AB);
-	/** Get all the nodes of a face (ordered).
-	 * @param[in] AF a face
-	 * @return the set of nodes of the face.
-	 */
-	std::vector<Node> get_nodes_of_face(const Face AF);
-	/** Get the ending nodes of an edge.
-	 * @param[in] AE an edge
-	 * @return the ending nodes of the edge
-	 */
-	std::vector<Node> get_nodes_of_edge(const Edge AE);
-	/** Return the face center
-	 * @param AF a face
-	 * @return the center point of @p AF
-	 */
-	math::Point get_center_of_face(const Face AF);
-	/** Return the face normal. No orientation is provided the
-	 *  normal can be in any direction.
-	 * @param AF a face
-	 * @return the normal to @p AF.
-	 */
-	math::Vector3d get_normal_of_face(const Face AF);
-	/** Return the edge center
-	 * @param AE an edge
-	 * @return the center point of @p AE
-	 */
-	math::Point get_center_of_edge(const Edge AE);
-	/** Return the block center
-	 * @param[in] AB a block
-	 * @return a point which is the center of @p AB
-	 */
-	math::Point get_center_of_block(const Block AB);
 	/**@brief Get all the parallel edges composing the sheet defined from edge @p AE
-	 * @param[in]  AE			the edge we start from
+	* @param[in]  AE		the edge we start from
+	* @param[in]  AE_firstN the fist node of AE we orient AE from
 	 * @param[out] AEdges	all the edges of the sheet defined by @p AE
+	 * @param[out] AE2N		the orient edges - for each edge of AE we, get the nodes in the same direction
+	 * @param[out] ABlocks	all the blocks of the sheet defined by @p AE
 	 */
-	void get_all_sheet_edges(const Edge AE, std::vector<Edge> &AEdges);
+	void get_sheet_cells(const Edge AE, const Node AE_fistN, std::vector<Edge> &AEdges,
+		std::map<TCellID,std::pair<TCellID,TCellID>>& AE2N,
+		std::vector<Block> &ABlocks);
 
 	/**@brief Get all the parallel edges composing sheets. Each set of parallel
 	 * 		 edges is an item pf @p ASheetEdges
 	 * return all the edges gathered by sheet
 	 */
 	std::vector<std::vector<Edge>> get_all_sheet_edge_sets();
+
 	/**@brief Get all the blocks of the chord defined from face @p AF. All the returned darts
 	 * belong to different blocks.
 	 * @param[in]  AF			the face we start from
@@ -580,29 +336,9 @@ class  Blocking
 	std::tuple<Blocking::Edge, double, double> get_cut_info(const gmds::math::Point &APoint,
 	                                                        const std::vector<Blocking::Edge> AEdges);
 
-	/**@brief Low level operation that @p TDim-sew two darts
-	 * @tparam TDim sewing dimension
-	 * @param[in] AD1 First dart
-	 * @param[in] AD2 Second dart
-	 */
-	/**@brief Provides a list of information about the blocking structure
-	 * @return a string containing the expected pieces of information
-	 */
-	std::string info() const;
-
-	/**@brief Check the topological validity of the block structure
-	 * @return true if it is valid, false otherwise
-	 */
-	bool is_valid_topology() const;
 
 	bool is_valid_connected();
 
-
-
-	Counter *getCounter()
-	{
-		return &m_counter;
-	}
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
 	 *=================================================================*/
@@ -714,11 +450,6 @@ class  Blocking
 	 */
 	void smooth(const int ANbIterations);
 
-	template<int TDim> void sew(Dart3 AD1, Dart3 AD2)
-	{
-		static_assert(TDim >= 0 && TDim < 4, "The parameter must be included in [0,3]");
-		m_cmap.sew<TDim>(AD1, AD2);
-	}
 	/**@brief intiialize the block structure from a gecko cellular mesh. The provided
 	 * 		 mesh @p ACellMesh must have the following characteristics:
 	 * 		 - DIM3, N, E, F, R, R2N, F2N, E2N
@@ -731,14 +462,7 @@ class  Blocking
 	/**@brief intiialize the block structure from the bounding box of the geom model
 	 */
 	void init_from_bounding_box();
-	/**@brief Convert the block structure into a gecko cellular mesh. The provided
-	 * 		 mesh @p ACellMesh must have the following characteristics:
-	 * 		 - DIM3, N, E, F, R, R2N, F2N, E2N
-	 * 		 Attributes are exported into @p ACellMesh as variable
-	 *
-	 * @param[in,out] ACellMesh A cellular mesh
-	 */
-	void convert_to_mesh(Mesh &ACellMesh);
+
 
 	/**\brief save the blocking on vtk. During the process, the curved blocking is convert on a mesh.
 	 * @param[in] AFileName 		the name used for the file
@@ -765,59 +489,14 @@ class  Blocking
 	 */
 	std::pair<double, double> get_projection_info(const math::Point &AP, Blocking::Edge &AEdge);
 
- private:
-	/**@brief Mark with @p AMark all the darts of orbit <0,1>(@p ADart)
-	 * @param[in] ADart  dimension of the associated geometric cell
-	 * @param[in] AMark the mark we use
-	 */
-	void mark_half_face(Dart3 ADart, int AMark);
-
-	/**@brief During the pillowing operation, we have to duplicate nodes. This procedure encapsulates this single
-	 *        algorithm. Starting from a node @p ANode and a boolean mark @p AMark, we information to know where to move
-	 *        the node
-	 * @param[in] ANode the node to duplicate
-	 * @param[in] AMark the mark that indicates where to pillow. Some darts of @p Anode are marked with this mark
-	 * @return a tuple [topo_dim, topo_id, geom_dim, geom_id] that fully describes the cells where to move @p ANode
-	 */
-	//std::tuple<int, int, int, int> compute_pillow_twin_node(const Node &ANode, const int AMark);
-	/**@brief Create a node attribute in the n-cmap
-	 *
-	 * @param[in] AGeomDim dimension of the associated geometric cell
-	 * @param[in] AGeomId id of the associated geometric cell
-	 * @param[in] APoint  spatial location of the node
-	 * @return the created node attribute
-	 */
-	Node create_node(const int AGeomDim, const int AGeomId, const math::Point &APoint);
-	/**@brief Create an edge attribute in the n-cmap
-	 *
-	 * @param AGeomDim dimension of the associated geometric cell
-	 * @param AGeomId id of the associated geometric cell
-	 * @return the created edge attribute
-	 */
-	Edge create_edge(const int AGeomDim, const int AGeomId);
-	/**@brief Create a face attribute in the n-cmap
-	 *
-	 * @param AGeomDim dimension of the associated geometric cell
-	 * @param AGeomId id of the associated geometric cell
-	 * @return the created face attribute
-	 */
-	Face create_face(const int AGeomDim, const int AGeomId);
-	/**@brief Create a block attribute in the n-cmap
-	 *
-	 * @param AGeomDim dimension of the associated geometric cell
-	 * @param AGeomId id of the associated geometric cell
-	 * @return the created block attribute
-	 */
-	Block create_block(const int AGeomDim, const int AGeomId);
-
+	std::tuple<TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID>
+	get_parallel_edges(Block AB, Edge AE, Node AE_first);
  private:
 	/*** the associated geometric model*/
 	cad::GeomManager *m_geom_model;
 	/*** the underlying n-g-map model*/
-	CMap3 m_cmap;
-
-	/*** id counter*/
-	Counter m_counter;
+	gmds::Mesh m_mesh;
+	gmds::cad::GeomMeshLinker m_mesh_linker;
 };
 /*----------------------------------------------------------------------------*/
 }     // namespace mctsblock

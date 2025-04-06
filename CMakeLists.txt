@@ -23,6 +23,7 @@ include(Catch)
 #==============================================================================
 add_subdirectory(gmds_core)
 add_subdirectory(cblock)
+add_subdirectory(blocking)
 add_subdirectory(mcts)
 
 add_executable(gecko2 main_blocker.cpp)

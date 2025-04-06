@@ -62,7 +62,7 @@ ayez **Python3** installé (pas d'environnement spécifique pour l'instant) :
 ```
 Les paramètres suivants sont utilisés :
 1. `gecko2_path` est le chemin relatif vers une version du programme `gecko2`. Dans le cadre de l'IDE CLion, ce sera
-usuellement `./cmake-build-release/gecko2` ou `./cmake-build-debug/gecko2`.
+usuellement `cmake-build-release/gecko2` ou `cmake-build-debug/gecko2`.
 2. `ìnput_dir` est le chemin relatif vers le répertoire contenant l'ensemble des modèles sur lesquels vous voulez
 exécuter `gecko2_path`. Pour rappel un modèle est un fichier au format `vtk` conternant une discrétisation tétraédrique
 du modèle géométrique.

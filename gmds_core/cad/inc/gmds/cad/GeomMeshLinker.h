@@ -168,6 +168,9 @@ namespace gmds{
              */
             void linkFaceToSurface(const TCellID & AF, int AGeomId);
 
+            void unlinkNode(const TCellID & AID);
+            void unlinkEdge(const TCellID & AID);
+            void unlinkFace(const TCellID & AID);
             /*------------------------------------------------------------------------*/
             /**@ brief accessor on the dimension of the geom entity AN is classified on.
              *

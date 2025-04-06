@@ -1,26 +1,18 @@
 #==============================================================================
 # LIBRARY DEFINTION (SOURCE FILES)
 #==============================================================================
-set(GECKO_LIB           gmds_utils)
-set(GECKO_LIB_PREFIX    gmds/utils)
+set(GECKO_LIB           blocking)
+set(GECKO_LIB_PREFIX    gecko/blocking)
 
 set(GECKO_INC
-        inc/gmds/utils/BitVector.h
-        inc/gmds/utils/CommonFlags.h
-        inc/gmds/utils/CommonTypes.h
-        inc/gmds/utils/Exception.h
-        inc/gmds/utils/IndexedVector.h
-        inc/gmds/utils/LocalCellTopology.h
-        inc/gmds/utils/Marks32.h
-        inc/gmds/utils/SmartVector.h
-        inc/gmds/utils/Variable.h
-        inc/gmds/utils/VariableManager.h
+        inc/gecko/blocking/Blocking.h
+    #    inc/gecko/blocking/BlockingClassifier.h
+        inc/gecko/blocking/Graph.h
 )
 set(GECKO_SRC
-        src/BitVector.cpp
-        src/CommonTypes.cpp
-        src/LocalCellTopology.cpp
-        src/VariableManager.cpp
+        src/Blocking.cpp
+      #  src/BlockingClassifier.cpp
+        src/Graph.cpp
 )
 #==============================================================================
 add_library(${GECKO_LIB} ${GECKO_INC} ${GECKO_SRC})
@@ -30,6 +22,14 @@ add_library(${GECKO_LIB} ${GECKO_INC} ${GECKO_SRC})
 include(GNUInstallDirs)
 
 target_compile_features(${GECKO_LIB} PUBLIC cxx_std_14)
+
+
+#LIBRARY TO INSTALL
+target_link_libraries(${GECKO_LIB}
+        PUBLIC
+        gmds_ig
+        gmds_cad
+        gmds_cadfac)
 
 # INCLUDE TO INSTALL
 target_include_directories(${GECKO_LIB} PUBLIC

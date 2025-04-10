@@ -303,7 +303,9 @@ class  Blocking
 	 * @param[out] AE2N		the orient edges - for each edge of AE we, get the nodes in the same direction
 	 * @param[out] ABlocks	all the blocks of the sheet defined by @p AE
 	 */
-	void get_sheet_cells(const Edge AE, const Node AE_fistN, std::vector<Edge> &AEdges,
+	void get_sheet_cells(const Edge AE,
+		const Node AE_fistN,
+		std::vector<Edge> &AEdges,
 		std::map<TCellID,std::pair<TCellID,TCellID>>& AE2N,
 		std::vector<Block> &ABlocks);
 
@@ -383,7 +385,7 @@ class  Blocking
 	 * @param[in] AE an edge we want to split in two edges
 	 * @param[in] AP a point we use to define where AE must be cut.
 	 */
-	void cut_sheet(const Edge AE, const math::Point &AP);
+	void cut_sheet(const Edge AE, const Node AN, const math::Point &AP);
 	/**@brief Split the sheet defined by edge @p AE at the parameter @p AParam, which is included
 	 * 		 in ]0,1[. The end point of @p AE with the lowest id is at parameter 0,
 	 * 		 the second one at parameter 1.
@@ -391,7 +393,7 @@ class  Blocking
 	 * @param[in] AE an edge we want to split in two edges
 	 * @param[in] AParam a parameter included in ]0,1[
 	 */
-	void cut_sheet(const Edge AE, const double AParam);
+	void cut_sheet(const Edge AE, const Node AN,  const double AParam);
 
 	/**@brief Split the sheet defined by edge @p AnEdgeId at the parameter @p AParam, which is included
 	 * 		 in ]0,1[. The first end point of @p AE is at parameter 0, the second one at parameter 1.
@@ -399,7 +401,7 @@ class  Blocking
 	 * @param[in] AnEdgeId an edge id we want to split in two edges
 	 * @param[in] AParam a parameter included in ]0,1[
 	 */
-	void cut_sheet(const TCellID AnEdgeId, const double AParam);
+	void cut_sheet(const TCellID AnEdgeId, const TCellID ANodeId,  const double AParam);
 
 	/**@brief Split the sheet defined by edge @p AE
 	 * @param[in] AE an edge we want to split in two edges
@@ -468,7 +470,6 @@ class  Blocking
 	 * @param[in] AFileName 		the name used for the file
 	 */
 	void save_vtk_blocking(const std::string &AFileName);
-
  private:
 	/**\brief Order the edges of @p AEdges accordingly to their distance to @p AP.
 	 * 		 More specifically, we orthogonaly project @p AP on each edge of @p AEdges.

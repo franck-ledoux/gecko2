@@ -7,6 +7,7 @@
 #include <gmds/io/VTKWriter.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
 
 #include "../../cblock/inc/gecko/cblock/Blocking.h"
 using Catch::Approx;
@@ -124,51 +125,36 @@ TEST_CASE("BlockingTestSuite - split_one_block_once", "[blocking]") {
     REQUIRE(bl.mesh().getNbRegions()== 2);
 
 }
-/*
+
 TEST_CASE("BlockingTestSuite - split_one_block_twice", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
-    cl.classify();
+    gecko::blocking::Blocking bl(&geom_model,true);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
 
-    auto e = bl.get_all_edges()[0];
-    auto e_id = e->info().geom_id;
-    auto e_dim = e->info().geom_dim;
 
-    auto e2 = bl.cmap()->attribute<1>(bl.cmap()->beta<1>(e->dart()));
+    auto e = edges[0];
+    auto e2 = edges[1];
     bl.cut_sheet(e);
-    REQUIRE(bl.get_nb_cells<0>() == 12);
-    REQUIRE(bl.get_nb_cells<1>() == 20);
-    REQUIRE(bl.get_nb_cells<2>() == 11);
-    REQUIRE(bl.get_nb_cells<3>() == 2);
-    REQUIRE(bl.cmap()->is_valid());
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
 
-    int classified_nodes = 0;
-    int classified_edges = 0;
-    for (auto cur_edge : bl.get_all_edges()) {
-        if (cur_edge->info().geom_id == e_id && cur_edge->info().geom_dim == e_dim)
-            classified_edges++;
-    }
-    for (auto cur_node : bl.get_all_nodes()) {
-        if (cur_node->info().geom_id == e_id && cur_node->info().geom_dim == e_dim)
-            classified_nodes++;
-    }
-    REQUIRE(classified_edges == 2);
-    REQUIRE(classified_nodes == 1);
+    bl.cut_sheet(e2);
 
-    gmds::math::Point p_cut(2, 5,-5);
-    bl.cut_sheet(e2, p_cut);
-    for (auto n : bl.get_all_nodes()) {
-        auto nz = n->info().point.Z();
-        REQUIRE((Approx(nz).margin(1e-4) == 5 || Approx(nz).margin(1e-4) == -5 || Approx(nz).margin(1e-4) == 2));
+    REQUIRE(bl.mesh().getNbRegions()== 4);
+    std::vector<Node> all_nodes;
+    bl.mesh().getAll<Node>(all_nodes);
+    for (const auto& n:all_nodes) {
+        std::cout<<n.id()<<": "<<n.point()<<std::endl;
     }
-    REQUIRE(bl.get_nb_cells<0>() == 18);
-    REQUIRE(bl.get_nb_cells<1>() == 33);
-    REQUIRE(bl.get_nb_cells<2>() == 20);
-    REQUIRE(bl.get_nb_cells<3>() == 4);
+    REQUIRE(bl.mesh().getNbNodes() == 18);
+    REQUIRE(bl.mesh().getNbEdges() == 33);
+    REQUIRE(bl.mesh().getNbFaces() == 20);
 }
-
+/*
 TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);

@@ -1,6 +1,7 @@
 /*----------------------------------------------------------------------------*/
 #include "gecko/blocking//Blocking.h"
 
+#include <boost/container/detail/pair.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
 #include <gmds/io/IGMeshIOService.h>
@@ -16,10 +17,7 @@ using namespace gmds;
 /*----------------------------------------------------------------------------*/
 Blocking::Blocking(cad::GeomManager *AGeomModel, bool AInitAsBoundingBox)
 : m_geom_model(AGeomModel),
-m_mesh(MeshModel(DIM3|R|F|E|N|
-								   R2N|R2F|R2E|
-								   F2N|F2R|F2E|
-								   E2F|E2N|N2E|N2R)),
+m_mesh(MeshModel(DIM3|R|F|E|N|R2N|F2N|E2N|R2F|F2R|F2E|E2F)),
 m_mesh_linker(&m_mesh,m_geom_model)
 {
 	if (AInitAsBoundingBox) {
@@ -292,9 +290,12 @@ Blocking::get_all_sheet_edge_sets() {
 			// work to do, we will do another iteration
 			remain_edge_to_do = true;
 			std::vector<Edge> sh_edges;
-			std::map<TCellID, std::pair<TCellID,TCellID> > sh_e2n;
+			std::map<TCellID, std::pair<TCellID, TCellID>> sh_e2n;
 			std::vector<Block> sh_blocks;
-			get_sheet_cells(all_edges[edge_index], sh_edges, sh_e2n,sh_blocks);
+			get_sheet_cells(all_edges[edge_index], all_edges[edge_index].get<Node>()[0],
+				sh_edges, sh_e2n,sh_blocks);
+
+
 			// we store the sheet edges
 			edges.push_back(sh_edges);
 			// now we mark them as treated
@@ -308,7 +309,14 @@ Blocking::get_all_sheet_edge_sets() {
 /*----------------------------------------------------------------------------*/
 std::tuple<TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID>
 Blocking::get_parallel_edges(Block AB, Edge AE, Node AE_first) {
-	auto b_edges = AB.get<Edge>();
+	auto b_faces = AB.get<Face>();
+	std::set<Edge> b_edges;
+	for (const auto& f:b_faces) {
+		auto f_edges = f.get<Edge>();
+		for (const auto& e: f_edges) {
+			b_edges.insert(e);
+		}
+	}
 	auto b_nodes = AB.get<Node>();
 	//we find the local indices of AE end points
 	auto e_nodes = AE.get<Node>();
@@ -520,12 +528,15 @@ Blocking::get_parallel_edges(Block AB, Edge AE, Node AE_first) {
 		lid_e3_n1=0;
 	}
 	else if (i0==7 && i1==6) {
-		lid_e1_n0=2;
-		lid_e1_n1=3;
-		lid_e2_n0=5;
-		lid_e2_n1=4;
-		lid_e3_n0=1;
-		lid_e3_n1=0;
+		lid_e1_n0=3;
+		lid_e1_n1=2;
+		lid_e2_n0=4;
+		lid_e2_n1=5;
+		lid_e3_n0=0;
+		lid_e3_n1=1;
+	}
+	else {
+		throw GMDSException("Enumeration error!!!");
 	}
 	auto id_e1_n0 = b_nodes[lid_e1_n0].id();
 	auto id_e1_n1 = b_nodes[lid_e1_n1].id();
@@ -534,50 +545,32 @@ Blocking::get_parallel_edges(Block AB, Edge AE, Node AE_first) {
 	auto id_e3_n0 = b_nodes[lid_e3_n0].id();
 	auto id_e3_n1 = b_nodes[lid_e3_n1].id();
 	//now we find the corresponding edges
-	TCellID e1,e2,e3, e1_n0, e2_n0, e3_n0, e1_n1, e2_n1, e3_n1;
+	TCellID e1,e2,e3;
 	for (auto e :b_edges) {
 		auto ens = e.getIDs<Node>();
-		if (ens[0]==id_e1_n0 && ens[1]==id_e1_n1){
+		if ((ens[0]==id_e1_n0 && ens[1]==id_e1_n1)||
+			(ens[1]==id_e1_n0 && ens[0]==id_e1_n1)){
 			e1 = e.id();
-			e1_n0 = id_e1_n0;
-			e1_n1 = id_e1_n1;
 		}
-		else if (ens[1]==id_e1_n0 && ens[0]==id_e1_n1) {
-			e1 = e.id();
-			e1_n0 = id_e1_n1;
-			e1_n1 = id_e1_n0;
-
-		}
-		else if (ens[0]==id_e2_n0 && ens[1]==id_e2_n1) {
+		else if ((ens[0]==id_e2_n0 && ens[1]==id_e2_n1)||
+			(ens[1]==id_e2_n0 && ens[0]==id_e2_n1)){
 			e2 = e.id();
-			e2_n0 = id_e2_n0;
-			e2_n1 = id_e2_n1;
 		}
-		else if (ens[1]==id_e2_n0 && ens[0]==id_e2_n1) {
-			e2 = e.id();
-			e2_n0 = id_e2_n1;
-			e2_n1 = id_e2_n0;
-		}
-		else if (ens[0]==id_e3_n0 && ens[1]==id_e3_n1) {
+		else if ((ens[0]==id_e3_n0 && ens[1]==id_e3_n1) ||
+			(ens[1]==id_e3_n0 && ens[0]==id_e3_n1)) {
 			e3 = e.id();
-			e3_n0 = id_e3_n0;
-			e3_n1 = id_e3_n1;
-		}
-		else if (ens[1]==id_e3_n0 && ens[0]==id_e3_n1) {
-			e3 = e.id();
-			e3_n0 = id_e3_n1;
-			e3_n1 = id_e3_n0;
 		}
 	}
-	return std::make_tuple(e1, e1_n0, e1_n1,
-		e2, e2_n0, e2_n1,
-		e3, e3_n0, e3_n1);
+	return std::make_tuple(e1, id_e1_n0, id_e1_n1,
+		e2, id_e2_n0, id_e2_n1,
+		e3, id_e3_n0, id_e3_n1);
 }
 
 /*----------------------------------------------------------------------------*/
 void
 Blocking::get_sheet_cells(const Edge AE,
-	const Node AE_firstN, std::vector<Edge> &AEdges,
+	const Node AE_firstN,
+	std::vector<Edge> &AEdges,
 	std::map<TCellID,std::pair<TCellID,TCellID>>& AE2N,
 	std::vector<Block>& ABlocks) {
 	AEdges.clear();
@@ -585,40 +578,70 @@ Blocking::get_sheet_cells(const Edge AE,
 	ABlocks.clear();
 	// we allocate a mark to know all the edges we go through
 	auto edge_mark = m_mesh.newMark<Edge>();
+	auto block_mark = m_mesh.newMark<Region>();
 
-	std::vector<Edge> front;
-	front.push_back(AE);
+	std::vector<std::pair<Edge,Node> > front;
+	front.push_back(std::make_pair(AE,AE_firstN));
+	AEdges.push_back(AE);
+	auto AE_sndN =	AE.getOppositeNode(AE_firstN);
+	AE2N[AE.id()]={AE_firstN.id(), AE_sndN.id()};
 	m_mesh.mark(AE,edge_mark);
 
 	// Now we propagate along topological parallel edges in each adjacent hex cell
 	while (!front.empty()) {
 		// we pick the last dart of the front
-		auto current_edge = front.back();
+		auto current_edge_node = front.back();
 		front.pop_back();
-		//add it in the set of parallel edges
-		AEdges.push_back(current_edge);
 		// we traverse the adjacent hexes to get parallel edges
-		auto adj_hexes = current_edge.get<Region>();
+		auto adj_faces = current_edge_node.first.get<Face>();
+		std::set<Region> adj_hexes;
+		for (auto f:adj_faces) {
+			std::vector<Region> f_regions = f.get<Region>();
+			for (auto r:f_regions) {
+				if (!m_mesh.isMarked(r,block_mark)) {
+					adj_hexes.insert(r);
+				}
+			}
+		}
 		for (auto h: adj_hexes) {
 			ABlocks.push_back(h);
+			m_mesh.mark(h,block_mark);
 			auto [next_e1, next_e1_n0, next_e1_n1,
 				next_e2, next_e2_n0, next_e2_n1,
 				next_e3, next_e3_n0, next_e3_n1] =
-					get_parallel_edges(h, current_edge, AE_firstN);
+					get_parallel_edges(h, current_edge_node.first,
+						current_edge_node.second);
 			if (!m_mesh.isMarked<Edge>(next_e1,edge_mark)) {
-				front.push_back(m_mesh.get<Edge>(next_e1));
+				front.push_back(std::make_pair(m_mesh.get<Edge>(next_e1),
+					m_mesh.get<Node>(next_e1_n0)));
+				AEdges.push_back(m_mesh.get<Edge>(next_e1));
+				AE2N[next_e1]={next_e1_n0, next_e1_n1};
+				m_mesh.mark<Edge>(next_e1,edge_mark);
+
+
 			}
 			if (!m_mesh.isMarked<Edge>(next_e2,edge_mark)) {
-				front.push_back(m_mesh.get<Edge>(next_e2));
+				front.push_back(std::make_pair(m_mesh.get<Edge>(next_e2),
+					m_mesh.get<Node>(next_e2_n0)));
+				AEdges.push_back(m_mesh.get<Edge>(next_e2));
+				AE2N[next_e2]={next_e2_n0, next_e2_n1};
+				m_mesh.mark<Edge>(next_e2,edge_mark);
 			}
 			if (!m_mesh.isMarked<Edge>(next_e3,edge_mark)) {
-				front.push_back(m_mesh.get<Edge>(next_e3));
+				front.push_back(std::make_pair(m_mesh.get<Edge>(next_e3),
+					m_mesh.get<Node>(next_e3_n0)));
+				AEdges.push_back(m_mesh.get<Edge>(next_e3));
+				AE2N[next_e3]={next_e3_n0, next_e3_n1};
+				m_mesh.mark<Edge>(next_e3,edge_mark);
 			}
 		}
 	}
 	for (auto e:AEdges)
 		m_mesh.unmark(e,edge_mark);
 	m_mesh.freeMark<Edge>(edge_mark);
+	for (auto b:ABlocks)
+		m_mesh.unmark(b,block_mark);
+	m_mesh.freeMark<Region>(block_mark);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -656,56 +679,360 @@ Blocking::get_cut_info(const gmds::math::Point &APoint,
 }
 
 /*----------------------------------------------------------------------------*/
-void Blocking::cut_sheet(const TCellID AnEdgeId, const double AParam) {
-	cut_sheet(m_mesh.get<Edge>(AnEdgeId), AParam);
+void Blocking::cut_sheet(const TCellID AnEdgeId, const TCellID ANodeId, const double AParam) {
+	cut_sheet(m_mesh.get<Edge>(AnEdgeId),
+		m_mesh.get<Node>(ANodeId),
+		AParam);
 }
 
 /*----------------------------------------------------------------------------*/
 void
 Blocking::cut_sheet(const Edge AE) {
-	cut_sheet(AE, 0.5);
+	cut_sheet(AE, AE.get<Node>()[0], 0.5);
 }
 /*----------------------------------------------------------------------------*/
 void
-Blocking::cut_sheet(const Edge AE, const math::Point &AP) {
+Blocking::cut_sheet(const Edge AE, const Node AN, const math::Point &AP) {
 	auto ns = AE.get<Node>();
-	math::Point p0 = ns[0].point();
-	math::Point p1 = ns[1].point();
+	math::Point p0, p1;
+	if (ns[0]==AN) {
+		p0 = ns[0].point();
+		p1 = ns[1].point();
+	}
+	else {
+		p0 = ns[1].point();
+		p1 = ns[0].point();
+	}
 	math::Segment s01(p0, p1);
 	math::Point p = s01.project(AP);
 	double param = math::Segment(p0, p).computeLength() / s01.computeLength();
-	cut_sheet(AE, param);
+	cut_sheet(AE, AN, param);
 }
 /*----------------------------------------------------------------------------*/
 void
-Blocking::cut_sheet(const Edge AE, const double AParam) {
+Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 	assert(AParam > 0 && AParam < 1);
 	// Note: the parameterization starts from the first node of AE
 	std::vector<Blocking::Edge> sheet_edges;
-	std::vector<Blocking::Face> sheet_faces;
+	std::map<TCellID, std::pair<TCellID, TCellID>> sheet_e2N;
 	std::vector<Blocking::Block> sheet_blocks;
-	get_sheet_cells(AE, sheet_edges,sheet_faces, sheet_blocks);
-	auto sheet_mark = m_mesh.newMark<Edge>();
+	get_sheet_cells(AE, AN, sheet_edges,sheet_e2N, sheet_blocks);
+	//for each sheet edge, we store the link from the first to the second node
+	std::map<TCellID,TCellID> sheet_n2n;
+	//link each first node to the edge
+	std::map<TCellID,TCellID> sheet_n2e;
+	for (auto e2nn: sheet_e2N) {
+		sheet_n2n[e2nn.second.first]= e2nn.second.second;
+		sheet_n2e[e2nn.second.first]= e2nn.first;
+	}
+
+	auto mark_sheet_edges = m_mesh.newMark<Edge>();
 	for (auto e: sheet_edges) {
-		m_mesh.mark(e,sheet_mark);
+		m_mesh.mark(e,mark_sheet_edges);
 	}
 
 	for (auto b : sheet_blocks) {
-		auto b_edges = b.get<Edge>();
+		auto b_faces = b.get<Face>();
+		std::set<Edge> b_edges;
+		for (const auto& fb:b_faces) {
+			for (const auto& e_fb:fb.get<Edge>())
+				b_edges.insert(e_fb);
+		}
 		std::vector<Edge> par_edges;
 		for (auto e: b_edges) {
-			if (m_mesh.isMarked(e, sheet_mark)) {
+			if (m_mesh.isMarked(e, mark_sheet_edges)) {
 				par_edges.push_back(e);
 			}
 		}
 		if (par_edges.size() != 4) {
+			//clean the boolean marks
+			m_mesh.unmarkAll<Edge>(mark_sheet_edges);
+			m_mesh.freeMark<Edge>(mark_sheet_edges);
 			throw GMDSException("Unsupported blocking cut");
 		}
 		//We have so 4 parallel edges
 	}
+	//we retrieve all the nodes that are at the beginning of the edges to cut (and
+	//so on the same side of the cut)
+	auto mark_first_node = m_mesh.newMark<Node>();
+	for (auto e2n_info: sheet_e2N) {
+		m_mesh.mark<Node>(e2n_info.second.first, mark_first_node);
+	}
+	//We retrieve the set of faces that defines the surface where we are going
+	//to insert the new layer of hexes. For each face, we keep in mind its adjacent region
+	//that belongs to the sheet to be cut
+	std::map<Blocking::Face, Blocking::Block> sheet_faces;
+
+	for (auto b: sheet_blocks) {
+		auto b_fs = b.get<Face>();
+		for (auto f: b_fs) {
+			auto f_node_ids = f.getIDs<Node>();
+			auto is_sheet_face = true;
+			for (auto n_id: f_node_ids) {
+				if (!m_mesh.isMarked<Node>(n_id, mark_first_node)) {
+					is_sheet_face = false;
+				}
+			}
+			if (is_sheet_face) {
+				sheet_faces[f]=b;
+			}
+		}
+	}
+	//now we get the opposite face
+	std::map<TCellID, TCellID> sheet_opp_faces;
+	std::set<TCellID> sheet_inside_faces;
+	for (const auto& fr: sheet_faces) {
+		auto f = fr.first;
+		auto r = fr.second;
+		std::vector<TCellID> f_node_ids = f.getIDs<Node>();
+		TCellID opp_f_id = NullID;
+		for (const auto& fi : r.get<Face>()) {
+			if (fi!=f) {
+				std::vector<TCellID> fi_node_ids = fi.getIDs<Node>();
+				// fi is opposite to f if all its node are different of f nodes
+				auto all_different = true;
+				for (auto n_id: fi_node_ids) {
+					for (auto n2_id: f_node_ids) {
+						if (n2_id==n_id) {
+							all_different = false;
+						}
+					}
+				}
+				if (all_different) {
+					sheet_opp_faces[f.id()]=fi.id();
+				}
+				else {
+					sheet_inside_faces.insert(fi.id());
+				}
+			}
+		}
+	}
+
+	//we build the new cells
+	std::map<TCellID,TCellID> map_node_to_new_node;
+	std::map<TCellID,TCellID> map_node_to_new_first_edge;
+	std::map<TCellID,TCellID> map_node_to_new_second_edge;
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_edge_to_new_edge;
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_edge_to_new_first_face;
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_edge_to_new_second_face;
+	auto mark_done_node = m_mesh.newMark<Node>();
+
+	for (const auto& fr: sheet_faces) {
+		auto f = fr.first;
+		auto r = fr.second;
+		auto f_node_ids = f.getIDs<Node>();
+		std::vector<Blocking::Node> new_nodes(4);
+		std::vector<Blocking::Edge> new_first_edges(4);
+		std::vector<Blocking::Edge> new_second_edges(4);
+		std::vector<Blocking::Face> new_first_faces(4);
+		std::vector<Blocking::Face> new_second_faces(4);
+		std::vector<Blocking::Edge> new_edges(4);
+		// We create new points and new edges if they are not already created
+		for (auto i=0;i<4;i++) {
+			if (m_mesh.isMarked<Node>(f_node_ids[i], mark_done_node)) {
+				new_nodes[i] = m_mesh.get<Node>(map_node_to_new_node[f_node_ids[i]]);
+				new_first_edges[i] = m_mesh.get<Edge>(map_node_to_new_first_edge[f_node_ids[i]]);
+				new_second_edges[i] = m_mesh.get<Edge>(map_node_to_new_first_edge[f_node_ids[i]]);
+			}
+			else {
+				auto p1 = m_mesh.get<Node>(f_node_ids[i]).point();
+				auto p2 = m_mesh.get<Node>(sheet_n2n[f_node_ids[i]]).point();
+				new_nodes[i] = m_mesh.newNode((1-AParam)*p1+AParam*p2);
+				new_first_edges[i] = m_mesh.newEdge(m_mesh.get<Node>(f_node_ids[i]), new_nodes[i]);
+				new_second_edges[i] = m_mesh.newEdge(new_nodes[i], m_mesh.get<Node>(sheet_n2n[f_node_ids[i]]));
+				//update maps
+				map_node_to_new_node[f_node_ids[i]] = new_nodes[i].id();
+				map_node_to_new_first_edge[f_node_ids[i]] = new_first_edges[i].id();
+				map_node_to_new_second_edge[f_node_ids[i]] = new_second_edges[i].id();
+
+			}
+		}
+		// We create new faces if mandatory
+		for (auto i=0;i<4;i++) {
+			auto id_i = f_node_ids[i];
+			auto id_j = f_node_ids[(i+1)%4];
+			auto id_ij  = (id_i<id_j)?std::make_pair(id_i,id_j):
+							std::make_pair(id_j,id_i);
+			if (m_mesh.isMarked<Node>(id_i, mark_done_node) &&
+				m_mesh.isMarked<Node>(id_j, mark_done_node)) {
+				new_edges[i] = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
+				new_first_faces[i] = m_mesh.get<Face>(map_edge_to_new_first_face[id_ij]);
+				new_second_faces[i] = m_mesh.get<Face>(map_edge_to_new_second_face[id_ij]);
+			}
+			else {
+
+				new_edges[i] = m_mesh.newEdge(map_node_to_new_node[id_ij.first],
+					map_node_to_new_node[id_ij.second]);
+				new_first_faces[i] = m_mesh.newQuad(
+					id_ij.first, id_ij.second,
+					map_node_to_new_node[id_ij.second],
+					map_node_to_new_node[id_ij.first]
+					);
+				new_second_faces[i] = m_mesh.newQuad(
+									map_node_to_new_node[id_ij.first],
+									map_node_to_new_node[id_ij.second],
+									sheet_n2n[f_node_ids[id_ij.second]],
+									sheet_n2n[f_node_ids[id_ij.first]]
+									);
+				//update maps
+				map_edge_to_new_edge[id_ij] = new_edges[i].id();
+				map_edge_to_new_first_face[id_ij] = new_first_faces[i].id();
+				map_edge_to_new_second_face[id_ij] = new_second_faces[i].id();
+			}
+		}
+		// now we create the inner face and the two new blocks
+		auto new_inner_face = m_mesh.newQuad(new_nodes[0], new_nodes[1], new_nodes[2], new_nodes[3]);
+		auto first_block = m_mesh.newHex(
+					f_node_ids[0], f_node_ids[1],
+					f_node_ids[2], f_node_ids[3],
+					map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+					map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
+
+		auto snd_block = m_mesh.newHex(
+					map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+					map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]],
+					sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
+					sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);
+
+		//Remove cells and update connectivities
+
+		//F2R and R2F
+		f.replace<Region>(r.id(),first_block.id());
+		m_mesh.get<Face>(sheet_opp_faces[f.id()]).replace<Region>(r.id(),snd_block.id());
+		if (!new_inner_face.has(first_block))
+			new_inner_face.add(first_block);
+		if (!new_inner_face.has(snd_block))
+			new_inner_face.add(snd_block);
+		if (!first_block.has(f))
+			first_block.add<Face>(f.id());
+		if (!first_block.has(new_inner_face))
+			first_block.add<Face>(new_inner_face.id());
+		if (!snd_block.has<Face>(sheet_opp_faces[f.id()]))
+			snd_block.add<Face>(sheet_opp_faces[f.id()]);
+		if (!snd_block.has<Face>(new_inner_face))
+			snd_block.add<Face>(new_inner_face.id());
+
+		for (auto &f_lateral:new_first_faces) {
+ 			if (!f_lateral.has(first_block))
+				f_lateral.add(first_block);
+
+			if (!first_block.has(f_lateral))
+				first_block.add(f_lateral);
+		}
+		for (auto &f_lateral:new_second_faces) {
+
+			if (!f_lateral.has(snd_block))
+				f_lateral.add(snd_block);
+
+			if (!snd_block.has(f_lateral))
+				snd_block.add(f_lateral);
+		}
+
+		// F2E| E2F
+		for (auto i=0;i<4;i++) {
+
+			auto id_i = f_node_ids[i];
+			auto id_j = f_node_ids[(i+1)%4];
+			auto id_ij  = (id_i<id_j)?std::make_pair(id_i,id_j):
+							std::make_pair(id_j,id_i);
+			auto inner_edge = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
+			new_inner_face.add<Edge>(inner_edge);
+			inner_edge.add(new_inner_face);
+
+			auto first_face = m_mesh.get<Face>(map_edge_to_new_first_face[id_ij]);
+			auto snd_face = m_mesh.get<Face>(map_edge_to_new_second_face[id_ij]);
+
+			if (!first_face.has(inner_edge))
+				first_face.add(inner_edge);
+
+			if (!snd_face.has(inner_edge))
+				snd_face.add(inner_edge);
+
+			if (!inner_edge.has(first_face))
+				inner_edge.add(first_face);
+
+			if (!inner_edge.has(snd_face))
+				inner_edge.add(snd_face);
+
+			auto e_i_first = m_mesh.get<Edge>(map_node_to_new_first_edge[id_ij.first]);
+			auto e_i_snd = m_mesh.get<Edge>(map_node_to_new_second_edge[id_ij.first]);
+			auto e_j_first = m_mesh.get<Edge>(map_node_to_new_first_edge[id_ij.second]);
+			auto e_j_snd = m_mesh.get<Edge>(map_node_to_new_second_edge[id_ij.second]);
+
+			if (!e_i_first.has(first_face))
+				e_i_first.add(first_face);
+
+			if (!first_face.has(e_i_first))
+				first_face.add(e_i_first);
+
+			if (!e_j_first.has(first_face))
+				e_j_first.add(first_face);
+
+			if (!first_face.has(e_j_first))
+				first_face.add(e_j_first);
+
+			if (!e_i_snd.has(snd_face))
+				e_i_snd.add(snd_face);
+
+			if (!snd_face.has(e_i_snd))
+				snd_face.add(e_i_snd);
+
+			if (!e_j_snd.has(snd_face))
+				e_j_snd.add(snd_face);
+
+			if (!snd_face.has(e_j_snd))
+				snd_face.add(e_j_snd);
+
+
+
+		}
+		//we mark the node for the next blocks
+		for (auto nid : f_node_ids)
+			m_mesh.mark<Node>(nid, mark_done_node);
+	}
+
+	//delete cells
+	//R
+	for (const auto& info:sheet_faces) {
+		auto current_r = info.second;
+		for (auto f : current_r.get<Face>()) {
+			f.remove(current_r);
+		}
+		m_mesh.deleteRegion(current_r);
+	}
+	//F
+	for (const auto& f_id:sheet_inside_faces) {
+		auto f = m_mesh.get<Face>(f_id);
+		for (auto r: f.get<Region>()) {
+			r.remove(f);
+		}
+		for (auto e: f.get<Edge>()) {
+			e.remove(f);
+		}
+		m_mesh.deleteFace(f);
+	}
+	//E
+	for (auto& e:sheet_edges) {
+
+		for (auto f: e.get<Face>()) {
+			f.remove(e);
+		}
+		m_mesh.deleteEdge(e);
+	}
+
+	//================================================================
+	// mark cleaning now
+	//================================================================
+	for (auto e2n_info: sheet_e2N) {
+		m_mesh.unmark<Node>(e2n_info.second.first, mark_first_node);
+		m_mesh.unmark<Node>(e2n_info.second.first, mark_done_node);
+	}
+	m_mesh.freeMark<Node>(mark_first_node);
+	m_mesh.freeMark<Node>(mark_done_node);
+
 	//I unmark all mesh edge, it might be possible to improve that
-	m_mesh.unmarkAll<Edge>(sheet_mark);
-	m_mesh.freeMark<Edge>(sheet_mark);
+	m_mesh.unmarkAll<Edge>(mark_sheet_edges);
+	m_mesh.freeMark<Edge>(mark_sheet_edges);
 }
 
 /*----------------------------------------------------------------------------*/

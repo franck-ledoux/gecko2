@@ -265,6 +265,7 @@ class  Blocking
 	 */
 	bool operator==(Blocking& ABlocking);
 
+	void display_info();
 	/**================================================================
 	 *  QUERIES OPERATIONS
 	 *=================================================================*/

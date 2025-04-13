@@ -133,7 +133,6 @@ TEST_CASE("BlockingTestSuite - split_one_block_twice", "[blocking]") {
     std::vector<gecko::blocking::Blocking::Edge> edges;
     bl.mesh().getAll<Edge>(edges);
 
-
     auto e = edges[0];
     auto e2 = edges[1];
     bl.cut_sheet(e);
@@ -145,45 +144,104 @@ TEST_CASE("BlockingTestSuite - split_one_block_twice", "[blocking]") {
     bl.cut_sheet(e2);
 
     REQUIRE(bl.mesh().getNbRegions()== 4);
-    std::vector<Node> all_nodes;
-    bl.mesh().getAll<Node>(all_nodes);
-    for (const auto& n:all_nodes) {
-        std::cout<<n.id()<<": "<<n.point()<<std::endl;
-    }
     REQUIRE(bl.mesh().getNbNodes() == 18);
     REQUIRE(bl.mesh().getNbEdges() == 33);
     REQUIRE(bl.mesh().getNbFaces() == 20);
 }
-/*
+
+TEST_CASE("BlockingTestSuite - split_one_block_three", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+
+    auto e = edges[0];
+    auto e2 = edges[1];
+    auto e3 = edges[8];
+
+    bl.cut_sheet(e);
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
+
+    bl.cut_sheet(e2);
+
+    REQUIRE(bl.mesh().getNbRegions()== 4);
+    REQUIRE(bl.mesh().getNbNodes() == 18);
+    REQUIRE(bl.mesh().getNbEdges() == 33);
+    REQUIRE(bl.mesh().getNbFaces() == 20);
+
+    bl.cut_sheet(e3);
+    REQUIRE(bl.mesh().getNbNodes() == 27);
+    REQUIRE(bl.mesh().getNbRegions()== 8);
+    REQUIRE(bl.mesh().getNbEdges() == 54);
+    REQUIRE(bl.mesh().getNbFaces() == 36);
+
+    for (auto e_id:bl.mesh().edges()) {
+        Edge ei = bl.mesh().get<Edge>(e_id);
+        REQUIRE(ei.getIDs<Face>().size()>1);
+        REQUIRE(ei.getIDs<Face>().size()<5);
+    }
+
+    edges.clear();
+    bl.mesh().getAll<Edge>(edges);
+    auto e_cut = edges[0];
+    bl.display_info();
+    bl.cut_sheet(e_cut);
+
+    std::cout<<"APRES APRES APRES APRES APRES APRES"<<std::endl;
+    bl.display_info();
+    export_vtk(bl,E|N, "cut_after.vtk");
+
+    for (auto e_id:bl.mesh().edges()) {
+        Edge ei = bl.mesh().get<Edge>(e_id);
+        if (ei.getIDs<Face>().size()==1) {
+            bl.display_info();
+            export_vtk(bl,E|N, "cut_error_edge.vtk");
+            export_vtk(bl,F|N, "cut_error_face.vtk");
+        }
+        REQUIRE(ei.getIDs<Face>().size()>1);
+        REQUIRE(ei.getIDs<Face>().size()<5);
+    }
+
+    bl.mesh().getAll<Edge>(edges);
+    bl.cut_sheet(edges[0]);
+    bl.display_info();
+}
+
+
 TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
-    cl.classify();
+    gecko::blocking::Blocking bl(&geom_model,true);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
 
     bool to_cut = true;
     gecko::blocking::Blocking::Edge edge_to_cut;
     while (to_cut) {
+        export_vtk(bl,E|F|N, "cut_prev.vtk");
 
         to_cut = false;
-        auto all_edges = bl.get_all_edges();
-        for (auto cur_edge : all_edges) {
-            auto nodes_of_e = bl.get_nodes_of_edge(cur_edge);
-            gmds::math::Point p0 = nodes_of_e[0]->info().point;
-            gmds::math::Point p1 = nodes_of_e[1]->info().point;
-            if (p0.distance(p1) > 2) {
+        for (auto cur_edge_id : bl.mesh().edges()) {
+            Edge cur_edge = bl.mesh().get<Edge>(cur_edge_id);
+            auto nodes_of_e = cur_edge.get<Node>();
+            gmds::math::Point p0 = nodes_of_e[0].point();
+            gmds::math::Point p1 = nodes_of_e[1].point();
+            if (p0.distance(p1) > 1) {
                 to_cut = true;
                 edge_to_cut = cur_edge;
             }
         }
         if (to_cut) {
-            bl.cut_sheet(edge_to_cut, 0.5);
+            bl.cut_sheet(edge_to_cut);
         }
     }
-    REQUIRE(bl.get_nb_cells<3>() == 512);
+    REQUIRE(bl.mesh().getNbRegions() == 4096);
 }
-
+/*
 TEST_CASE("BlockingTestSuite - init_from_geom_bounding_box", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);

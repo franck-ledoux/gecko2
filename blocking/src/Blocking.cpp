@@ -43,6 +43,62 @@ void Blocking::reset_classification() {
 Blocking::~Blocking() {
 }
 /*----------------------------------------------------------------------------*/
+void Blocking::display_info() {
+	std::cout<<"----------- Blocking info ----------------"<<std::endl;
+	std::cout<<"Nodes "<<std::endl;
+	for (auto i:m_mesh.nodes()) {
+		auto n = m_mesh.get<Node>(i);
+		std::cout<<n.id()<<": "<<n.point()<<std::endl;
+	}
+	std::cout<<"Edges "<<std::endl;
+	for (auto i:m_mesh.edges()) {
+		auto e = m_mesh.get<Edge>(i);
+		auto ns = e.getIDs<Node>();
+		std::cout<<e.id()<<" (n): ";
+		for (auto j:ns)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+		auto fs = e.getIDs<Face>();
+		std::cout<<e.id()<<" (f): ";
+		for (auto j:fs)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+	}
+	std::cout<<"Faces "<<std::endl;
+	for (auto i:m_mesh.faces()) {
+		auto f= m_mesh.get<Face>(i);
+		auto ns = f.getIDs<Node>();
+		auto es = f.getIDs<Edge>();
+		auto rs = f.getIDs<Region>();
+		std::cout<<f.id()<<" (n): ";
+		for (auto j:ns)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+		std::cout<<f.id()<<" (e): ";
+		for (auto j:es)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+		std::cout<<f.id()<<" (r): ";
+		for (auto j:rs)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+	}
+	std::cout<<"Blocks "<<std::endl;
+	for (auto i:m_mesh.regions()) {
+		auto r= m_mesh.get<Region>(i);
+		auto ns = r.getIDs<Node>();
+		auto fs = r.getIDs<Face>();
+		std::cout<<r.id()<<" (n): ";
+		for (auto j:ns)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+		std::cout<<r.id()<<" (f): ";
+		for (auto j:fs)
+			std::cout<<j<<" ";
+		std::cout<<std::endl;
+	}
+}
+/*----------------------------------------------------------------------------*/
 bool Blocking::operator==(Blocking &ABlocking) {
 	if (m_mesh.getNbRegions()!=ABlocking.m_mesh.getNbRegions()) {
 		return false;
@@ -327,7 +383,9 @@ Blocking::get_parallel_edges(Block AB, Edge AE, Node AE_first) {
 		else if (b_nodes[i]==e_nodes[1])
 			i1 = i;
 	}
-	assert(i0>=0 && i1>=0);
+	if(i0<0 || i1<0) {
+		throw GMDSException("Impposible to find this edge in this block");
+	}
 	//i0 for first node
 	if (b_nodes[i0].id()!=AE_first.id()){
 		auto tmp = i1;
@@ -807,6 +865,29 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			}
 		}
 	}
+	// We get the origin and opposite edges
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_nodes_to_origin_edge;
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_nodes_to_opposite_edge;
+	for (const auto& fr: sheet_faces) {
+		auto f = fr.first;
+		auto f_edges = f.get<Edge>();
+		for (const auto &ei: f_edges) {
+			auto ei_node_ids = ei.getIDs<Node>();
+			auto n_id0 = (ei_node_ids[0]<ei_node_ids[1])?ei_node_ids[0]:ei_node_ids[1];
+			auto n_id1 = (ei_node_ids[0]<ei_node_ids[1])?ei_node_ids[1]:ei_node_ids[0];
+			map_nodes_to_origin_edge[std::make_pair(n_id0,n_id1)]=ei.id();
+		}
+		auto f_opp = m_mesh.get<Face>(sheet_opp_faces[f.id()]);
+		auto f_opp_edges = f_opp.get<Edge>();
+		for (const auto &ei: f_opp_edges) {
+
+			auto ei_node_ids = ei.getIDs<Node>();
+			auto n_id0 = (ei_node_ids[0]<ei_node_ids[1])?ei_node_ids[0]:ei_node_ids[1];
+			auto n_id1 = (ei_node_ids[0]<ei_node_ids[1])?ei_node_ids[1]:ei_node_ids[0];
+			map_nodes_to_opposite_edge[std::make_pair(n_id0,n_id1)]=ei.id();
+		}
+
+	}
 
 	//we build the new cells
 	std::map<TCellID,TCellID> map_node_to_new_node;
@@ -816,11 +897,15 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 	std::map<std::pair<TCellID,TCellID>,TCellID> map_edge_to_new_first_face;
 	std::map<std::pair<TCellID,TCellID>,TCellID> map_edge_to_new_second_face;
 	auto mark_done_node = m_mesh.newMark<Node>();
-
+	auto mark_done_edge = m_mesh.newMark<Edge>();
 	for (const auto& fr: sheet_faces) {
 		auto f = fr.first;
 		auto r = fr.second;
+		auto f_opp = m_mesh.get<Face>(sheet_opp_faces[f.id()]);
 		auto f_node_ids = f.getIDs<Node>();
+		auto f_opp_node_ids = f_opp.getIDs<Node>();
+		auto f_edges = f.get<Edge>();
+		auto f_opp_edges = f_opp.get<Edge>();
 		std::vector<Blocking::Node> new_nodes(4);
 		std::vector<Blocking::Edge> new_first_edges(4);
 		std::vector<Blocking::Edge> new_second_edges(4);
@@ -853,27 +938,24 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			auto id_j = f_node_ids[(i+1)%4];
 			auto id_ij  = (id_i<id_j)?std::make_pair(id_i,id_j):
 							std::make_pair(id_j,id_i);
-			if (m_mesh.isMarked<Node>(id_i, mark_done_node) &&
-				m_mesh.isMarked<Node>(id_j, mark_done_node)) {
+			if (m_mesh.isMarked<Edge>(map_nodes_to_origin_edge[id_ij], mark_done_edge)) {
 				new_edges[i] = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
 				new_first_faces[i] = m_mesh.get<Face>(map_edge_to_new_first_face[id_ij]);
 				new_second_faces[i] = m_mesh.get<Face>(map_edge_to_new_second_face[id_ij]);
+				if (new_first_faces[i].id()==0 && new_second_faces[i].id()==0) {
+					std::cout<<"stop here"<<std::endl;
+				}
+
 			}
 			else {
-
 				new_edges[i] = m_mesh.newEdge(map_node_to_new_node[id_ij.first],
 					map_node_to_new_node[id_ij.second]);
-				new_first_faces[i] = m_mesh.newQuad(
-					id_ij.first, id_ij.second,
+				new_first_faces[i] = m_mesh.newQuad(id_ij.first, id_ij.second,
+					map_node_to_new_node[id_ij.second],map_node_to_new_node[id_ij.first]);
+				new_second_faces[i] = m_mesh.newQuad(map_node_to_new_node[id_ij.first],
 					map_node_to_new_node[id_ij.second],
-					map_node_to_new_node[id_ij.first]
-					);
-				new_second_faces[i] = m_mesh.newQuad(
-									map_node_to_new_node[id_ij.first],
-									map_node_to_new_node[id_ij.second],
-									sheet_n2n[f_node_ids[id_ij.second]],
-									sheet_n2n[f_node_ids[id_ij.first]]
-									);
+					sheet_n2n[id_ij.second],
+					sheet_n2n[id_ij.first]);
 				//update maps
 				map_edge_to_new_edge[id_ij] = new_edges[i].id();
 				map_edge_to_new_first_face[id_ij] = new_first_faces[i].id();
@@ -882,23 +964,25 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 		}
 		// now we create the inner face and the two new blocks
 		auto new_inner_face = m_mesh.newQuad(new_nodes[0], new_nodes[1], new_nodes[2], new_nodes[3]);
+
 		auto first_block = m_mesh.newHex(
-					f_node_ids[0], f_node_ids[1],
-					f_node_ids[2], f_node_ids[3],
-					map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
-					map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
+			f_node_ids[0], f_node_ids[1],
+			f_node_ids[2], f_node_ids[3],
+			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+			map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
 
 		auto snd_block = m_mesh.newHex(
-					map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
-					map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]],
-					sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
-					sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);
+			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+			map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]],
+			sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
+			sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);
 
 		//Remove cells and update connectivities
 
 		//F2R and R2F
-		f.replace<Region>(r.id(),first_block.id());
-		m_mesh.get<Face>(sheet_opp_faces[f.id()]).replace<Region>(r.id(),snd_block.id());
+		f.replace<Region>(r.id(), first_block.id());
+
+		m_mesh.get<Face>(sheet_opp_faces[f.id()]).replace<Region>(r.id(), snd_block.id());
 		if (!new_inner_face.has(first_block))
 			new_inner_face.add(first_block);
 		if (!new_inner_face.has(snd_block))
@@ -911,30 +995,34 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			snd_block.add<Face>(sheet_opp_faces[f.id()]);
 		if (!snd_block.has<Face>(new_inner_face))
 			snd_block.add<Face>(new_inner_face.id());
+		for (auto &f_lateral: new_first_faces) {
+				if (!f_lateral.has(first_block))
+					f_lateral.add(first_block);
+				if (!first_block.has(f_lateral))
+					first_block.add(f_lateral);
 
-		for (auto &f_lateral:new_first_faces) {
- 			if (!f_lateral.has(first_block))
-				f_lateral.add(first_block);
-
-			if (!first_block.has(f_lateral))
-				first_block.add(f_lateral);
 		}
-		for (auto &f_lateral:new_second_faces) {
+		for (auto &f_lateral: new_second_faces) {
 
-			if (!f_lateral.has(snd_block))
-				f_lateral.add(snd_block);
+				if (!f_lateral.has(snd_block))
+					f_lateral.add(snd_block);
 
-			if (!snd_block.has(f_lateral))
-				snd_block.add(f_lateral);
+				if (!snd_block.has(f_lateral))
+					snd_block.add(f_lateral);
+
 		}
 
 		// F2E| E2F
-		for (auto i=0;i<4;i++) {
-
+		for (auto i = 0; i < 4; i++) {
 			auto id_i = f_node_ids[i];
-			auto id_j = f_node_ids[(i+1)%4];
-			auto id_ij  = (id_i<id_j)?std::make_pair(id_i,id_j):
-							std::make_pair(id_j,id_i);
+			auto id_j = f_node_ids[(i + 1) % 4];
+			auto opp_i = sheet_n2n[id_i];
+			auto opp_j = sheet_n2n[id_j];
+			auto id_ij = (id_i < id_j) ? std::make_pair(id_i, id_j) : std::make_pair(id_j, id_i);
+			auto opp_ij = (opp_i < opp_j) ? std::make_pair(opp_i, opp_j) : std::make_pair(opp_j, opp_i);
+
+			Edge origin_edge = m_mesh.get<Edge>(map_nodes_to_origin_edge[id_ij]);
+			Edge opp_edge = m_mesh.get<Edge>(map_nodes_to_opposite_edge[opp_ij]);
 			auto inner_edge = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
 			new_inner_face.add<Edge>(inner_edge);
 			inner_edge.add(new_inner_face);
@@ -954,6 +1042,7 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			if (!inner_edge.has(snd_face))
 				inner_edge.add(snd_face);
 
+			//boundary edges
 			auto e_i_first = m_mesh.get<Edge>(map_node_to_new_first_edge[id_ij.first]);
 			auto e_i_snd = m_mesh.get<Edge>(map_node_to_new_second_edge[id_ij.first]);
 			auto e_j_first = m_mesh.get<Edge>(map_node_to_new_first_edge[id_ij.second]);
@@ -983,37 +1072,51 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			if (!snd_face.has(e_j_snd))
 				snd_face.add(e_j_snd);
 
+			// the original and opposite edges
 
+			if (!origin_edge.has(first_face))
+				origin_edge.add(first_face);
 
+			if (!first_face.has(origin_edge))
+				first_face.add(origin_edge);
+
+			if (!opp_edge.has(snd_face))
+				opp_edge.add(snd_face);
+
+			if (!snd_face.has(opp_edge))
+				snd_face.add(opp_edge);
 		}
-		//we mark the node for the next blocks
-		for (auto nid : f_node_ids)
+		//we mark the node and edge for the next blocks
+		for (auto nid: f_node_ids)
 			m_mesh.mark<Node>(nid, mark_done_node);
+		for (auto e: f_edges)
+			m_mesh.mark(e, mark_done_edge);
 	}
 
 	//delete cells
 	//R
-	for (const auto& info:sheet_faces) {
+	for (const auto &info: sheet_faces) {
 		auto current_r = info.second;
-		for (auto f : current_r.get<Face>()) {
+		for (auto f: current_r.get<Face>()) {
 			f.remove(current_r);
+			current_r.remove(f);
 		}
 		m_mesh.deleteRegion(current_r);
 	}
 	//F
-	for (const auto& f_id:sheet_inside_faces) {
+	for (const auto &f_id: sheet_inside_faces) {
 		auto f = m_mesh.get<Face>(f_id);
 		for (auto r: f.get<Region>()) {
 			r.remove(f);
 		}
 		for (auto e: f.get<Edge>()) {
 			e.remove(f);
+			f.remove(e);
 		}
 		m_mesh.deleteFace(f);
 	}
 	//E
-	for (auto& e:sheet_edges) {
-
+	for (auto &e: sheet_edges) {
 		for (auto f: e.get<Face>()) {
 			f.remove(e);
 		}
@@ -1023,14 +1126,18 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 	//================================================================
 	// mark cleaning now
 	//================================================================
-	for (auto e2n_info: sheet_e2N) {
+/*	for (auto e2n_info: sheet_e2N) {
 		m_mesh.unmark<Node>(e2n_info.second.first, mark_first_node);
 		m_mesh.unmark<Node>(e2n_info.second.first, mark_done_node);
-	}
+	}*/
+	m_mesh.unmarkAll<Node>(mark_first_node);
+	m_mesh.unmarkAll<Node>(mark_done_node);
 	m_mesh.freeMark<Node>(mark_first_node);
 	m_mesh.freeMark<Node>(mark_done_node);
 
 	//I unmark all mesh edge, it might be possible to improve that
+	m_mesh.unmarkAll<Edge>(mark_done_edge);
+	m_mesh.freeMark<Edge>(mark_done_edge);
 	m_mesh.unmarkAll<Edge>(mark_sheet_edges);
 	m_mesh.freeMark<Edge>(mark_sheet_edges);
 }

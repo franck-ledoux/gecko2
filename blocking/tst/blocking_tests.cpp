@@ -106,9 +106,29 @@ TEST_CASE("single_block", "[BlockingTestSuite]") {
     auto block_center = bl.mesh().get<Region>(0).center();
     for (auto f : bl.mesh().faces()) {
         gmds::math::Point face_center = bl.mesh().get<Face>(f).center();
-         REQUIRE(std::abs(block_center.distance(face_center) - 5) < 1e-8);
+        REQUIRE(std::abs(block_center.distance(face_center) - 5) < 1e-8);
     }
 
+}
+
+TEST_CASE("remove_single_block", "[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+
+    REQUIRE(bl.mesh().getNbRegions() == 1);
+    REQUIRE(bl.mesh().getNbFaces() == 6);
+    REQUIRE(bl.mesh().getNbEdges() == 12);
+    REQUIRE(bl.mesh().getNbNodes() == 8);
+
+    bl.remove_block(bl.mesh().get<Region>(0));
+
+
+    REQUIRE(bl.mesh().getNbRegions() == 0);
+    REQUIRE(bl.mesh().getNbFaces() == 0);
+    REQUIRE(bl.mesh().getNbEdges() == 0);
+    REQUIRE(bl.mesh().getNbNodes() == 0);
 }
 
 TEST_CASE("BlockingTestSuite - split_one_block_once", "[blocking]") {
@@ -124,6 +144,30 @@ TEST_CASE("BlockingTestSuite - split_one_block_once", "[blocking]") {
     REQUIRE(bl.mesh().getNbFaces() == 11);
     REQUIRE(bl.mesh().getNbRegions()== 2);
 
+
+
+
+}
+
+TEST_CASE("BlockingTestSuite - remove_one_of_two_blocks", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+
+    bl.cut_sheet(edges[0]);
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
+
+    bl.remove_block(bl.mesh().get<Region>(1));
+
+    REQUIRE(bl.mesh().getNbRegions() == 1);
+    REQUIRE(bl.mesh().getNbFaces() == 6);
+    REQUIRE(bl.mesh().getNbEdges() == 12);
+    REQUIRE(bl.mesh().getNbNodes() == 8);
 }
 TEST_CASE("BlockingTestSuite - split_one_block_once_non_uniform", "[blocking]") {
     gmds::cad::FACManager geom_model;
@@ -226,11 +270,8 @@ TEST_CASE("BlockingTestSuite - split_one_block_three", "[blocking]") {
     edges.clear();
     bl.mesh().getAll<Edge>(edges);
     auto e_cut = edges[0];
-    bl.display_info();
     bl.cut_sheet(e_cut);
 
-    bl.display_info();
-    export_vtk(bl,E|N, "cut_after.vtk");
 
     for (auto e_id:bl.mesh().edges()) {
         Edge ei = bl.mesh().get<Edge>(e_id);

@@ -316,6 +316,49 @@ Blocking::save_vtk_blocking(const std::string &AFileName) {
 	writer_edge.setDataOptions(N | E);
 	writer_edge.write(edge_filename);
 }
+/*----------------------------------------------------------------------------*/
+void Blocking::remove_block(Block AB) {
+	auto b_faces = AB.get<Face>();
+	auto b_nodes = AB.get<Node>();
+
+	m_mesh.deleteRegion(AB);
+
+	for (auto f:b_faces) {
+		f.remove(AB);
+		if (f.getIDs<Region>().size()==0) {
+			//we remove the face, so do we have lonely edges?
+			auto f_edges = f.get<Edge>();
+			m_mesh.deleteFace(f);
+			for (auto e:f_edges) {
+				e.remove(f);
+				if (e.getIDs<Face>().size()==0) {
+					m_mesh.deleteEdge(e);
+				}
+			}
+		}
+	}
+	//Now we have to check if a node is lonely and must be removed.
+	for (auto n_id:m_mesh.nodes()) {
+		std::vector<Region> blocks;
+		m_mesh.getAll(blocks);
+		bool used = false;
+		for (auto i=0;i<blocks.size()&& !used;i++) {
+			auto b_ns = blocks[i].getIDs<Node>();
+			for (auto b_n_id:b_ns) {
+				if (n_id==b_n_id)
+					used = true;
+			}
+		}
+		if (!used)
+			m_mesh.deleteNode(n_id);
+	}
+
+}
+/*----------------------------------------------------------------------------*/
+void Blocking::remove_block(const gmds::TCellID ABlockId) {
+	remove_block(m_mesh.get<Region>(ABlockId));
+
+}
 
 /*----------------------------------------------------------------------------*/
 std::vector<std::vector<Blocking::Edge> >

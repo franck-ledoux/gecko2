@@ -125,6 +125,44 @@ TEST_CASE("BlockingTestSuite - split_one_block_once", "[blocking]") {
     REQUIRE(bl.mesh().getNbRegions()== 2);
 
 }
+TEST_CASE("BlockingTestSuite - split_one_block_once_non_uniform", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+
+    bl.cut_sheet(edges[0],edges[0].get<Node>()[0],0.2);
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
+    auto nb_10=0, nb_8=0, nb_2=0;
+    for (auto ei: bl.mesh().edges()){
+        Edge e = bl.mesh().get<Edge>(ei);
+        auto le =e.length();
+        if(Approx(le).margin(1e-8) == 10)
+            nb_10++;
+        else if(Approx(le).margin(1e-8) == 8)
+            nb_8++;
+        else if(Approx(le).margin(1e-8) == 2)
+            nb_2++;
+
+    }
+    REQUIRE(nb_10==12);
+    REQUIRE(nb_8==4);
+    REQUIRE(nb_2==4);
+
+
+    for (auto ri: bl.mesh().regions()){
+        Region r = bl.mesh().get<Region>(ri);
+        auto vol = r.volume();
+        bool is_equal =(Approx(r.volume()).margin(1e-8) == 200 )||
+            (Approx(r.volume()).margin(1e-8) == 800 );
+        REQUIRE(is_equal);
+
+    }
+}
 
 TEST_CASE("BlockingTestSuite - split_one_block_twice", "[blocking]") {
     gmds::cad::FACManager geom_model;
@@ -191,24 +229,17 @@ TEST_CASE("BlockingTestSuite - split_one_block_three", "[blocking]") {
     bl.display_info();
     bl.cut_sheet(e_cut);
 
-    std::cout<<"APRES APRES APRES APRES APRES APRES"<<std::endl;
     bl.display_info();
     export_vtk(bl,E|N, "cut_after.vtk");
 
     for (auto e_id:bl.mesh().edges()) {
         Edge ei = bl.mesh().get<Edge>(e_id);
-        if (ei.getIDs<Face>().size()==1) {
-            bl.display_info();
-            export_vtk(bl,E|N, "cut_error_edge.vtk");
-            export_vtk(bl,F|N, "cut_error_face.vtk");
-        }
         REQUIRE(ei.getIDs<Face>().size()>1);
         REQUIRE(ei.getIDs<Face>().size()<5);
     }
 
     bl.mesh().getAll<Edge>(edges);
     bl.cut_sheet(edges[0]);
-    bl.display_info();
 }
 
 
@@ -240,6 +271,22 @@ TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
         }
     }
     REQUIRE(bl.mesh().getNbRegions() == 4096);
+
+    for (auto e_id:bl.mesh().edges()) {
+        Edge ei = bl.mesh().get<Edge>(e_id);
+        REQUIRE(ei.getIDs<Face>().size()>1);
+        REQUIRE(ei.getIDs<Face>().size()<5);
+    }
+    for (auto f_id:bl.mesh().faces()) {
+        Face fi = bl.mesh().get<Face>(f_id);
+        REQUIRE(fi.getIDs<Edge>().size()==4);
+        REQUIRE(fi.getIDs<Region>().size()<3);
+    }
+
+    for (auto b_id:bl.mesh().regions() ){
+        Region ri = bl.mesh().get<Region>(b_id);
+        REQUIRE(ri.getIDs<Face>().size()==6);
+    }
 }
 /*
 TEST_CASE("BlockingTestSuite - init_from_geom_bounding_box", "[blocking]") {

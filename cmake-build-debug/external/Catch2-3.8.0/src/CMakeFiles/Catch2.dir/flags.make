@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/src/catch2/.. -I/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/external/Catch2-3.8.0/generated-includes
 
-CXX_FLAGSarm64 = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics -ffile-prefix-map=/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/=
+CXX_FLAGSarm64 = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -fcolor-diagnostics -ffile-prefix-map=/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/=
 
-CXX_FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics -ffile-prefix-map=/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/=
+CXX_FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -fcolor-diagnostics -ffile-prefix-map=/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/=
 

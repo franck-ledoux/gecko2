@@ -207,6 +207,7 @@ Blocking::move_node(Node AN, math::Point &ALoc) {
 		AN.setPoint(p);
 	}
 	// otherwise nothing else to do
+	ALoc = AN.point();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -985,10 +986,6 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 				new_edges[i] = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
 				new_first_faces[i] = m_mesh.get<Face>(map_edge_to_new_first_face[id_ij]);
 				new_second_faces[i] = m_mesh.get<Face>(map_edge_to_new_second_face[id_ij]);
-				if (new_first_faces[i].id()==0 && new_second_faces[i].id()==0) {
-					std::cout<<"stop here"<<std::endl;
-				}
-
 			}
 			else {
 				new_edges[i] = m_mesh.newEdge(map_node_to_new_node[id_ij.first],

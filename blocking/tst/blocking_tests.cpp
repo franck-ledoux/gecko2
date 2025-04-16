@@ -20,7 +20,7 @@ setUp(gmds::cad::FACManager &AGeomManager)
 	                                 gmds::F2R | gmds::F2E
 	                                 | gmds::E2F | gmds::E2N | gmds::N2E));
 	std::string dir(TEST_SAMPLES_DIR);
-	std::string vtk_file = dir + "/AxisAlign//tet_in_box.vtk";
+	std::string vtk_file = dir + "/AxisAlign/tet_in_box.vtk";
 	gmds::IGMeshIOService ioService(&m_vol);
 	gmds::VTKReader vtkReader(&ioService);
 	vtkReader.setCellOptions(gmds::N | gmds::R);
@@ -294,7 +294,6 @@ TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
     bool to_cut = true;
     gecko::blocking::Blocking::Edge edge_to_cut;
     while (to_cut) {
-        export_vtk(bl,E|F|N, "cut_prev.vtk");
 
         to_cut = false;
         for (auto cur_edge_id : bl.mesh().edges()) {
@@ -329,25 +328,29 @@ TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
         REQUIRE(ri.getIDs<Face>().size()==6);
     }
 }
-/*
+
 TEST_CASE("BlockingTestSuite - init_from_geom_bounding_box", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
 
-    REQUIRE(bl.get_nb_cells<0>() == 8);
-    REQUIRE(bl.get_nb_cells<1>() == 12);
-    REQUIRE(bl.get_nb_cells<2>() == 6);
-    REQUIRE(bl.get_nb_cells<3>() == 1);
+    REQUIRE(bl.mesh().getNbNodes() == 8);
+    REQUIRE(bl.mesh().getNbEdges() == 12);
+    REQUIRE(bl.mesh().getNbFaces() == 6);
+    REQUIRE(bl.mesh().getNbRegions() == 1);
 
-    for (auto a : bl.cmap()->attributes<0>()) {
-        gmds::math::Point p = a.info().point;
+    std::vector<gecko::blocking::Blocking::Node> nodes;
+    bl.mesh().getAll<Node>(nodes);
+    for (auto n : nodes) {
+        gmds::math::Point p = n.point();
         REQUIRE(Approx(fabs(p.X())).margin(1e-8) == 5);
         REQUIRE(Approx(fabs(p.Y())).margin(1e-8) == 5);
         REQUIRE(Approx(fabs(p.Z())).margin(1e-8) == 5);
     }
 }
 
+//Mesh structure now, useless test ?
+/*
 TEST_CASE("BlockingTestSuite - single_block_to_mesh", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
@@ -373,49 +376,61 @@ TEST_CASE("BlockingTestSuite - single_block_to_mesh", "[blocking]") {
     REQUIRE(m.getNbRegions() == 1);
 }
 
+//Check erreur matching nbReg pour une arrete
 TEST_CASE("BlockingTestSuite - test_topological_queries", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
 
-    auto bl_nodes = bl.get_all_nodes();
-    auto bl_edges = bl.get_all_edges();
-    auto bl_faces = bl.get_all_faces();
+    auto bl_nodes = bl.mesh().nodes();
+    auto bl_edges = bl.mesh().edges();
+    auto bl_faces = bl.mesh().faces();
 
-    for (auto n : bl_nodes) {
-        auto fs = bl.get_faces_of_node(n);
-        REQUIRE(fs.size() == 3);
+    // for (auto n : bl_nodes) {
+    //     auto nbFs = bl.mesh().get<Node>(n).nbFaces();
+    //     REQUIRE(nbFs == 3);
+    //
+    //     auto nbEs = bl.mesh().get<Node>(n).nbEdges();
+    //     REQUIRE(nbEs == 3);
+    //
+    //     auto nbBs = bl.mesh().get<Node>(n).nbRegions();
+    //     REQUIRE(nbBs == 1);
+    // }
 
-        auto es = bl.get_edges_of_node(n);
-        REQUIRE(es.size() == 3);
-
-        auto bs = bl.get_blocks_of_node(n);
-        REQUIRE(bs.size() == 1);
-    }
-
+    bl.save_vtk_blocking("topological_queries.vtk");
     for (auto e : bl_edges) {
-        auto ns = bl.get_nodes_of_edge(e);
-        REQUIRE(ns.size() == 2);
+        auto nbNs = bl.mesh().get<Edge>(e).nbNodes();
+        REQUIRE(nbNs == 2);
 
-        auto fs = bl.get_faces_of_edge(e);
-        REQUIRE(fs.size() == 2);
+        auto nbFs = bl.mesh().get<Edge>(e).nbFaces();
+        REQUIRE(nbFs == 2);
 
-        auto bs = bl.get_blocks_of_edge(e);
-        REQUIRE(bs.size() == 1);
+        //auto bs = bl.get_blocks_of_edge(e);
+        int nbBs = 0;
+
+        std::vector<gecko::blocking::Blocking::Face> e_faces;
+        bl.mesh().get<Edge>(e).getAll<Face>(e_faces);
+        for (auto f : e_faces) {
+            if (nbBs < f.nbRegions()) {
+                nbBs = f.nbRegions();
+            }
+        }
+        //auto nbBs = bl.mesh().get<Edge>(e).nbRegions();
+        REQUIRE(nbBs == 1);
     }
 
-    for (auto f : bl_faces) {
-        auto ns = bl.get_nodes_of_face(f);
-        REQUIRE(ns.size() == 4);
-
-        auto es = bl.get_edges_of_face(f);
-        REQUIRE(es.size() == 4);
-
-        auto bs = bl.get_blocks_of_face(f);
-        REQUIRE(bs.size() == 1);
-    }
+    // for (auto f : bl_faces) {
+    //     auto ns = bl.get_nodes_of_face(f);
+    //     REQUIRE(ns.size() == 4);
+    //
+    //     auto es = bl.get_edges_of_face(f);
+    //     REQUIRE(es.size() == 4);
+    //
+    //     auto bs = bl.get_blocks_of_face(f);
+    //     REQUIRE(bs.size() == 1);
+    // }
 }
-
+*/
 
 TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
     gmds::cad::FACManager geom_model;
@@ -448,9 +463,8 @@ TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
     m.newHex(n8,n9,n10,n11,n12,n13,n14,n15);
     bl.init_from_mesh(m);
 
-    REQUIRE(bl.get_all_nodes().size() == 16);
-    REQUIRE(bl.get_all_edges().size() == 28);
-    REQUIRE(bl.get_all_faces().size() == 16);
-    REQUIRE(bl.get_all_blocks().size() == 3);
+    REQUIRE(bl.mesh().getNbNodes() == 16);
+    REQUIRE(bl.mesh().getNbEdges() == 28);
+    REQUIRE(bl.mesh().getNbFaces() == 16);
+    REQUIRE(bl.mesh().getNbRegions() == 3);
 }
-*/

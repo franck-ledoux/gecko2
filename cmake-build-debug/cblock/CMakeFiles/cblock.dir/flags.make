@@ -6,7 +6,7 @@ CXX_DEFINES = -DCGAL_USE_GMPXX=1
 
 CXX_INCLUDES = -I/Users/paulbourmaud/Projects/gecko/gecko2/external/eigen-3.4.0 -I/Users/paulbourmaud/Projects/gecko/gecko2/cblock/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/ig/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/math/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/external/Predicates_psm -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/cad/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/io/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/cadfac/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/igalgo/inc -isystem /opt/homebrew/include
 
-CXX_FLAGSarm64 = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+CXX_FLAGSarm64 = -g -std=gnu++17 -arch arm64 -fcolor-diagnostics
 
-CXX_FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+CXX_FLAGS = -g -std=gnu++17 -arch arm64 -fcolor-diagnostics
 

@@ -536,19 +536,6 @@ ContinuousSubmit/fast:
 .PHONY : ContinuousSubmit/fast
 
 #=============================================================================
-# Target rules for targets named gecko2
-
-# Build rule for target.
-gecko2: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gecko2
-.PHONY : gecko2
-
-# fast build rule for target.
-gecko2/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/gecko2.dir/build.make CMakeFiles/gecko2.dir/build
-.PHONY : gecko2/fast
-
-#=============================================================================
 # Target rules for targets named Catch2
 
 # Build rule for target.
@@ -757,67 +744,56 @@ test_gmds_cadfac/fast:
 .PHONY : test_gmds_cadfac/fast
 
 #=============================================================================
-# Target rules for targets named cblock
+# Target rules for targets named gmds_quality
 
 # Build rule for target.
-cblock: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cblock
-.PHONY : cblock
+gmds_quality: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmds_quality
+.PHONY : gmds_quality
 
 # fast build rule for target.
-cblock/fast:
-	$(MAKE) $(MAKESILENT) -f cblock/CMakeFiles/cblock.dir/build.make cblock/CMakeFiles/cblock.dir/build
-.PHONY : cblock/fast
+gmds_quality/fast:
+	$(MAKE) $(MAKESILENT) -f gmds_core/quality/CMakeFiles/gmds_quality.dir/build.make gmds_core/quality/CMakeFiles/gmds_quality.dir/build
+.PHONY : gmds_quality/fast
 
 #=============================================================================
-# Target rules for targets named test_cblock
+# Target rules for targets named test_gmds_quality
 
 # Build rule for target.
-test_cblock: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cblock
-.PHONY : test_cblock
+test_gmds_quality: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_gmds_quality
+.PHONY : test_gmds_quality
 
 # fast build rule for target.
-test_cblock/fast:
-	$(MAKE) $(MAKESILENT) -f cblock/tst/CMakeFiles/test_cblock.dir/build.make cblock/tst/CMakeFiles/test_cblock.dir/build
-.PHONY : test_cblock/fast
+test_gmds_quality/fast:
+	$(MAKE) $(MAKESILENT) -f gmds_core/quality/tst/CMakeFiles/test_gmds_quality.dir/build.make gmds_core/quality/tst/CMakeFiles/test_gmds_quality.dir/build
+.PHONY : test_gmds_quality/fast
 
 #=============================================================================
-# Target rules for targets named mcts
+# Target rules for targets named blocking
 
 # Build rule for target.
-mcts: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mcts
-.PHONY : mcts
+blocking: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 blocking
+.PHONY : blocking
 
 # fast build rule for target.
-mcts/fast:
-	$(MAKE) $(MAKESILENT) -f mcts/CMakeFiles/mcts.dir/build.make mcts/CMakeFiles/mcts.dir/build
-.PHONY : mcts/fast
+blocking/fast:
+	$(MAKE) $(MAKESILENT) -f blocking/CMakeFiles/blocking.dir/build.make blocking/CMakeFiles/blocking.dir/build
+.PHONY : blocking/fast
 
-main_blocker.o: main_blocker.cpp.o
-.PHONY : main_blocker.o
+#=============================================================================
+# Target rules for targets named test_blocking
 
-# target to build an object file
-main_blocker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/gecko2.dir/build.make CMakeFiles/gecko2.dir/main_blocker.cpp.o
-.PHONY : main_blocker.cpp.o
+# Build rule for target.
+test_blocking: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_blocking
+.PHONY : test_blocking
 
-main_blocker.i: main_blocker.cpp.i
-.PHONY : main_blocker.i
-
-# target to preprocess a source file
-main_blocker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/gecko2.dir/build.make CMakeFiles/gecko2.dir/main_blocker.cpp.i
-.PHONY : main_blocker.cpp.i
-
-main_blocker.s: main_blocker.cpp.s
-.PHONY : main_blocker.s
-
-# target to generate assembly for a file
-main_blocker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/gecko2.dir/build.make CMakeFiles/gecko2.dir/main_blocker.cpp.s
-.PHONY : main_blocker.cpp.s
+# fast build rule for target.
+test_blocking/fast:
+	$(MAKE) $(MAKESILENT) -f blocking/tst/CMakeFiles/test_blocking.dir/build.make blocking/tst/CMakeFiles/test_blocking.dir/build
+.PHONY : test_blocking/fast
 
 # Help Target
 help:
@@ -863,26 +839,23 @@ help:
 	@echo "... Catch2"
 	@echo "... Catch2WithMain"
 	@echo "... Predicates_psm"
-	@echo "... cblock"
-	@echo "... gecko2"
+	@echo "... blocking"
 	@echo "... gmds_cad"
 	@echo "... gmds_cadfac"
 	@echo "... gmds_ig"
 	@echo "... gmds_igalgo"
 	@echo "... gmds_io"
 	@echo "... gmds_math"
+	@echo "... gmds_quality"
 	@echo "... gmds_utils"
-	@echo "... mcts"
-	@echo "... test_cblock"
+	@echo "... test_blocking"
 	@echo "... test_gmds_cadfac"
 	@echo "... test_gmds_ig"
 	@echo "... test_gmds_igalgo"
 	@echo "... test_gmds_io"
 	@echo "... test_gmds_math"
+	@echo "... test_gmds_quality"
 	@echo "... test_gmds_utils"
-	@echo "... main_blocker.o"
-	@echo "... main_blocker.i"
-	@echo "... main_blocker.s"
 .PHONY : help
 
 

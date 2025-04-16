@@ -6,7 +6,7 @@ CXX_DEFINES = -DTEST_SAMPLES_DIR=\"/Users/paulbourmaud/Projects/gecko/gecko2/tes
 
 CXX_INCLUDES = -I/Users/paulbourmaud/Projects/gecko/gecko2/external/eigen-3.4.0 -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/io/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/ig/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/math/inc -I/Users/paulbourmaud/Projects/gecko/gecko2/external/Predicates_psm -I/Users/paulbourmaud/Projects/gecko/gecko2/external/Catch2-3.8.0/src/catch2/.. -I/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/external/Catch2-3.8.0/generated-includes
 
-CXX_FLAGSarm64 = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+CXX_FLAGSarm64 = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
 
-CXX_FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -fcolor-diagnostics
+CXX_FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk -fcolor-diagnostics
 

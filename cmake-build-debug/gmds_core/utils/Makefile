@@ -233,6 +233,30 @@ src/CommonTypes.cpp.s:
 	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug && $(MAKE) $(MAKESILENT) -f gmds_core/utils/CMakeFiles/gmds_utils.dir/build.make gmds_core/utils/CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.s
 .PHONY : src/CommonTypes.cpp.s
 
+src/LocalCellTopology.o: src/LocalCellTopology.cpp.o
+.PHONY : src/LocalCellTopology.o
+
+# target to build an object file
+src/LocalCellTopology.cpp.o:
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug && $(MAKE) $(MAKESILENT) -f gmds_core/utils/CMakeFiles/gmds_utils.dir/build.make gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o
+.PHONY : src/LocalCellTopology.cpp.o
+
+src/LocalCellTopology.i: src/LocalCellTopology.cpp.i
+.PHONY : src/LocalCellTopology.i
+
+# target to preprocess a source file
+src/LocalCellTopology.cpp.i:
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug && $(MAKE) $(MAKESILENT) -f gmds_core/utils/CMakeFiles/gmds_utils.dir/build.make gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.i
+.PHONY : src/LocalCellTopology.cpp.i
+
+src/LocalCellTopology.s: src/LocalCellTopology.cpp.s
+.PHONY : src/LocalCellTopology.s
+
+# target to generate assembly for a file
+src/LocalCellTopology.cpp.s:
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug && $(MAKE) $(MAKESILENT) -f gmds_core/utils/CMakeFiles/gmds_utils.dir/build.make gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.s
+.PHONY : src/LocalCellTopology.cpp.s
+
 src/VariableManager.o: src/VariableManager.cpp.o
 .PHONY : src/VariableManager.o
 
@@ -277,6 +301,9 @@ help:
 	@echo "... src/CommonTypes.o"
 	@echo "... src/CommonTypes.i"
 	@echo "... src/CommonTypes.s"
+	@echo "... src/LocalCellTopology.o"
+	@echo "... src/LocalCellTopology.i"
+	@echo "... src/LocalCellTopology.s"
 	@echo "... src/VariableManager.o"
 	@echo "... src/VariableManager.i"
 	@echo "... src/VariableManager.s"

@@ -59,12 +59,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/cblock/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/mcts/cmake_install.cmake")
+  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/blocking/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)

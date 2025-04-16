@@ -72,3 +72,8 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/cadfac/cmake_install.cmake")
 endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/quality/cmake_install.cmake")
+endif()
+

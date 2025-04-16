@@ -97,10 +97,24 @@ gmds_core/utils/CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.s"
 	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/CommonTypes.cpp -o CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.s
 
+gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o: gmds_core/utils/CMakeFiles/gmds_utils.dir/flags.make
+gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o: /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/LocalCellTopology.cpp
+gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o: gmds_core/utils/CMakeFiles/gmds_utils.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o"
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o -MF CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o.d -o CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o -c /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/LocalCellTopology.cpp
+
+gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.i"
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/LocalCellTopology.cpp > CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.i
+
+gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.s"
+	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/LocalCellTopology.cpp -o CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.s
+
 gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o: gmds_core/utils/CMakeFiles/gmds_utils.dir/flags.make
 gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o: /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/VariableManager.cpp
 gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o: gmds_core/utils/CMakeFiles/gmds_utils.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o"
 	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o -MF CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o.d -o CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o -c /Users/paulbourmaud/Projects/gecko/gecko2/gmds_core/utils/src/VariableManager.cpp
 
 gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.i: cmake_force
@@ -115,6 +129,7 @@ gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.s: cmake_force
 gmds_utils_OBJECTS = \
 "CMakeFiles/gmds_utils.dir/src/BitVector.cpp.o" \
 "CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.o" \
+"CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o" \
 "CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o"
 
 # External object files for target gmds_utils
@@ -122,10 +137,11 @@ gmds_utils_EXTERNAL_OBJECTS =
 
 gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/src/BitVector.cpp.o
 gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.o
+gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o
 gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o
 gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/build.make
 gmds_core/utils/libgmds_utils.a: gmds_core/utils/CMakeFiles/gmds_utils.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libgmds_utils.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libgmds_utils.a"
 	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && $(CMAKE_COMMAND) -P CMakeFiles/gmds_utils.dir/cmake_clean_target.cmake
 	cd /Users/paulbourmaud/Projects/gecko/gecko2/cmake-build-debug/gmds_core/utils && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gmds_utils.dir/link.txt --verbose=$(VERBOSE)
 

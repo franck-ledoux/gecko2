@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/gmds_utils.dir/src/BitVector.cpp.o.d"
   "CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.o"
   "CMakeFiles/gmds_utils.dir/src/CommonTypes.cpp.o.d"
+  "CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o"
+  "CMakeFiles/gmds_utils.dir/src/LocalCellTopology.cpp.o.d"
   "CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o"
   "CMakeFiles/gmds_utils.dir/src/VariableManager.cpp.o.d"
   "libgmds_utils.a"

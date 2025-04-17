@@ -193,6 +193,12 @@ GeomMeshLinker::getGeomId(const Face &AF)
 	return getGeomId<Face>(AF.id());
 }
 /*----------------------------------------------------------------------------*/
+int
+GeomMeshLinker::getGeomId(const Region &AR) {
+	return getGeomId<Region>(AR.id());
+}
+
+/*----------------------------------------------------------------------------*/
 std::pair<GeomMeshLinker::eLink, int>
 GeomMeshLinker::getGeomInfo(const Node &AN)
 {

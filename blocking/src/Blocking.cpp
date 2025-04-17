@@ -153,6 +153,10 @@ cad::GeomMeshLinker::eLink Blocking::get_geom_dim(Face &AF) {
 	return m_mesh_linker.getGeomDim(AF);
 }
 /*----------------------------------------------------------------------------*/
+cad::GeomMeshLinker::eLink Blocking::get_geom_dim(Region &AR) {
+	return m_mesh_linker.getGeomDim(AR);
+}
+/*----------------------------------------------------------------------------*/
 int Blocking::get_geom_id(Node &AN) {
 	return m_mesh_linker.getGeomId(AN);
 }
@@ -165,6 +169,82 @@ int Blocking::get_geom_id(Face &AF) {
 	return m_mesh_linker.getGeomId(AF);
 }
 /*----------------------------------------------------------------------------*/
+int Blocking::get_geom_id(Region &AR) {
+	return m_mesh_linker.getGeomId(AR);
+}
+/*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+void Blocking::set_geom_link(Node &AN, cad::GeomMeshLinker::eLink ADim, int AnId) {
+	if (ADim == cad::GeomMeshLinker::eLink::LinkPoint) {
+		m_mesh_linker.linkToPoint(AN,AnId);
+	}
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkCurve) {
+		m_mesh_linker.linkToCurve(AN,AnId);
+	}
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
+		m_mesh_linker.linkToSurface(AN,AnId);
+	}
+	//add link to volume, not implement wet
+	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+	// 	m_mesh_linker.linkToVolume(AN,AnId);
+	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
+		m_mesh_linker.unlinkNode(AN.id());
+	}
+	else {throw
+		GMDSException( "Blocking::set_geom_link: Unknown link type");}
+}
+/*----------------------------------------------------------------------------*/
+void Blocking::set_geom_link(Edge &AE, cad::GeomMeshLinker::eLink ADim, int AnId) {
+
+	if (ADim == cad::GeomMeshLinker::eLink::LinkCurve) {
+		m_mesh_linker.linkToCurve(AE,AnId);
+	}
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
+		m_mesh_linker.linkToSurface(AE,AnId);
+	}
+	//add link to volume, not implement wet
+	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+	// 	m_mesh_linker.linkToVolume(AN,AnId);
+	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
+		m_mesh_linker.unlinkEdge(AE.id());
+	}
+	else {throw
+		GMDSException( "Blocking::set_geom_link: Unknown link type");}
+}
+
+/*----------------------------------------------------------------------------*/
+void Blocking::set_geom_link(Face &AF, cad::GeomMeshLinker::eLink ADim, int AnId) {
+
+	if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
+		m_mesh_linker.linkToSurface(AF,AnId);
+	}
+	//add link to volume, not implement wet
+	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+	// 	m_mesh_linker.linkToVolume(AN,AnId);
+	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
+		m_mesh_linker.unlinkFace(AF.id());
+	}
+	else {throw
+		GMDSException( "Blocking::set_geom_link: Unknown link type");}
+}
+
+/*----------------------------------------------------------------------------*/
+void Blocking::set_geom_link(Region &AR, cad::GeomMeshLinker::eLink ADim, int AnId) {
+
+	//add link to volume, not implement wet
+	if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+	 	m_mesh_linker.linkToVolume(AR,AnId);
+	 }
+	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
+		m_mesh_linker.unlinkRegion(AR.id());
+	}
+	else {throw
+		GMDSException( "Blocking::set_geom_link: Unknown link type");}
+}
 
 /*----------------------------------------------------------------------------*/
 void
@@ -208,6 +288,22 @@ Blocking::move_node(Node AN, math::Point &ALoc) {
 	}
 	// otherwise nothing else to do
 	ALoc = AN.point();
+}
+
+/*----------------------------------------------------------------------------*/
+Edge Blocking::get_edge(const TCellID ANodeId0, const TCellID ANodeId1) {
+	auto edges = m_mesh.edges();
+	for (auto e_id: edges) {
+		auto e = m_mesh.get<Edge>(e_id);
+		auto e_nodes = e.getIDs<Node>();
+		auto n0 = e_nodes[0];
+		auto n1 = e_nodes[1];
+		if (((n0 == ANodeId0) && (n1 == ANodeId1))
+			|| ((n0 == ANodeId1) && (n1 == ANodeId0))) {
+			return e;
+			}
+	}
+	throw GMDSException("Blocking::get_edge: No edge found");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -288,9 +384,27 @@ void Blocking::init_from_bounding_box() {
 
 /*----------------------------------------------------------------------------*/
 void
-Blocking::init_from_mesh(Mesh &AMesh) {
+Blocking::init_from_mesh(Mesh& AMesh) {
 	m_mesh.clear();
-	m_mesh=AMesh;
+	std::map<TCellID,TCellID> n2n;
+	for (auto n_id:AMesh.nodes()) {
+		auto from_n = AMesh.get<Node>(n_id);
+		auto to_n = m_mesh.newNode(from_n.point());
+		n2n[from_n.id()]=to_n.id();
+	}
+	for (auto r_id:AMesh.regions()) {
+		auto from_r = AMesh.get<Region>(r_id);
+		auto from_nodes = from_r.getIDs<Node>();
+		if (from_nodes.size() != 8) {
+			throw GMDSException("The number of nodes must be 8");
+		}
+		m_mesh.newHex(n2n[from_nodes[0]],n2n[from_nodes[1]],n2n[from_nodes[2]],n2n[from_nodes[3]],
+			n2n[from_nodes[4]],n2n[from_nodes[5]],n2n[from_nodes[6]],n2n[from_nodes[7]]);
+	}
+	MeshDoctor doc(&m_mesh);
+	doc.buildFacesAndR2F();
+	doc.buildEdgesAndX2E();
+	doc.updateUpwardConnectivity();
 }
 
 /*----------------------------------------------------------------------------*/

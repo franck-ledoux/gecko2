@@ -171,6 +171,7 @@ namespace gmds{
             void unlinkNode(const TCellID & AID);
             void unlinkEdge(const TCellID & AID);
             void unlinkFace(const TCellID & AID);
+            void unlinkRegion(const TCellID & AID);
             /*------------------------------------------------------------------------*/
             /**@ brief accessor on the dimension of the geom entity AN is classified on.
              *
@@ -180,6 +181,7 @@ namespace gmds{
 	         eLink getGeomDim(const Node& AN);
 	         eLink getGeomDim(const Edge& AE);
 	         eLink getGeomDim(const Face& AF);
+	         eLink getGeomDim(const Region& AR);
             /*------------------------------------------------------------------------*/
             /**@ brief accessor on the id of the geom entity AN is classified on.
              *
@@ -187,8 +189,9 @@ namespace gmds{
              * @return the id of the geom entity AN is classified on
              */
             int getGeomId(const Node& AN);
-            int getGeomId(const Edge& AN);
-            int getGeomId(const Face& AN);
+            int getGeomId(const Edge& AE);
+            int getGeomId(const Face& AF);
+            int getGeomId(const Region& AR);
             /*------------------------------------------------------------------------*/
             /**@ brief accessor on the dimension of the geom entity AN is classified on.
              *

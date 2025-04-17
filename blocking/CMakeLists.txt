@@ -6,12 +6,12 @@ set(GECKO_LIB_PREFIX    gecko/blocking)
 
 set(GECKO_INC
         inc/gecko/blocking/Blocking.h
-    #    inc/gecko/blocking/BlockingClassifier.h
+        inc/gecko/blocking/BlockingClassifier.h
         inc/gecko/blocking/Graph.h
 )
 set(GECKO_SRC
         src/Blocking.cpp
-      #  src/BlockingClassifier.cpp
+        src/BlockingClassifier.cpp
         src/Graph.cpp
 )
 #==============================================================================

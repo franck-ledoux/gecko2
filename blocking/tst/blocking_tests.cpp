@@ -375,16 +375,20 @@ TEST_CASE("BlockingTestSuite - single_block_to_mesh", "[blocking]") {
     REQUIRE(m.getNbFaces() == 6);
     REQUIRE(m.getNbRegions() == 1);
 }
-
+*/
 //Check erreur matching nbReg pour une arrete
 TEST_CASE("BlockingTestSuite - test_topological_queries", "[blocking]") {
+
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
 
-    auto bl_nodes = bl.mesh().nodes();
-    auto bl_edges = bl.mesh().edges();
-    auto bl_faces = bl.mesh().faces();
+    REQUIRE(bl.mesh().getNbNodes() == 8);
+    REQUIRE(bl.mesh().getNbEdges() == 12);
+    REQUIRE(bl.mesh().getNbFaces() == 6);
+    REQUIRE(bl.mesh().getNbRegions() == 1);
+
+
 
     // for (auto n : bl_nodes) {
     //     auto nbFs = bl.mesh().get<Node>(n).nbFaces();
@@ -398,24 +402,21 @@ TEST_CASE("BlockingTestSuite - test_topological_queries", "[blocking]") {
     // }
 
     bl.save_vtk_blocking("topological_queries.vtk");
-    for (auto e : bl_edges) {
-        auto nbNs = bl.mesh().get<Edge>(e).nbNodes();
-        REQUIRE(nbNs == 2);
+    for (auto &id_e : bl.mesh().edges()) {
+        auto e = bl.mesh().get<Edge>(id_e);\
 
-        auto nbFs = bl.mesh().get<Edge>(e).nbFaces();
-        REQUIRE(nbFs == 2);
+        REQUIRE(e.getIDs<Node>().size() == 2);
+        REQUIRE(e.getIDs<Face>().size() == 2);
 
         //auto bs = bl.get_blocks_of_edge(e);
         int nbBs = 0;
 
-        std::vector<gecko::blocking::Blocking::Face> e_faces;
-        bl.mesh().get<Edge>(e).getAll<Face>(e_faces);
+        auto e_faces = e.get<Face>();
         for (auto f : e_faces) {
-            if (nbBs < f.nbRegions()) {
-                nbBs = f.nbRegions();
+            if (nbBs < f.getIDs<Region>().size()) {
+                nbBs = f.getIDs<Region>().size();
             }
         }
-        //auto nbBs = bl.mesh().get<Edge>(e).nbRegions();
         REQUIRE(nbBs == 1);
     }
 
@@ -430,8 +431,12 @@ TEST_CASE("BlockingTestSuite - test_topological_queries", "[blocking]") {
     //     REQUIRE(bs.size() == 1);
     // }
 }
-*/
 
+/*
+TEST_CASE("BlockingTestSuite - test_equal_operator_blocking", "[BlockingTestSuite}") {
+    gmds::cad::FACManager geom_model;
+}
+*/
 TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
     gmds::cad::FACManager geom_model;
     setUp(geom_model);
@@ -461,10 +466,11 @@ TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
     m.newHex(n0,n1,n2,n3,n4,n5,n6,n7);
     m.newHex(n4,n5,n6,n7,n8,n9,n10,n11);
     m.newHex(n8,n9,n10,n11,n12,n13,n14,n15);
+
     bl.init_from_mesh(m);
 
+    REQUIRE(bl.mesh().getNbRegions() == 3);
     REQUIRE(bl.mesh().getNbNodes() == 16);
     REQUIRE(bl.mesh().getNbEdges() == 28);
     REQUIRE(bl.mesh().getNbFaces() == 16);
-    REQUIRE(bl.mesh().getNbRegions() == 3);
 }

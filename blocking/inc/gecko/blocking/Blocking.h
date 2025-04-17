@@ -280,9 +280,17 @@ class  Blocking
 	cad::GeomMeshLinker::eLink get_geom_dim(Node& AN);
 	cad::GeomMeshLinker::eLink get_geom_dim(Edge& AE);
 	cad::GeomMeshLinker::eLink get_geom_dim(Face& AF);
+	cad::GeomMeshLinker::eLink get_geom_dim(Region& AR);
+
 	int get_geom_id(Node& AN);
 	int get_geom_id(Edge& AE);
 	int get_geom_id(Face& AF);
+	int get_geom_id(Region& AR);
+
+	void set_geom_link(Node& AN,cad::GeomMeshLinker::eLink ADim, int AnId);
+	void set_geom_link(Edge& AE,cad::GeomMeshLinker::eLink ADim, int AnId);
+	void set_geom_link(Face& AF,cad::GeomMeshLinker::eLink ADim, int AnId);
+	void set_geom_link(Region& AR,cad::GeomMeshLinker::eLink ADim, int AnId);
 
 	/**@brief We get the id lists of nodes, edges and faces that make
 	 * the blocking boundary
@@ -341,6 +349,8 @@ class  Blocking
 
 
 	bool is_valid_connected();
+
+	Edge get_edge(const TCellID ANodeId0, const TCellID ANodeId1);
 
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
@@ -459,7 +469,7 @@ class  Blocking
 	 *
 	 * @param[in,out] ACellMesh A cellular mesh
 	 */
-	void init_from_mesh(Mesh &ACellMesh);
+	void init_from_mesh(Mesh& ACellMesh);
 
 
 	/**@brief intiialize the block structure from the bounding box of the geom model

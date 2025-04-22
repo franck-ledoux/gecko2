@@ -106,6 +106,7 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     REQUIRE(m_boundary_edge_ids.size() == 12);
     REQUIRE(m_boundary_face_ids.size() == 6);
 
+    cl.clear_classification();
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
 

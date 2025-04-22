@@ -142,6 +142,44 @@ GeomMeshLinker::linkFaceToSurface(const TCellID &AF, const int AGeomId)
 	(*m_face_classification_id)[AF] = AGeomId;
 }
 /*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkToVolume(const Node &AN, int AGeomId) {
+	linkNodeToVolume(AN.id(), AGeomId);
+}
+/*----------------------------------------------------------------------------*/
+void
+GeomMeshLinker::linkNodeToVolume(const TCellID &AN, int AGeomId) {
+	(*m_node_classification_dim)[AN] = LinkVolume;
+	(*m_node_classification_id)[AN] = AGeomId;
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkToVolume(const Edge &AE, int AGeomId) {
+	linkEdgeToVolume(AE.id(), AGeomId);
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkEdgeToVolume(const TCellID &AE, int AGeomId) {
+	(*m_edge_classification_dim)[AE] = LinkVolume;
+	(*m_edge_classification_id)[AE] = AGeomId;
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkToVolume(const Face &AF, int AGeomId) {
+	linkFaceToVolume(AF.id(), AGeomId);
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkFaceToVolume(const TCellID &AF, int AGeomId) {
+	(*m_face_classification_dim)[AF] = LinkVolume;
+	(*m_face_classification_id)[AF] = AGeomId;
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkToVolume(const Region &AR, int AGeomId) {
+	linkRegionToVolume(AR.id(), AGeomId);
+}
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::linkRegionToVolume(const TCellID &AR, int AGeomId) {
+	(*m_region_classification_dim)[AR] = LinkVolume;
+	(*m_region_classification_id)[AR] = AGeomId;
+}
+
+/*----------------------------------------------------------------------------*/
 void GeomMeshLinker::unlinkNode(const TCellID & AID) {
 	(*m_node_classification_dim)[AID] = NoLink;
 	(*m_node_classification_id)[AID] = NullID;
@@ -156,6 +194,12 @@ void GeomMeshLinker::unlinkFace(const TCellID & AID) {
 	(*m_face_classification_dim)[AID] = NoLink;
 	(*m_face_classification_id)[AID] = NullID;
 }
+/*----------------------------------------------------------------------------*/
+void GeomMeshLinker::unlinkRegion(const TCellID &AID) {
+	(*m_region_classification_dim)[AID] = NoLink;
+	(*m_region_classification_id)[AID] = NullID;
+}
+
 /*----------------------------------------------------------------------------*/
 GeomMeshLinker::eLink
 GeomMeshLinker::getGeomDim(const Node &AN)
@@ -187,6 +231,11 @@ GeomMeshLinker::getGeomDim(const Face &AF)
 	return getGeomDim<Face>(AF.id());
 }
 /*----------------------------------------------------------------------------*/
+GeomMeshLinker::eLink GeomMeshLinker::getGeomDim(const Region &AR) {
+	return getGeomDim<Region>(AR.id());
+}
+
+/*----------------------------------------------------------------------------*/
 int
 GeomMeshLinker::getGeomId(const Face &AF)
 {
@@ -216,6 +265,12 @@ GeomMeshLinker::getGeomInfo(const Face &AN)
 {
 	return getGeomInfo<Face>(AN.id());
 }
+/*----------------------------------------------------------------------------*/
+std::pair<GeomMeshLinker::eLink, int>
+GeomMeshLinker::getGeomInfo(const Region &AR) {
+	return getGeomInfo<Region>(AR.id());
+}
+
 /*----------------------------------------------------------------------------*/
 void
 GeomMeshLinker::writeVTKDebugMesh(const std::string &AFileName)
@@ -320,6 +375,18 @@ GeomMeshLinker::getGeomId<Face>(const TCellID &AN)
 	return (*m_face_classification_id)[AN];
 }
 /*----------------------------------------------------------------------------*/
+template<>  GeomMeshLinker::eLink
+GeomMeshLinker::getGeomDim<Region>(const TCellID &AR)
+{
+	return (*m_region_classification_dim)[AR];
+}
+/*----------------------------------------------------------------------------*/
+template<>  int
+GeomMeshLinker::getGeomId<Region>(const TCellID &AR)
+{
+	return (*m_region_classification_id)[AR];
+}
+/*----------------------------------------------------------------------------*/
 template<>  std::pair<GeomMeshLinker::eLink, int>
 GeomMeshLinker::getGeomInfo<Node>(const TCellID &AN)
 {
@@ -336,5 +403,11 @@ template<>  std::pair<GeomMeshLinker::eLink, int>
 GeomMeshLinker::getGeomInfo<Face>(const TCellID &AF)
 {
 	return std::make_pair((*m_edge_classification_dim)[AF], (*m_edge_classification_id)[AF]);
+}
+/*----------------------------------------------------------------------------*/
+template<>  std::pair<GeomMeshLinker::eLink, int>
+GeomMeshLinker::getGeomInfo<Region>(const TCellID &AR)
+{
+	return std::make_pair((*m_edge_classification_dim)[AR], (*m_edge_classification_id)[AR]);
 }
 /*----------------------------------------------------------------------------*/

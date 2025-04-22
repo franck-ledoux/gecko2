@@ -168,6 +168,69 @@ namespace gmds{
              */
             void linkFaceToSurface(const TCellID & AF, int AGeomId);
 
+            /*------------------------------------------------------------------------*/
+            /**@brief classify node AN onto volume AGeomID
+             *
+             * @param AN        A node of m_mesh
+             * @param AGeomId   Volume id in the geom manager
+             */
+            void linkToVolume(const Node& AN, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify node AN onto volume AGeomID
+             *
+             * @param AN       A node id of m_mesh
+             * @param AGeomId   volume id in the geom manager
+             */
+            void linkNodeToVolume(const TCellID & AN, int AGeomId);
+            /*------------------------------------------------------------------------*/
+            /**@brief classify edge AE onto volume AGeomID
+             *
+             * @param AE        An edge of m_mesh
+             * @param AGeomId   Volume id in the geom manager
+             */
+            void linkToVolume(const Edge& AE, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify edge AE onto volume AGeomID
+             *
+             * @param AE       An edge id of m_mesh
+             * @param AGeomId   volume id in the geom manager
+             */
+            void linkEdgeToVolume(const TCellID & AE, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify face AF onto volume AGeomID
+             *
+             * @param AF        A face of m_mesh
+             * @param AGeomId   Volume id in the geom manager
+             */
+            void linkToVolume(const Face& AF, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify node AN onto volume AGeomID
+             *
+             * @param AF       A face id of m_mesh
+             * @param AGeomId   volume id in the geom manager
+             */
+            void linkFaceToVolume(const TCellID & AF, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify region AR onto volume AGeomID
+             *
+             * @param AR        A region of m_mesh
+             * @param AGeomId   Volume id in the geom manager
+             */
+            void linkToVolume(const Region& AR, int AGeomId);
+
+            /*------------------------------------------------------------------------*/
+            /**@brief classify region AR onto volume AGeomID
+             *
+             * @param AR       A region id of m_mesh
+             * @param AGeomId   volume id in the geom manager
+             */
+            void linkRegionToVolume(const TCellID & AR, int AGeomId);
+
             void unlinkNode(const TCellID & AID);
             void unlinkEdge(const TCellID & AID);
             void unlinkFace(const TCellID & AID);
@@ -217,6 +280,7 @@ namespace gmds{
             std::pair<eLink,int> getGeomInfo(const Node& AN);
             std::pair<eLink,int> getGeomInfo(const Edge& AE);
             std::pair<eLink,int> getGeomInfo(const Face& AF);
+            std::pair<eLink,int> getGeomInfo(const Region& AR);
 
             /*------------------------------------------------------------------------*/
             /**@ brief accessor on the dimension and id of the geom entity AN is
@@ -249,19 +313,26 @@ namespace gmds{
             Variable<eLink>* m_face_classification_dim{};
             /** variable storing the id of the geom entity each face is linked to*/
             Variable<int>* m_face_classification_id{};
+            /** variable storing the dim. of the geom entity each region is linked to*/
+            Variable<eLink>* m_region_classification_dim{};
+            /** variable storing the id of the geom entity each region is linked to*/
+            Variable<int>* m_region_classification_id{};
         };
 
         template <>  GeomMeshLinker::eLink GeomMeshLinker::getGeomDim<Node>(const TCellID &AN);
         template <>  GeomMeshLinker::eLink GeomMeshLinker::getGeomDim<Edge>(const TCellID &AN);
         template <>  GeomMeshLinker::eLink GeomMeshLinker::getGeomDim<Face>(const TCellID &AN);
+        template <>  GeomMeshLinker::eLink GeomMeshLinker::getGeomDim<Region>(const TCellID &AR);
 
         template <>  int GeomMeshLinker::getGeomId<Edge>(const TCellID &AN);
         template <>  int GeomMeshLinker::getGeomId<Node>(const TCellID &AN);
         template <>  int GeomMeshLinker::getGeomId<Face>(const TCellID &AN);
+        template <>  int GeomMeshLinker::getGeomId<Region>(const TCellID &AR);
 
         template <>  std::pair<GeomMeshLinker::eLink,int> GeomMeshLinker::getGeomInfo<Node>(const TCellID& AN);
         template <>  std::pair<GeomMeshLinker::eLink,int> GeomMeshLinker::getGeomInfo<Edge>(const TCellID& AN);
         template <>  std::pair<GeomMeshLinker::eLink,int> GeomMeshLinker::getGeomInfo<Face>(const TCellID& AN);
+        template <>  std::pair<GeomMeshLinker::eLink,int> GeomMeshLinker::getGeomInfo<Region>(const TCellID& AR);
 
 /*----------------------------------------------------------------------------*/
     } // namespace cad

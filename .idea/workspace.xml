@@ -79,17 +79,20 @@
   <component name="ChangeListManager">
     <list default="true" id="b38a562f-aa46-4587-bc85-7071e3aaec92" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blocking/src/Blocking.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/blocking/src/Blocking.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blocking/src/BlockingClassifier.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/blocking/src/BlockingClassifier.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blocking/tst/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/blocking/tst/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blocking/tst/blocking_classifier_tests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/blocking/tst/blocking_classifier_tests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.30.5/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/DartConfiguration.tcl" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/DartConfiguration.tcl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/external/Catch2-3.8.0/src/CMakeFiles/Catch2.dir/compiler_depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/external/Catch2-3.8.0/src/CMakeFiles/Catch2.dir/compiler_depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/external/Catch2-3.8.0/src/CMakeFiles/Catch2WithMain.dir/compiler_depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/external/Catch2-3.8.0/src/CMakeFiles/Catch2WithMain.dir/compiler_depend.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cad/CMakeFiles/gmds_cad.dir/src/GeomMeshLinker.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cad/CMakeFiles/gmds_cad.dir/src/GeomMeshLinker.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cad/libgmds_cad.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cad/libgmds_cad.a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cadfac/CMakeFiles/gmds_cadfac.dir/src/FACManager.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cadfac/CMakeFiles/gmds_cadfac.dir/src/FACManager.cpp.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cadfac/libgmds_cadfac.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/gmds_core/cadfac/libgmds_cadfac.a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/gmds_core/utils/libgmds_utils.a" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/gmds_core/utils/libgmds_utils.a" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gmds_core/cad/inc/gmds/cad/GeomMeshLinker.h" beforeDir="false" afterPath="$PROJECT_DIR$/gmds_core/cad/inc/gmds/cad/GeomMeshLinker.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gmds_core/cad/src/GeomMeshLinker.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/gmds_core/cad/src/GeomMeshLinker.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -105,11 +108,51 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/blocking/inc/gecko/blocking/BlockingClassifier.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/blocking/src/BlockingClassifier.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/blocking/tst/blocking_classifier_tests.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/cblock/inc/gecko/cblock/Blocking.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/cblock/src/Blocking.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/mcts/inc/gecko/mcts/BlockingAction.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/mcts/src/MCTSSelectionFunction.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -571,47 +614,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;CMake Application.gecko2.executor&quot;: &quot;Debug&quot;,
-    &quot;CTest Application.All CTest.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.All in blocking_tests.cpp.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.BlockingTestSuite - classify_box.executor&quot;: &quot;Debug&quot;,
-    &quot;Catch.BlockingTestSuite - init_from_geom_bounding_box.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.BlockingTestSuite - test_init_from_ig_mesh.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.BlockingTestSuite - test_topological_queries.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.test_blocking.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.test_cblock.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.test_gmds_io.executor&quot;: &quot;Run&quot;,
-    &quot;Catch.test_gmds_utils.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
-    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;ctest.advertisement.all.test.configuration.is.created&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev__volume__linker&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/paulbourmaud/Projects/gecko/gecko2&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "CMake Application.gecko2.executor": "Debug",
+    "CTest Application.All CTest.executor": "Run",
+    "Catch.All in blocking_tests.cpp.executor": "Run",
+    "Catch.BlockingTestSuite - classify_box.executor": "Run",
+    "Catch.BlockingTestSuite - init_from_geom_bounding_box.executor": "Run",
+    "Catch.BlockingTestSuite - test_init_from_ig_mesh.executor": "Run",
+    "Catch.BlockingTestSuite - test_topological_queries.executor": "Run",
+    "Catch.test_blocking.executor": "Run",
+    "Catch.test_cblock.executor": "Run",
+    "Catch.test_gmds_io.executor": "Run",
+    "Catch.test_gmds_utils.executor": "Run",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "cf.advertisement.text.has.clang-format": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "ctest.advertisement.all.test.configuration.is.created": "true",
+    "git-widget-placeholder": "dev__volume__linker",
+    "last_opened_file_path": "/Users/paulbourmaud/Projects/gecko/gecko2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Catch.BlockingTestSuite - classify_box">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="All in blocking_tests.cpp" type="CMakeCatchTestRunConfigurationType" factoryName="Catch Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="gecko2" TARGET_NAME="test_blocking" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="gecko2" RUN_TARGET_NAME="test_blocking" TEST_PATTERN="[#blocking_tests]" TEST_MODE="PATTERN">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BlockingTestSuite - classify_box" type="CMakeCatchTestRunConfigurationType" factoryName="Catch Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="gecko2" TARGET_NAME="test_blocking" RUN_TARGET_PROJECT_NAME="gecko2" RUN_TARGET_NAME="test_blocking" TEST_CLASS="[blocking]" TEST_METHOD="BlockingTestSuite - classify_box" TEST_MODE="SUITE_TEST">
+    <configuration name="BlockingTestSuite - classify_box" type="CMakeCatchTestRunConfigurationType" factoryName="Catch Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="gecko2" TARGET_NAME="test_blocking" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="gecko2" RUN_TARGET_NAME="test_blocking" TEST_CLASS="[blocking]" TEST_METHOD="BlockingTestSuite - classify_box" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
@@ -970,7 +1019,7 @@
       <updated>1743371640007</updated>
       <workItem from="1743371641047" duration="17526000" />
       <workItem from="1744706848227" duration="49002000" />
-      <workItem from="1745312621312" duration="7748000" />
+      <workItem from="1745312621312" duration="10481000" />
     </task>
     <servers />
   </component>
@@ -992,7 +1041,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/blocking/src/BlockingClassifier.cpp</url>
-          <line>557</line>
+          <line>561</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -1002,8 +1051,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/blocking/src/BlockingClassifier.cpp</url>
-          <line>556</line>
-          <option name="timeStamp" value="26" />
+          <line>560</line>
+          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

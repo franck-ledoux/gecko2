@@ -580,7 +580,7 @@ MPFR_LIBRARIES:FILEPATH=/opt/homebrew/lib/libmpfr.dylib
 MPFR_LIBRARIES_DIR:FILEPATH=/opt/homebrew/lib
 
 //Name of the computer/site where compile is being run
-SITE:STRING=Pauls-MacBook-Pro.local
+SITE:STRING=mac.home
 
 //Build test
 WITH_TEST:BOOL=ON

@@ -127,6 +127,10 @@ BlockingClassifier::clear_classification()
 		auto f = m_blocking->mesh().get<Face>(fId);
 		m_blocking->set_geom_link(f,cad::GeomMeshLinker::NoLink,NullID);
 	}
+	for (auto rId : m_blocking->mesh().regions()) {
+		auto r = m_blocking->mesh().get<Region>(rId);
+		m_blocking->set_geom_link(r,cad::GeomMeshLinker::NoLink,NullID);
+	}
 }
 /*----------------------------------------------------------------------------*/
 int

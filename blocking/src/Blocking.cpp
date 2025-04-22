@@ -185,10 +185,9 @@ void Blocking::set_geom_link(Node &AN, cad::GeomMeshLinker::eLink ADim, int AnId
 	else if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
 		m_mesh_linker.linkToSurface(AN,AnId);
 	}
-	//add link to volume, not implement wet
-	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
-	// 	m_mesh_linker.linkToVolume(AN,AnId);
-	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+		m_mesh_linker.linkToVolume(AN,AnId);
+	}
 	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
 		m_mesh_linker.unlinkNode(AN.id());
 	}
@@ -204,10 +203,9 @@ void Blocking::set_geom_link(Edge &AE, cad::GeomMeshLinker::eLink ADim, int AnId
 	else if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
 		m_mesh_linker.linkToSurface(AE,AnId);
 	}
-	//add link to volume, not implement wet
-	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
-	// 	m_mesh_linker.linkToVolume(AN,AnId);
-	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+		m_mesh_linker.linkToVolume(AE,AnId);
+	}
 	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
 		m_mesh_linker.unlinkEdge(AE.id());
 	}
@@ -221,10 +219,9 @@ void Blocking::set_geom_link(Face &AF, cad::GeomMeshLinker::eLink ADim, int AnId
 	if (ADim == cad::GeomMeshLinker::eLink::LinkSurface) {
 		m_mesh_linker.linkToSurface(AF,AnId);
 	}
-	//add link to volume, not implement wet
-	// else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
-	// 	m_mesh_linker.linkToVolume(AN,AnId);
-	// }
+	else if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
+		m_mesh_linker.linkToVolume(AF,AnId);
+	}
 	else if (ADim == cad::GeomMeshLinker::eLink::NoLink) {
 		m_mesh_linker.unlinkFace(AF.id());
 	}
@@ -235,7 +232,6 @@ void Blocking::set_geom_link(Face &AF, cad::GeomMeshLinker::eLink ADim, int AnId
 /*----------------------------------------------------------------------------*/
 void Blocking::set_geom_link(Region &AR, cad::GeomMeshLinker::eLink ADim, int AnId) {
 
-	//add link to volume, not implement wet
 	if (ADim == cad::GeomMeshLinker::eLink::LinkVolume) {
 	 	m_mesh_linker.linkToVolume(AR,AnId);
 	 }
@@ -254,7 +250,8 @@ Blocking::extract_boundary(std::set<TCellID> &ANodeIds, std::set<TCellID> &AEdge
 	AFaceIds.clear();
 	for (auto f_id : m_mesh.faces()) {
 		auto f = m_mesh.get<Face>(f_id);
-		if (f.nbRegions() == 1) {
+		auto f_nbReg = f.nbRegions();
+		if (f.getIDs<Region>().size()== 1) {
 			//means we have a boundary face
 			AFaceIds.insert(f_id);
 			for (auto e_id:  f.getIDs<Edge>())

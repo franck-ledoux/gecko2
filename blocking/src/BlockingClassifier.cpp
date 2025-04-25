@@ -127,6 +127,10 @@ BlockingClassifier::clear_classification()
 		auto f = m_blocking->mesh().get<Face>(fId);
 		m_blocking->set_geom_link(f,cad::GeomMeshLinker::NoLink,NullID);
 	}
+	for (auto rId : m_blocking->mesh().regions()) {
+		auto r = m_blocking->mesh().get<Region>(rId);
+		m_blocking->set_geom_link(r,cad::GeomMeshLinker::NoLink,NullID);
+	}
 }
 /*----------------------------------------------------------------------------*/
 int
@@ -253,6 +257,12 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 	// 1. WE CHECK NODE
 	//===================================================================
 	try_and_classify_nodes(ANodeIds);
+	std::vector<std::pair<int, Blocking::Node>> classNodes;
+	for (auto nId : ANodeIds) {
+		auto n = m_blocking->mesh().get<Node>(nId);
+		classNodes.push_back(std::make_pair(m_blocking->get_geom_dim(n),n));
+		std::cout << nId << "class dim: "<<m_blocking->get_geom_dim(n)<< " & id: "<<m_blocking->get_geom_id(n) <<std::endl;
+	}
 
 	//===================================================================
 	// 2. WE WORK ON CURVES
@@ -548,6 +558,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 				}
 				for (auto bId :m_blocking->mesh().regions()) {
 					auto b = m_blocking->mesh().get<Region>(bId);
+					std::cout<<"Region "<<bId<<" -> "<<b<<" Linked: "<<m_blocking->get_geom_dim(b)<<std::endl;
 					if (m_blocking->get_geom_dim(b) == cad::GeomMeshLinker::NoLink) {
 						m_blocking->set_geom_link(b,cad::GeomMeshLinker::LinkVolume,v->id());
 					}

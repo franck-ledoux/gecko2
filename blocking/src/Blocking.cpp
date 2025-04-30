@@ -361,7 +361,7 @@ void Blocking::init_from_bounding_box() {
 		for (auto i = 0; i < 3; i++)
 			if (v_max[i] > max[i]) max[i] = v_max[i];
 	}
-
+	//node creat on edge -> class of the edge
 	auto n1 = m_mesh.newNode(min[0], min[1], min[2]);
 	auto n2 = m_mesh.newNode(min[0], max[1], min[2]);
 	auto n3 = m_mesh.newNode(max[0], max[1], min[2]);
@@ -994,6 +994,8 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 	//now we get the opposite face
 	std::map<TCellID, TCellID> sheet_opp_faces;
 	std::set<TCellID> sheet_inside_faces;
+	std::map<std::pair<TCellID,TCellID>,TCellID> map_nodes_to_inside_face;
+
 	for (const auto& fr: sheet_faces) {
 		auto f = fr.first;
 		auto r = fr.second;
@@ -1016,6 +1018,16 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 				}
 				else {
 					sheet_inside_faces.insert(fi.id());
+					for (auto k=0;k<4;k++) {
+						auto id_k1 = fi_node_ids[k];
+						auto id_k2 = fi_node_ids[(k+1)%4];
+						if ((m_mesh.isMarked<Node>(id_k1, mark_first_node)) &&
+							(m_mesh.isMarked<Node>(id_k2, mark_first_node))) {
+							auto id_kk = (id_k1<id_k2)?std::make_pair(id_k1,id_k2):std::make_pair(id_k2,id_k1);
+							map_nodes_to_inside_face[id_kk]=fi.id();
+							}
+					}
+
 				}
 			}
 		}
@@ -1078,8 +1090,14 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 				auto p1 = m_mesh.get<Node>(f_node_ids[i]).point();
 				auto p2 = m_mesh.get<Node>(sheet_n2n[f_node_ids[i]]).point();
 				new_nodes[i] = m_mesh.newNode((1-AParam)*p1+AParam*p2);
+				auto old_e_id = sheet_n2e[f_node_ids[i]];
+				auto old_e = m_mesh.get<Edge>(old_e_id);
+				set_geom_link(new_nodes[i], get_geom_dim(old_e), get_geom_id(old_e));
+
 				new_first_edges[i] = m_mesh.newEdge(m_mesh.get<Node>(f_node_ids[i]), new_nodes[i]);
+				set_geom_link(new_first_edges[i], get_geom_dim(old_e), get_geom_id(old_e));
 				new_second_edges[i] = m_mesh.newEdge(new_nodes[i], m_mesh.get<Node>(sheet_n2n[f_node_ids[i]]));
+				set_geom_link(new_second_edges[i], get_geom_dim(old_e), get_geom_id(old_e));
 				//update maps
 				map_node_to_new_node[f_node_ids[i]] = new_nodes[i].id();
 				map_node_to_new_first_edge[f_node_ids[i]] = new_first_edges[i].id();
@@ -1093,34 +1111,46 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			auto id_j = f_node_ids[(i+1)%4];
 			auto id_ij  = (id_i<id_j)?std::make_pair(id_i,id_j):
 							std::make_pair(id_j,id_i);
+			auto old_face_id = map_nodes_to_inside_face[id_ij];
+			auto old_face = m_mesh.get<Face>(old_face_id);
 			if (m_mesh.isMarked<Edge>(map_nodes_to_origin_edge[id_ij], mark_done_edge)) {
 				new_edges[i] = m_mesh.get<Edge>(map_edge_to_new_edge[id_ij]);
 				new_first_faces[i] = m_mesh.get<Face>(map_edge_to_new_first_face[id_ij]);
 				new_second_faces[i] = m_mesh.get<Face>(map_edge_to_new_second_face[id_ij]);
 			}
 			else {
+
 				new_edges[i] = m_mesh.newEdge(map_node_to_new_node[id_ij.first],
 					map_node_to_new_node[id_ij.second]);
+				set_geom_link(new_edges[i], get_geom_dim(old_face), get_geom_id(old_face));
+
 				new_first_faces[i] = m_mesh.newQuad(id_ij.first, id_ij.second,
 					map_node_to_new_node[id_ij.second],map_node_to_new_node[id_ij.first]);
+				set_geom_link(new_first_faces[i], get_geom_dim(old_face), get_geom_id(old_face));
+
 				new_second_faces[i] = m_mesh.newQuad(map_node_to_new_node[id_ij.first],
 					map_node_to_new_node[id_ij.second],
 					sheet_n2n[id_ij.second],
 					sheet_n2n[id_ij.first]);
+				set_geom_link(new_second_faces[i], get_geom_dim(old_face), get_geom_id(old_face));
 				//update maps
 				map_edge_to_new_edge[id_ij] = new_edges[i].id();
 				map_edge_to_new_first_face[id_ij] = new_first_faces[i].id();
 				map_edge_to_new_second_face[id_ij] = new_second_faces[i].id();
 			}
 		}
+		//TODO class reg
 		// now we create the inner face and the two new blocks
 		auto new_inner_face = m_mesh.newQuad(new_nodes[0], new_nodes[1], new_nodes[2], new_nodes[3]);
+
+		set_geom_link(new_inner_face, get_geom_dim(r), get_geom_id(r));
 
 		auto first_block = m_mesh.newHex(
 			f_node_ids[0], f_node_ids[1],
 			f_node_ids[2], f_node_ids[3],
 			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
 			map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
+		set_geom_link(first_block, get_geom_dim(r), get_geom_id(r));
 
 		auto snd_block = m_mesh.newHex(
 			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
@@ -1128,6 +1158,7 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 			sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
 			sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);
 
+		set_geom_link(snd_block, get_geom_dim(r), get_geom_id(r));
 		//Remove cells and update connectivities
 
 		//F2R and R2F

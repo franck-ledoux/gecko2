@@ -3,7 +3,7 @@
 #define GMDS_MCTS_BLOCKING_STATE_H
 /*----------------------------------------------------------------------------*/
 #include <gecko/mcts/IState.h>
-#include <gecko/blocking/Blocking.h>
+#include <gecko/cblock/Blocking.h>
 /*----------------------------------------------------------------------------*/
 namespace gecko {
 /*----------------------------------------------------------------------------*/
@@ -18,7 +18,7 @@ class BlockingState : public IState
 	static  double weight_edges;
 	static  double weight_faces;
 
-	BlockingState(std::shared_ptr<blocking::Blocking> AB, int ADepth = 0, std::deque<double> APrevScore = std::deque<double>());
+	BlockingState(std::shared_ptr<cblock::Blocking> AB, int ADepth = 0, std::deque<double> APrevScore = std::deque<double>());
 	BlockingState(const BlockingState &AState);
 
 	virtual ~BlockingState();
@@ -62,7 +62,7 @@ class BlockingState : public IState
 	double computeMinEdgeLenght() const;
 
 
-	std::shared_ptr<blocking::Blocking> get_blocking() const {return m_blocking;}
+	std::shared_ptr<cblock::Blocking> get_blocking() const {return m_blocking;}
 	int get_depth() const {return m_depth;}
 	/**
 	 * Stack of memorized score. The last score in the stack (back) is the score of the current state
@@ -100,7 +100,7 @@ class BlockingState : public IState
 
 	double m_expected_optimal_score;
 	/** the blocking we act on. Note that the geometric model is known by the blocking */
-	std::shared_ptr<blocking::Blocking> m_blocking;
+	std::shared_ptr<cblock::Blocking> m_blocking;
 
 	std::set<TCellID> m_boundary_node_ids;
 	std::set<TCellID> m_boundary_edge_ids;

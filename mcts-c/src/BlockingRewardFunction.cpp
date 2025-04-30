@@ -4,7 +4,7 @@
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gecko;
-using namespace gecko::blocking;
+using namespace gecko::cblock;
 using namespace gecko::mctsc;
 /*---------------------------------------------------------------------------*/
 double BlockingRewardFunction::evaluate(std::shared_ptr<IState> AState) const {

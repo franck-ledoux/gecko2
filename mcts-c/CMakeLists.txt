@@ -38,7 +38,7 @@ target_compile_features(${GECKO_LIB} PUBLIC cxx_std_14)
 #LIBRARY TO INSTALL
 target_link_libraries(${GECKO_LIB}
         PUBLIC
-        blocking
+        cblock
         nlohmann_json::nlohmann_json)
 
 # INCLUDE TO INSTALL

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-#include <gecko/blocking/BlockingClassifier.h>
+#include <gecko/cblock/BlockingClassifier.h>
 #include <gecko/mcts/BlockingState.h>
 #include <gecko/mcts/BlockingAction.h>
 #include <gmds/cad/GeomManager.h>
@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gecko;
-using namespace gecko::blocking;
+using namespace gecko::cblock;
 using namespace gecko::mctsc;
 /*----------------------------------------------------------------------------*/
 const int BlockingState::m_memory_depth = 4;

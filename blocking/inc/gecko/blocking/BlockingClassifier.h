@@ -24,12 +24,14 @@ struct ClassificationErrors
 	std::vector<int> non_captured_curves;
 	/*** ids of geometric surfaces that are not captured by the blocking */
 	std::vector<int> non_captured_surfaces;
-	/*** ids of block nodes thar are not classified  */
+	/*** ids of block nodes that are not classified  */
 	std::vector<int> non_classified_nodes;
-	/*** ids of block edges thar are not classified  */
+	/*** ids of block edges that are not classified  */
 	std::vector<int> non_classified_edges;
-	/*** ids of block faces thar are not classified  */
+	/*** ids of block faces that are not classified  */
 	std::vector<int> non_classified_faces;
+	/*** ids of blocks that are not classified  */
+	std::vector<int> non_classified_regions;
 };
 /*----------------------------------------------------------------------------*/
 /**@class BlockingClassifier

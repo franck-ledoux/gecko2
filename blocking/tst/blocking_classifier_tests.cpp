@@ -8,6 +8,7 @@
 #include <gmds/io/VTKWriter.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
+#include <iostream>
 using Catch::Approx;
 
 void
@@ -109,19 +110,54 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     cl.clear_classification();
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
+    auto errors = cl.detect_classification_errors();
 
-    //peut etre probleme avec destucteur de edges
-    auto edges = bl.mesh().edges();
-    auto eId = *edges.begin();
-    auto e = bl.mesh().get<Edge>(eId);
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+}
+
+TEST_CASE("BlockingTestSuite - split_and_capt_with_reset", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class(geom_model);
+    gecko::blocking::Blocking bl(&geom_model, true);
+    gecko::blocking::BlockingClassifier cl(&bl);
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    REQUIRE(m_boundary_node_ids.size() == 8);
+    REQUIRE(m_boundary_edge_ids.size() == 12);
+    REQUIRE(m_boundary_face_ids.size() == 6);
+
+    cl.clear_classification();
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    auto errors = cl.detect_classification_errors();
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+
+    std::vector<Edge> bl_edges;
+    bl.mesh().getAll<Edge>(bl_edges);
+
+    auto e = bl_edges[0];
 
     auto e_id = bl.get_geom_id(e);
     auto e_dim = bl.get_geom_dim(e);
 
-    //peut etre probleme avec destucteur de nodes
-    auto nodes = bl.mesh().nodes();
-    auto nId = *nodes.begin();
-    auto n = bl.mesh().get<Node>(nId);
+    std::vector<Node> bl_nodes;
+    bl.mesh().getAll<Node>(bl_nodes);
+    auto n =bl_nodes[0];
 
     auto n_id = bl.get_geom_id(n);
     auto n_dim = bl.get_geom_dim(n);
@@ -140,227 +176,215 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     cl.clear_classification();
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
+    errors = cl.detect_classification_errors();
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+}
+
+TEST_CASE("BlockingTestSuite - split_and_capt_without_reset", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class(geom_model);
+    gecko::blocking::Blocking bl(&geom_model, true);
+    gecko::blocking::BlockingClassifier cl(&bl);
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    REQUIRE(m_boundary_node_ids.size() == 8);
+    REQUIRE(m_boundary_edge_ids.size() == 12);
+    REQUIRE(m_boundary_face_ids.size() == 6);
+
+    cl.clear_classification();
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
     auto errors = cl.detect_classification_errors();
 
     REQUIRE(errors.non_captured_points.size()==0);
     REQUIRE(errors.non_captured_curves.size()==0);
     REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
 
-    std::cout<<"Errors :"<<std::endl;
-    if (errors.non_captured_curves.size()==0) {
-        std::cout<<"No classification found"<<std::endl;
-    }
-    int classified_nodes = 0;
-    int classified_edges = 0;
-    for (auto cur_edge_id : bl.mesh().edges()) {
-        auto cur_edge = bl.mesh().get<Edge>(cur_edge_id);
-        if (bl.get_geom_id(cur_edge) == e_id && bl.get_geom_dim(cur_edge) == e_dim)
-            classified_edges++;
-    }
-    for (auto cur_node_id : bl.mesh().nodes()) {
-        auto cur_node = bl.mesh().get<Node>(cur_node_id);
-        if (bl.get_geom_id(cur_node) == e_id && bl.get_geom_dim(cur_node) == e_dim)
-            classified_nodes++;
-    }
-    //REQUIRE(classified_edges == 2);
-    //REQUIRE(classified_nodes == 1);
+    std::vector<Edge> bl_edges;
+    bl.mesh().getAll<Edge>(bl_edges);
 
-}
-/*
-TEST_CASE("BlockingTestSuite - split_one_block_twice", "[blocking]") {
-    gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
-    cl.classify();
+    auto e = bl_edges[0];
 
-    auto e = bl.get_all_edges()[0];
-    auto e_id = e->info().geom_id;
-    auto e_dim = e->info().geom_dim;
+    auto e_id = bl.get_geom_id(e);
+    auto e_dim = bl.get_geom_dim(e);
 
-    auto e2 = bl.cmap()->attribute<1>(bl.cmap()->beta<1>(e->dart()));
+    std::vector<Node> bl_nodes;
+    bl.mesh().getAll<Node>(bl_nodes);
+    auto n =bl_nodes[0];
+
+    auto n_id = bl.get_geom_id(n);
+    auto n_dim = bl.get_geom_dim(n);
+
+    REQUIRE(n_dim==cad::GeomMeshLinker::LinkPoint);
+    REQUIRE(e_dim==cad::GeomMeshLinker::LinkCurve);
+
     bl.cut_sheet(e);
-    REQUIRE(bl.get_nb_cells<0>() == 12);
-    REQUIRE(bl.get_nb_cells<1>() == 20);
-    REQUIRE(bl.get_nb_cells<2>() == 11);
-    REQUIRE(bl.get_nb_cells<3>() == 2);
-    REQUIRE(bl.cmap()->is_valid());
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
 
-    int classified_nodes = 0;
-    int classified_edges = 0;
-    for (auto cur_edge : bl.get_all_edges()) {
-        if (cur_edge->info().geom_id == e_id && cur_edge->info().geom_dim == e_dim)
-            classified_edges++;
-    }
-    for (auto cur_node : bl.get_all_nodes()) {
-        if (cur_node->info().geom_id == e_id && cur_node->info().geom_dim == e_dim)
-            classified_nodes++;
-    }
-    REQUIRE(classified_edges == 2);
-    REQUIRE(classified_nodes == 1);
+    errors = cl.detect_classification_errors();
 
-    gmds::math::Point p_cut(2, 5,-5);
-    bl.cut_sheet(e2, p_cut);
-    for (auto n : bl.get_all_nodes()) {
-        auto nz = n->info().point.Z();
-        REQUIRE((Approx(nz).margin(1e-4) == 5 || Approx(nz).margin(1e-4) == -5 || Approx(nz).margin(1e-4) == 2));
-    }
-    REQUIRE(bl.get_nb_cells<0>() == 18);
-    REQUIRE(bl.get_nb_cells<1>() == 33);
-    REQUIRE(bl.get_nb_cells<2>() == 20);
-    REQUIRE(bl.get_nb_cells<3>() == 4);
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
 }
-
-TEST_CASE("BlockingTestSuite - split_until", "[blocking]") {
+TEST_CASE("BlockingTestSuite - split_until_and_capt_without_reset", "[blocking]") {
     gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
+    setUp_class(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
     gecko::blocking::BlockingClassifier cl(&bl);
-    cl.classify();
+
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    REQUIRE(m_boundary_node_ids.size() == 8);
+    REQUIRE(m_boundary_edge_ids.size() == 12);
+    REQUIRE(m_boundary_face_ids.size() == 6);
+
+    cl.clear_classification();
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    auto errors = cl.detect_classification_errors();
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+
 
     bool to_cut = true;
     gecko::blocking::Blocking::Edge edge_to_cut;
     while (to_cut) {
 
         to_cut = false;
-        auto all_edges = bl.get_all_edges();
-        for (auto cur_edge : all_edges) {
-            auto nodes_of_e = bl.get_nodes_of_edge(cur_edge);
-            gmds::math::Point p0 = nodes_of_e[0]->info().point;
-            gmds::math::Point p1 = nodes_of_e[1]->info().point;
-            if (p0.distance(p1) > 2) {
+        for (auto cur_edge_id : bl.mesh().edges()) {
+            Edge cur_edge = bl.mesh().get<Edge>(cur_edge_id);
+            auto nodes_of_e = cur_edge.get<Node>();
+            gmds::math::Point p0 = nodes_of_e[0].point();
+            gmds::math::Point p1 = nodes_of_e[1].point();
+            if (p0.distance(p1) > 3) {
                 to_cut = true;
                 edge_to_cut = cur_edge;
             }
         }
         if (to_cut) {
-            bl.cut_sheet(edge_to_cut, 0.5);
+            bl.cut_sheet(edge_to_cut);
         }
     }
-    REQUIRE(bl.get_nb_cells<3>() == 512);
-}
+    REQUIRE(bl.mesh().getNbRegions() == 64);
 
-TEST_CASE("BlockingTestSuite - init_from_geom_bounding_box", "[blocking]") {
-    gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
-
-    REQUIRE(bl.get_nb_cells<0>() == 8);
-    REQUIRE(bl.get_nb_cells<1>() == 12);
-    REQUIRE(bl.get_nb_cells<2>() == 6);
-    REQUIRE(bl.get_nb_cells<3>() == 1);
-
-    for (auto a : bl.cmap()->attributes<0>()) {
-        gmds::math::Point p = a.info().point;
-        REQUIRE(Approx(fabs(p.X())).margin(1e-8) == 5);
-        REQUIRE(Approx(fabs(p.Y())).margin(1e-8) == 5);
-        REQUIRE(Approx(fabs(p.Z())).margin(1e-8) == 5);
+    for (auto e_id:bl.mesh().edges()) {
+        Edge ei = bl.mesh().get<Edge>(e_id);
+        REQUIRE(ei.getIDs<Face>().size()>1);
+        REQUIRE(ei.getIDs<Face>().size()<5);
     }
-}
-
-TEST_CASE("BlockingTestSuite - single_block_to_mesh", "[blocking]") {
-    gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model);
-
-    gmds::math::Point p000(0, 0, 0);
-    gmds::math::Point p010(0, 1, 0);
-    gmds::math::Point p110(1, 1, 0);
-    gmds::math::Point p100(1, 0, 0);
-    gmds::math::Point p001(0, 0, 1);
-    gmds::math::Point p011(0, 1, 1);
-    gmds::math::Point p111(1, 1, 1);
-    gmds::math::Point p101(1, 0, 1);
-
-    bl.create_block(p000, p010, p110, p100, p001, p011, p111, p101);
-
-    gmds::Mesh m(gmds::MeshModel(gmds::DIM3 | gmds::N | gmds::E | gmds::F | gmds::R | gmds::E2N | gmds::F2N | gmds::R2N));
-    bl.convert_to_mesh(m);
-
-    REQUIRE(m.getNbNodes() == 8);
-    REQUIRE(m.getNbEdges() == 12);
-    REQUIRE(m.getNbFaces() == 6);
-    REQUIRE(m.getNbRegions() == 1);
-}
-
-TEST_CASE("BlockingTestSuite - test_topological_queries", "[blocking]") {
-    gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, true);
-
-    auto bl_nodes = bl.get_all_nodes();
-    auto bl_edges = bl.get_all_edges();
-    auto bl_faces = bl.get_all_faces();
-
-    for (auto n : bl_nodes) {
-        auto fs = bl.get_faces_of_node(n);
-        REQUIRE(fs.size() == 3);
-
-        auto es = bl.get_edges_of_node(n);
-        REQUIRE(es.size() == 3);
-
-        auto bs = bl.get_blocks_of_node(n);
-        REQUIRE(bs.size() == 1);
+    for (auto f_id:bl.mesh().faces()) {
+        Face fi = bl.mesh().get<Face>(f_id);
+        REQUIRE(fi.getIDs<Edge>().size()==4);
+        REQUIRE(fi.getIDs<Region>().size()<3);
     }
 
-    for (auto e : bl_edges) {
-        auto ns = bl.get_nodes_of_edge(e);
-        REQUIRE(ns.size() == 2);
-
-        auto fs = bl.get_faces_of_edge(e);
-        REQUIRE(fs.size() == 2);
-
-        auto bs = bl.get_blocks_of_edge(e);
-        REQUIRE(bs.size() == 1);
+    for (auto b_id:bl.mesh().regions() ){
+        Region ri = bl.mesh().get<Region>(b_id);
+        REQUIRE(ri.getIDs<Face>().size()==6);
     }
 
-    for (auto f : bl_faces) {
-        auto ns = bl.get_nodes_of_face(f);
-        REQUIRE(ns.size() == 4);
+    errors = cl.detect_classification_errors();
 
-        auto es = bl.get_edges_of_face(f);
-        REQUIRE(es.size() == 4);
-
-        auto bs = bl.get_blocks_of_face(f);
-        REQUIRE(bs.size() == 1);
-    }
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
 }
 
 
-TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
+TEST_CASE("BlockingTestSuite - split_three_and_finale_capt","[blocking]") {
     gmds::cad::FACManager geom_model;
-    setUp(geom_model);
-    gecko::blocking::Blocking bl(&geom_model, false);
+    setUp_class(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
 
-    gmds::Mesh m(gmds::MeshModel(gmds::DIM3 | gmds::N |  gmds::R | gmds::R2N));
-    gmds::Node n0 = m.newNode(gmds::math::Point(0,0,0));
-    gmds::Node n1 = m.newNode(gmds::math::Point(1,0,0));
-    gmds::Node n2 = m.newNode(gmds::math::Point(1,1,0));
-    gmds::Node n3 = m.newNode(gmds::math::Point(0,1,0));
+    bool to_cut = true;
+    gecko::blocking::Blocking::Edge edge_to_cut;
+    while (to_cut) {
 
-    gmds::Node n4 = m.newNode(gmds::math::Point(0,0,1));
-    gmds::Node n5 = m.newNode(gmds::math::Point(1,0,1));
-    gmds::Node n6 = m.newNode(gmds::math::Point(1,1,1));
-    gmds::Node n7 = m.newNode(gmds::math::Point(0,1,1));
+        to_cut = false;
+        for (auto cur_edge_id : bl.mesh().edges()) {
+            Edge cur_edge = bl.mesh().get<Edge>(cur_edge_id);
+            auto nodes_of_e = cur_edge.get<Node>();
+            gmds::math::Point p0 = nodes_of_e[0].point();
+            gmds::math::Point p1 = nodes_of_e[1].point();
+            if (p0.distance(p1) > 5) {
+                to_cut = true;
+                edge_to_cut = cur_edge;
+            }
+        }
+        if (to_cut) {
+            bl.cut_sheet(edge_to_cut);
+        }
+    }
+    REQUIRE(bl.mesh().getNbRegions() == 8);
 
-    gmds::Node n8 = m.newNode(gmds::math::Point(0,0,2));
-    gmds::Node n9 = m.newNode(gmds::math::Point(1,0,2));
-    gmds::Node n10= m.newNode(gmds::math::Point(1,1,2));
-    gmds::Node n11= m.newNode(gmds::math::Point(0,1,2));
+    for (auto e_id:bl.mesh().edges()) {
+        Edge ei = bl.mesh().get<Edge>(e_id);
+        REQUIRE(ei.getIDs<Face>().size()>1);
+        REQUIRE(ei.getIDs<Face>().size()<5);
+    }
+    for (auto f_id:bl.mesh().faces()) {
+        Face fi = bl.mesh().get<Face>(f_id);
+        REQUIRE(fi.getIDs<Edge>().size()==4);
+        REQUIRE(fi.getIDs<Region>().size()<3);
+    }
 
-    gmds::Node n12= m.newNode(gmds::math::Point(0,0,3));
-    gmds::Node n13= m.newNode(gmds::math::Point(1,0,3));
-    gmds::Node n14= m.newNode(gmds::math::Point(1,1,3));
-    gmds::Node n15= m.newNode(gmds::math::Point(0,1,3));
+    for (auto b_id:bl.mesh().regions() ){
+        Region ri = bl.mesh().get<Region>(b_id);
+        REQUIRE(ri.getIDs<Face>().size()==6);
+    }
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
-    m.newHex(n0,n1,n2,n3,n4,n5,n6,n7);
-    m.newHex(n4,n5,n6,n7,n8,n9,n10,n11);
-    m.newHex(n8,n9,n10,n11,n12,n13,n14,n15);
-    bl.init_from_mesh(m);
+    REQUIRE(m_boundary_node_ids.size() == 26);
+    REQUIRE(m_boundary_edge_ids.size() == 48);
+    REQUIRE(m_boundary_face_ids.size() == 24);
 
-    REQUIRE(bl.get_all_nodes().size() == 16);
-    REQUIRE(bl.get_all_edges().size() == 28);
-    REQUIRE(bl.get_all_faces().size() == 16);
-    REQUIRE(bl.get_all_blocks().size() == 3);
+    gecko::blocking::BlockingClassifier cl(&bl);
+
+    cl.clear_classification();
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+    auto errors = cl.detect_classification_errors();
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
 }
-*/

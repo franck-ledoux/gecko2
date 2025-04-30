@@ -5,7 +5,7 @@
 #include <gecko/mcts/IAction.h>
 #include <gmds/utils/CommonTypes.h>
 #include <gmds/math/Point.h>
-#include <gecko/blocking//Blocking.h>
+#include <gecko/cblock/Blocking.h>
 /*----------------------------------------------------------------------------*/
 namespace gecko {
 /*----------------------------------------------------------------------------*/

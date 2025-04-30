@@ -393,7 +393,6 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			}
 		}
 	}
-	// TODO faire class ordre priorite
 	for(auto mapElmt : captCurvesMap){
 		if(!alreadyClass(mapElmt.second.second)){
 			auto c = m_geom_model->getCurve(mapElmt.second.first);
@@ -426,9 +425,8 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 		}
 	}
 
-
 	//===================================================================
-	// 2. WE WORK ON SURFACES
+	// 3. WE WORK ON SURFACES
 	//===================================================================
 	//We try and capture surfaces only if all the curves are captured. It makes
 	// the surface capture algorithm easier to write
@@ -442,7 +440,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 		//we can try and capture surfaces so
 		//we store in a map the color of boundary block faces
 
-		//we use the boundary faces only
+		//we use the boundary faces only, AFaceIds vector is only bnd faces
 		std::vector<Blocking::Face> bnd_faces;
 		bnd_faces.reserve(AFaceIds.size());
 		for(auto f_id : AFaceIds) {
@@ -451,7 +449,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 		auto map_faces_colored = blocking_color_faces(bnd_faces);
 
 		// We class the faces with a surface
-		for (auto s : geom_surfaces) {
+ 		for (auto s : geom_surfaces) {
 
 			auto s_points = s->points();
 			auto s_curves = s->curves();
@@ -522,7 +520,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 	}
 
 	//===================================================================
-	// 3. WE WORK ON VOLUMES
+	// 4. WE WORK ON VOLUMES
 	//===================================================================
 	//We try and capture volumes only if all the surfaces are captured. It makes
 	// the volume capture algorithm easier to write
@@ -1140,7 +1138,7 @@ BlockingClassifier::find_faces_classified_on(cad::GeomSurface *AS)
 
 	for (auto fId : m_blocking->mesh().faces()) {
 		auto f = m_blocking->mesh().get<Face>(fId);
-		if (m_blocking->get_geom_dim(f) == AS->dim() && m_blocking->get_geom_id(f) == AS->id()) {
+		if (m_blocking->get_geom_dim(f) == cad::GeomMeshLinker::LinkSurface && m_blocking->get_geom_id(f) == AS->id()) {
 			facesOnSurface.push_back(f);
 		}
 	}
@@ -1242,7 +1240,7 @@ BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABnd
 				auto edges_f = m_blocking->mesh().get<Face>(current_face.id()).get<Edge>();
 				for (auto e : edges_f) {
 					// if the  edge e is not classified on a curve
-					if (m_blocking->get_geom_dim(e) != 1) {
+					if (m_blocking->get_geom_dim(e) != cad::GeomMeshLinker::LinkCurve) {
 						// We get adjacent faces
 						auto e_faces = m_blocking->mesh().get<Edge>(e.id()).get<Face>();
 						for (auto f : e_faces) {

@@ -8,6 +8,7 @@
 #include <gmds/io/VTKWriter.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
+#include <iostream>
 using Catch::Approx;
 
 void
@@ -141,6 +142,7 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
     auto errors = cl.detect_classification_errors();
+    printf("TEST");
 
     REQUIRE(errors.non_captured_points.size()==0);
     REQUIRE(errors.non_captured_curves.size()==0);
@@ -148,7 +150,7 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
 
     std::cout<<"Errors :"<<std::endl;
     if (errors.non_captured_curves.size()==0) {
-        std::cout<<"No classification found"<<std::endl;
+        printf("No class");
     }
     int classified_nodes = 0;
     int classified_edges = 0;

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+//*----------------------------------------------------------------------------*/
 #include <gmds/cad/GeomCurve.h>
 #include <gmds/cad/GeomPoint.h>
 #include <gmds/cad/GeomSurface.h>
@@ -135,11 +135,11 @@ int main(int argc, char* argv[])
 	 std::cout<<"MCTS Simulation depth:\t\t "<<params.at("simulation_depth")<<std::endl;
 	 std::cout<<"MCTS iteration max time (s):\t "<<params.at("max_mcts_iteration_time")<<std::endl;
 	 std::cout << "=======================================" << std::endl;
-	 
+
 	 // Geometry initialization
 	 cad::FACManager geom_model;
 	 init_geom(geom_model, file_geom);
-	 
+
 	 // We initialize the blocking structure from the geom model
 	 cblock::Blocking bl(&geom_model, false);
 	 // and we add the initial block structure afterward

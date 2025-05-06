@@ -474,3 +474,31 @@ TEST_CASE("BlockingTestSuite - test_init_from_ig_mesh", "[BlockingTestSuite]") {
     REQUIRE(bl.mesh().getNbEdges() == 28);
     REQUIRE(bl.mesh().getNbFaces() == 16);
 }
+
+TEST_CASE("BlockingTestSuite - test_nb_blocks_from_n","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    std::vector<Node> nodes;
+    bl.mesh().getAll<Node>(nodes);
+    for (auto n : nodes) {
+        auto nBlocks = bl.getBlocks(n);
+        REQUIRE(nBlocks.size() == 1);
+    }
+
+}
+
+TEST_CASE("BlockingTestSuite - test_sheet_edges","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    std::vector<Edge> sheet_edges;
+    std::vector<Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+    bl.get_all_sheet_edges(edges[0],sheet_edges);
+
+    REQUIRE(edges.size() == 12);
+    REQUIRE(sheet_edges.size() == 4);
+}

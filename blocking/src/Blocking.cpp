@@ -304,6 +304,29 @@ Edge Blocking::get_edge(const TCellID ANodeId0, const TCellID ANodeId1) {
 }
 
 /*----------------------------------------------------------------------------*/
+std::vector<Blocking::Block>
+Blocking::getBlocks(const TCellID ANodeId) {
+	std::vector<Region> regions;
+	m_mesh.getAll<Region>(regions);
+	std::vector<Blocking::Block> blocks;
+
+	for (auto r : regions) {
+		auto nodesR = r.getIDs<Node>();
+		for (auto n_id: nodesR) {
+			if (n_id == ANodeId) {
+				blocks.push_back(r);
+			}
+		}
+	}
+	return blocks;
+}
+/*----------------------------------------------------------------------------*/
+std::vector<Blocking::Block>
+Blocking::getBlocks(const Blocking::Node ANode) {
+	return getBlocks(ANode.id());
+}
+
+/*----------------------------------------------------------------------------*/
 bool
 Blocking::is_valid_connected() {
 	std::vector<Block> all_blocks,blocks;
@@ -517,6 +540,20 @@ Blocking::get_all_sheet_edge_sets() {
 	}
 	return edges;
 }
+/*----------------------------------------------------------------------------*/
+void
+Blocking::get_all_sheet_edges(const Edge AE, std::vector<Edge> &returnEdges) {
+	auto all_sheets = get_all_sheet_edge_sets();
+
+	for (auto& sheet : all_sheets) {
+		for (auto& e : sheet) {
+			if (e.id() == AE.id()) {
+				returnEdges = sheet;
+			}
+		}
+	}
+}
+
 /*----------------------------------------------------------------------------*/
 std::tuple<TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID, TCellID>
 Blocking::get_parallel_edges(Block AB, Edge AE, Node AE_first) {

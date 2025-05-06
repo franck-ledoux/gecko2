@@ -324,6 +324,8 @@ class  Blocking
 	 */
 	std::vector<std::vector<Edge>> get_all_sheet_edge_sets();
 
+	void get_all_sheet_edges(const Edge AE, std::vector<Edge> &returnEdges);
+
 	/**@brief Get all the blocks of the chord defined from face @p AF. All the returned darts
 	 * belong to different blocks.
 	 * @param[in]  AF			the face we start from
@@ -351,6 +353,9 @@ class  Blocking
 	bool is_valid_connected();
 
 	Edge get_edge(const TCellID ANodeId0, const TCellID ANodeId1);
+
+	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);
+	std::vector<Blocking::Block> getBlocks(const TCellID ANodeId);
 
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS

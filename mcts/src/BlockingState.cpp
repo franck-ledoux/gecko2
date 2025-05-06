@@ -261,7 +261,7 @@ BlockingState::get_possible_block_removals() const
 // std::vector<std::shared_ptr<IAction>>
 // BlockingState::get_possible_block_removals_limited() const
 // {
-// 	std::vector<gecko::blocking::Blocking::Node> nodes;
+// 	std::vector<gecko::blocking::Blocking::Node> nodes;B
 // 	m_blocking->mesh().getAll<Node>(nodes);
 // 	std::set<TCellID> blocks_to_keep;
 // 	for (auto n : nodes) {

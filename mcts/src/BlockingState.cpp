@@ -259,50 +259,51 @@ BlockingState::get_possible_block_removals() const
 }
 /*----------------------------------------------------------------------------*/
 
-// std::vector<std::shared_ptr<IAction>>
-// BlockingState::get_possible_block_removals_limited() const
-// {
-// 	std::vector<gecko::blocking::Blocking::Node> nodes;B
-// 	m_blocking->mesh().getAll<Node>(nodes);
-// 	std::set<TCellID> blocks_to_keep;
-// 	for (auto n : nodes) {
-// 		if (m_blocking->get_geom_dim(n) == 0) {
-// 			// n is classified onto a geom point
-// 			// if it belongs to a single block, the corresponding block cannot
-// 			// be removed
-// 			auto n_blocks = m_blocking->getBlocks(n);
-// 			if (n_blocks.size() == 1) {
-// 				blocks_to_keep.insert(n_blocks[0].id());
-// 			}
-// 		}
-// 	}
-// 	std::vector<std::shared_ptr<IAction> > actions;
-// 	// identify blocks with their centroid inside the geometry
-// 	cad::GeomManager *geom = m_blocking->geom_model();
-//
-// 	std::vector<Blocking::Block> blocks;
-// 	m_blocking->mesh().getAll<Region>(blocks);
-// 	for (auto b : blocks) {
-// 		gmds::math::Point pt = m_blocking->get_center_of_block(b);
-//
-// 		bool is_inside = geom->getVolume(1)->isIn(pt);
-// 		if(is_inside) {
-// 			blocks_to_keep.insert(m_blocking->get_block_id(b));
-// 		}
-// 	}
-//
-// 	// all the other blocks can be removed
-// 	auto all_blocks = m_blocking->get_all_id_blocks();
-// 	for (auto b : all_blocks) {
-// 		//We check if b is a block to keep?
-// 		if (blocks_to_keep.find(b) == blocks_to_keep.end()){
-// 			// b is not to keep, we remove it
-// 			actions.push_back(std::make_shared<BlockRemovalAction>(b));
-// 		}
-// 	}
-//
-// 	return  actions;
-// }
+std::vector<std::shared_ptr<IAction>>
+BlockingState::get_possible_block_removals_limited() const
+{
+	std::vector<gecko::blocking::Blocking::Node> nodes;
+	m_blocking->mesh().getAll<Node>(nodes);
+	std::set<TCellID> blocks_to_keep;
+	for (auto n : nodes) {
+		if (m_blocking->get_geom_dim(n) == 0) {
+			// n is classified onto a geom point
+			// if it belongs to a single block, the corresponding block cannot
+			// be removed
+			auto n_blocks = m_blocking->getBlocks(n);
+			if (n_blocks.size() == 1) {
+				blocks_to_keep.insert(n_blocks[0].id());
+			}
+		}
+	}
+	std::vector<std::shared_ptr<IAction> > actions;
+	// identify blocks with their centroid inside the geometry
+	cad::GeomManager *geom = m_blocking->geom_model();
+
+	// std::vector<Blocking::Block> blocks;
+	// m_blocking->mesh().getAll<Region>(blocks);
+	// for (auto b : blocks) {
+	// 	gmds::math::Point pt = m_blocking->get_center_of_block(b);
+	//
+	// 	bool is_inside = geom->getVolume(1)->isIn(pt);
+	// 	if(is_inside) {
+	// 		blocks_to_keep.insert(m_blocking->get_block_id(b));
+	// 	}
+	// }
+
+	// all the other blocks can be removed
+	std::vector<Blocking::Block> all_blocks;
+	m_blocking->mesh().getAll<Region>(all_blocks);
+	for (auto b : all_blocks) {
+		//We check if b is a block to keep?
+		if (blocks_to_keep.find(b.id()) == blocks_to_keep.end()){
+			// b is not to keep, we remove it
+			actions.push_back(std::make_shared<BlockRemovalAction>(b.id()));
+		}
+	}
+
+	return  actions;
+}
 /*----------------------------------------------------------------------------*/
 std::vector<std::shared_ptr<IAction>>
 BlockingState::get_possible_cuts() const

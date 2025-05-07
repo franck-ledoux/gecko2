@@ -5,6 +5,7 @@
 #include <gmds/cad/GeomManager.h>
 /*----------------------------------------------------------------------------*/
 #include <vector>
+#include <set>
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gecko;
@@ -484,7 +485,7 @@ BlockingState::get_possible_cuts_limited() const
 			// its end points (so for param O or 1)
 			if (epsilon < param_cut  && param_cut < 1.0-epsilon) {
 				auto e2cut = std::get<0>(cut_info_p);
-				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut->info().topo_id, std::get<1>(cut_info_p))));
+				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut.id(), std::get<1>(cut_info_p))));
 				// TODO: verify if we always have a cut that is possible for a point???
 				// As we cut the edge std::get<0>(action)->info().topo_id, we remove it to avoid multiple actions on the same edge
 				std::vector<Blocking::Edge> edges_to_remove;

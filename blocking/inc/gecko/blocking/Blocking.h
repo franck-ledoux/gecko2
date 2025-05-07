@@ -424,6 +424,13 @@ class  Blocking
 	 */
 	void cut_sheet(const Edge AE);
 
+	/**@brief Split the sheet defined by edge @p AnEdgeId at the parameter @p AParam, which is included
+	 * 		 in ]0,1[. We will select the first end point of @p AE as a starting point for the cut and the application of the @p AParam.
+	 * @param[in] AnEdgeId an edge id we want to split in two edges
+	 * * @param[in] AParam a parameter included in ]0,1[
+	 */
+	void cut_sheet(const TCellID AnEdgeId, const double AParam);
+
 	/**@brief Collapse the chord starting from face @p AF by merging
 	 * nodes @p AN1 and @p AN2. The operation is possible if and only if:
 	 * - @p AN1 and @p AN2 are opposite nodes in face @p AF.

@@ -937,6 +937,13 @@ void Blocking::cut_sheet(const TCellID AnEdgeId, const TCellID ANodeId, const do
 
 /*----------------------------------------------------------------------------*/
 void
+Blocking::cut_sheet(const TCellID AnEdgeId, const double AParam) {
+	auto AE = m_mesh.get<Edge>(AnEdgeId);
+	auto n0 = AE.get<Node>()[0];
+	cut_sheet(AE, n0, AParam);
+}
+/*----------------------------------------------------------------------------*/
+void
 Blocking::cut_sheet(const Edge AE) {
 	cut_sheet(AE, AE.get<Node>()[0], 0.5);
 }

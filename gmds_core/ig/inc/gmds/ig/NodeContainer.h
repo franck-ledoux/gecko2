@@ -20,6 +20,7 @@ namespace gmds{
 		friend class Mesh;
 	public:
 		explicit NodeContainer(Mesh* AMesh);
+		explicit NodeContainer(const NodeContainer& AContainer, Mesh* AMesh);
 
 		virtual ~NodeContainer();
 

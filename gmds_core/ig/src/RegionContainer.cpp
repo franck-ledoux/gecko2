@@ -10,19 +10,63 @@
 #include <gmds/ig/Mesh.h>
 /*----------------------------------------------------------------------------*/
 namespace gmds{
-/*----------------------------------------------------------------------------*/
-RegionContainer::RegionContainer( Mesh* AMesh)
- :m_mesh(AMesh),m_model(AMesh->getModel()),
- m_T2N(0),m_T2E(0),m_T2F(0),m_T2R(0),
- m_PY2N(0),m_PY2E(0),m_PY2F(0),m_PY2R(0),
- m_PR2N(0),m_PR2E(0),m_PR2F(0),m_PR2R(0),
- m_H2N(0),m_H2E(0),m_H2F(0),m_H2R(0),
- m_P2N(0),m_P2E(0),m_P2F(0),m_P2R(0),
- m_tet(0), m_pyra(0), m_hex(0), m_poly(0)
-{
+	/*----------------------------------------------------------------------------*/
+	RegionContainer::RegionContainer( Mesh* AMesh)
+	 :m_mesh(AMesh),m_model(AMesh->getModel()),
+	 m_T2N(0),m_T2E(0),m_T2F(0),m_T2R(0),
+	 m_PY2N(0),m_PY2E(0),m_PY2F(0),m_PY2R(0),
+	 m_PR2N(0),m_PR2E(0),m_PR2F(0),m_PR2R(0),
+	 m_H2N(0),m_H2E(0),m_H2F(0),m_H2R(0),
+	 m_P2N(0),m_P2E(0),m_P2F(0),m_P2R(0),
+	 m_tet(0), m_pyra(0), m_hex(0), m_poly(0)
+	{
 
-	setConnectivityContainers();
-}
+		setConnectivityContainers();
+	}
+	/*----------------------------------------------------------------------------*/
+	RegionContainer::RegionContainer(const RegionContainer& AC, Mesh* AMesh)
+	 :m_mesh(AMesh),m_model(AMesh->getModel()),
+	 m_T2N(0),m_T2E(0),m_T2F(0),m_T2R(0),
+	 m_PY2N(0),m_PY2E(0),m_PY2F(0),m_PY2R(0),
+	 m_PR2N(0),m_PR2E(0),m_PR2F(0),m_PR2R(0),
+	 m_H2N(0),m_H2E(0),m_H2F(0),m_H2R(0),
+	 m_P2N(0),m_P2E(0),m_P2F(0),m_P2R(0),
+	 m_tet(0), m_pyra(0), m_hex(0), m_poly(0)
+	{
+
+		if(m_model.has(R2N)){
+			m_T2N = new SmartVector<TabCellID<4> >(*AC.m_T2N);
+			m_PY2N = new SmartVector<TabCellID<5> >(*AC.m_PY2N);
+			m_PR2N = new SmartVector<TabCellID<6> >(*AC.m_PR2N);
+			m_H2N = new SmartVector<TabCellID<8> >(*AC.m_H2N);
+			m_P2N = new SmartVector<TabCellID<size_undef> >(*AC.m_P2N);
+		}
+		if(m_model.has(R2E)){
+			m_T2E = new SmartVector<TabCellID<6> >(*AC.m_T2E);
+			m_PY2E = new SmartVector<TabCellID<8> >(*AC.m_PY2E);
+			m_PR2E = new SmartVector<TabCellID<9> >(*AC.m_PR2E);
+			m_H2E = new SmartVector<TabCellID<12> >(*AC.m_H2E);
+			m_P2E = new SmartVector<TabCellID<size_undef> >(*AC.m_P2E);
+		}
+		if(m_model.has(R2F)){
+			m_T2F = new SmartVector<TabCellID<4> >(*AC.m_T2F);
+			m_PY2F = new SmartVector<TabCellID<5> >(*AC.m_PY2F);
+			m_PR2F = new SmartVector<TabCellID<5> >(*AC.m_PR2F);
+			m_H2F = new SmartVector<TabCellID<6> >(*AC.m_H2F);
+			m_P2F = new SmartVector<TabCellID<size_undef> >(*AC.m_P2F);
+		}
+		if(m_model.has(R2R)){
+			m_T2R = new SmartVector<TabCellID<4> >(*AC.m_T2R);
+			m_PY2R = new SmartVector<TabCellID<5> >(*AC.m_PY2R);
+			m_PR2R = new SmartVector<TabCellID<5> >(*AC.m_PR2R);
+			m_H2R = new SmartVector<TabCellID<6> >(*AC.m_H2R);
+			m_P2R = new SmartVector<TabCellID<size_undef> >(*AC.m_P2R);
+		}
+		m_tet    = new TAccessor(this,this->m_mesh->getModel());
+		m_pyra   = new PyAccessor(this,this->m_mesh->getModel());
+		m_prism3 = new PrAccessor(this,this->m_mesh->getModel());
+		m_hex    = new HAccessor(this,this->m_mesh->getModel());
+		m_poly   = new PAccessor(this,this->m_mesh->getModel());	}
 /*----------------------------------------------------------------------------*/
 RegionContainer::~RegionContainer()
 {

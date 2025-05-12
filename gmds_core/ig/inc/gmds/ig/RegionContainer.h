@@ -41,6 +41,7 @@ namespace gmds{
          * \param AMesh the mesh this face container builds faces for
          */
 		RegionContainer(Mesh* AMesh);
+		RegionContainer(const RegionContainer& AC, Mesh* AMesh);
 
 		/*------------------------------------------------------------------------*/
 		/** \brief Destructor

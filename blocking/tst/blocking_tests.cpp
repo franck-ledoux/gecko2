@@ -502,3 +502,27 @@ TEST_CASE("BlockingTestSuite - test_sheet_edges","[BlockingTestSuite]") {
     REQUIRE(edges.size() == 12);
     REQUIRE(sheet_edges.size() == 4);
 }
+
+TEST_CASE("BlockingTestSuite - copy_blocking","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    gecko::blocking::Blocking blockingCopy(bl);
+
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+
+    bl.cut_sheet(edges[0]);
+    REQUIRE(bl.mesh().getNbNodes() == 12);
+    REQUIRE(bl.mesh().getNbEdges() == 20);
+    REQUIRE(bl.mesh().getNbFaces() == 11);
+    REQUIRE(bl.mesh().getNbRegions()== 2);
+
+    REQUIRE(blockingCopy.mesh().getNbNodes() == 8);
+    REQUIRE(blockingCopy.mesh().getNbEdges() == 12);
+    REQUIRE(blockingCopy.mesh().getNbFaces() == 6);
+    REQUIRE(blockingCopy.mesh().getNbRegions()== 1);
+
+
+}

@@ -14,20 +14,31 @@ namespace gmds{
 NodeContainer::NodeContainer(const NodeContainer& AN, Mesh* AMesh)
 :m_mesh(AMesh),m_model(AMesh->getModel())
 {
-	if(m_model.has(N2N))
+	m_node_ids = AN.m_node_ids;
+	m_node_coords = AN.m_node_coords;
+
+	if(m_model.has(N2N)) {
 		m_N2N = new IndexedVector<TabCellID<size_undef>>(*AN.m_N2N);
+		*m_N2N = *(AN.m_N2N);
+	}
 	else
 		m_N2N = nullptr;
-	if(m_model.has(N2E))
+	if(m_model.has(N2E)) {
 		m_N2E = new IndexedVector<TabCellID<size_undef> >(*AN.m_N2E);
+		*m_N2E = *(AN.m_N2E);
+	}
 	else
 		m_N2E = nullptr;
-	if(m_model.has(N2F))
+	if(m_model.has(N2F)) {
 		m_N2F = new IndexedVector<TabCellID<size_undef> >(*AN.m_N2F);
+		*m_N2F = *(AN.m_N2F);
+	}
 	else
 		m_N2F = nullptr;
-	if(m_model.has(N2R))
+	if(m_model.has(N2R)) {
 		m_N2R = new IndexedVector<TabCellID<size_undef> >(*AN.m_N2R);
+		*m_N2R = *(AN.m_N2R);
+	}
 	else
 		m_N2R = nullptr;
 }

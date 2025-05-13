@@ -30,7 +30,8 @@ namespace gmds{
 	 m_P2N(nullptr),m_P2E(nullptr),m_P2F(nullptr),m_P2R(nullptr),
 	 m_triangles(nullptr), m_quads(nullptr), m_polygons(nullptr)
 	{
-
+		m_face_ids = AC.m_face_ids;
+		m_face_types = AC.m_face_types;
 		if(m_model.has(F2N)){
 			m_T2N = new SmartVector<TabCellID<3> >(*AC.m_T2N);
 			m_Q2N = new SmartVector<TabCellID<4> >(*AC.m_Q2N);

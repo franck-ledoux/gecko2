@@ -3,6 +3,8 @@
 #include <gmds/cad/GeomMeshLinker.h>
 #include <gmds/io/IGMeshIOService.h>
 #include <gmds/io/VTKWriter.h>
+
+#include <gmds/cadfac/FACManager.h>
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gmds::cad;
@@ -22,6 +24,22 @@ GeomMeshLinker::~GeomMeshLinker()
 
 	clear();
 }
+
+/*----------------------------------------------------------------------------*/
+GeomMeshLinker::GeomMeshLinker(const GeomMeshLinker &AMeshLinker) : m_link_id(m_global_link_id++) {
+	m_mesh= new Mesh(*AMeshLinker.m_mesh);
+	m_geometry = new FACManager(*((FACManager*)AMeshLinker.m_geometry));
+
+	m_node_classification_dim = new Variable<eLink>(*AMeshLinker.m_node_classification_dim);
+	m_node_classification_id = new Variable<int>(*AMeshLinker.m_node_classification_id);
+	m_edge_classification_dim = new Variable<eLink>(*AMeshLinker.m_edge_classification_dim);
+	m_edge_classification_id = new Variable<int>(*AMeshLinker.m_edge_classification_id);
+	m_face_classification_dim = new Variable<eLink>(*AMeshLinker.m_face_classification_dim);
+	m_face_classification_id = new Variable<int>(*AMeshLinker.m_face_classification_id);
+	m_region_classification_dim = new Variable<eLink>(*AMeshLinker.m_region_classification_dim);
+	m_region_classification_id = new Variable<int>(*AMeshLinker.m_region_classification_id);
+}
+
 
 /*----------------------------------------------------------------------------*/
 void

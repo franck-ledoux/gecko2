@@ -535,7 +535,7 @@ Mesh::Mesh(const Mesh &AOther) :m_model(AOther.m_model){
 	m_faces_container = new FaceContainer(AOther.faces(),this);
 	m_regions_container = new RegionContainer(AOther.regions(),this);
 
-	m_node_variable_manager = new VariableManager();
+	m_node_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
 	m_edge_variable_manager = new VariableManager();
 	m_face_variable_manager = new VariableManager();
 	m_region_variable_manager = new VariableManager();

@@ -49,6 +49,9 @@ class FACManager : public GeomManager
 	virtual ~FACManager();
 
 	/*------------------------------------------------------------------------*/
+
+	FACManager(const FACManager& other);
+	/*------------------------------------------------------------------------*/
 	/** @brief create a faceted model from a 3D tet mesh. There is no assumption
 	 *         about AFromMesh, we get its boundary to build the model.
 	 *

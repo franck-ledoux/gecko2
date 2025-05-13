@@ -434,6 +434,8 @@ TEST_CASE("BlockingTestSuite - copy_blocking_and_classification","[BlockingTestS
 
 
     gecko::blocking::Blocking copyBl(bl);
+    
+    cl.clear_classification();
 
     for (auto nId : copyBl.mesh().nodes()) {
         auto n = copyBl.mesh().get<Node>(nId);

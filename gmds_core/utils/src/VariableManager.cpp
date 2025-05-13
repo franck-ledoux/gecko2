@@ -24,6 +24,15 @@ VariableManager::~VariableManager()
 	}
 }
 /*----------------------------------------------------------------------------*/
+	VariableManager::VariableManager(const VariableManager &other) {
+		m_variables.clear();
+	m_variables.reserve(other.m_variables.size());
+	for (auto v : other.m_variables) {
+		auto vCopy = new 
+	}
+	}
+
+/*----------------------------------------------------------------------------*/
 void VariableManager::deleteVariable(const std::string& AName){
 	for(unsigned int k=0;k<m_variables.size();k++)
 	{

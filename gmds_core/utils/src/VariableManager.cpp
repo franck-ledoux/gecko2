@@ -28,7 +28,7 @@ VariableManager::~VariableManager()
 		m_variables.clear();
 	m_variables.reserve(other.m_variables.size());
 	for (auto v : other.m_variables) {
-		auto vCopy = new 
+		auto vCopy = 
 	}
 	}
 

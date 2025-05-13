@@ -304,19 +304,19 @@ namespace gmds{
             /** geometric model we work on*/
             GeomManager* m_geometry;
             /** variable storing the dim. of the geom entity each node is linked to*/
-            Variable<eLink>* m_node_classification_dim{};
+            Variable<int>* m_node_classification_dim{};
             /** variable storing the id of the geom entity each node is linked to*/
             Variable<int>* m_node_classification_id{};
             /** variable storing the dim. of the geom entity each edge is linked to*/
-            Variable<eLink>* m_edge_classification_dim{};
+            Variable<int>* m_edge_classification_dim{};
             /** variable storing the id of the geom entity each edge is linked to*/
             Variable<int>* m_edge_classification_id{};
             /** variable storing the dim. of the geom entity each face is linked to*/
-            Variable<eLink>* m_face_classification_dim{};
+            Variable<int>* m_face_classification_dim{};
             /** variable storing the id of the geom entity each face is linked to*/
             Variable<int>* m_face_classification_id{};
             /** variable storing the dim. of the geom entity each region is linked to*/
-            Variable<eLink>* m_region_classification_dim{};
+            Variable<int>* m_region_classification_dim{};
             /** variable storing the id of the geom entity each region is linked to*/
             Variable<int>* m_region_classification_id{};
         };

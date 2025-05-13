@@ -536,9 +536,9 @@ Mesh::Mesh(const Mesh &AOther) :m_model(AOther.m_model){
 	m_regions_container = new RegionContainer(AOther.regions(),this);
 
 	m_node_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
-	m_edge_variable_manager = new VariableManager();
-	m_face_variable_manager = new VariableManager();
-	m_region_variable_manager = new VariableManager();
+	m_edge_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_face_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_region_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
 	/* init all the bits to false*/
 	m_maskMarks_nodes.reset();
 	m_maskMarks_edges.reset();
@@ -560,17 +560,7 @@ Mesh::Mesh(const Mesh &AOther) :m_model(AOther.m_model){
 	m_maxNbUsedMarks_regions = 0;
 #endif     // _DEBUG
 
-	m_marks[0]= newVariable<Marks32, GMDS_NODE>("mark");
-	m_marks[1]= newVariable<Marks32, GMDS_EDGE>("mark");
-	m_marks[2]= newVariable<Marks32, GMDS_FACE>("mark");
-	m_marks[3]= newVariable<Marks32, GMDS_REGION>("mark");
-	for (auto i = 0; i < 32; ++i)
-	{
-		m_marks_nodes[i] = i;
-		m_marks_edges[i] = i;
-		m_marks_faces[i] = i;
-		m_marks_regions[i] = i;
-	}
+	//nothing to do for the marks that are copied via variables beforehand
 }
 /*----------------------------------------------------------------------------*/
 Mesh::~Mesh()

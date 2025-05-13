@@ -33,6 +33,7 @@ namespace gmds{
 	 m_P2N(0),m_P2E(0),m_P2F(0),m_P2R(0),
 	 m_tet(0), m_pyra(0), m_hex(0), m_poly(0)
 	{
+		m_region_ids = AC.m_region_ids;
 
 		if(m_model.has(R2N)){
 			m_T2N = new SmartVector<TabCellID<4> >(*AC.m_T2N);

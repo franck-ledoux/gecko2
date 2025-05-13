@@ -7,6 +7,9 @@
  */
 /*----------------------------------------------------------------------------*/
 #include <gmds/utils/VariableManager.h>
+
+#include "gmds/utils/Marks32.h"
+
 /*----------------------------------------------------------------------------*/
 namespace gmds{
 /*----------------------------------------------------------------------------*/
@@ -25,12 +28,33 @@ VariableManager::~VariableManager()
 }
 /*----------------------------------------------------------------------------*/
 	VariableManager::VariableManager(const VariableManager &other) {
-		m_variables.clear();
+	m_variables.clear();
 	m_variables.reserve(other.m_variables.size());
 	for (auto v : other.m_variables) {
-		auto vCopy = 
+		if (dynamic_cast<Variable<int>*>(v)) {
+			auto* vCopy = new Variable<int>(*dynamic_cast<Variable<int>*>(v));
+			m_variables.push_back(vCopy);
+
+		} else if (dynamic_cast<Variable<double>*>(v)) {
+			auto* vCopy = new Variable<double>(*dynamic_cast<Variable<double>*>(v));
+
+			m_variables.push_back(vCopy);
+		}
+		else if (dynamic_cast<Variable<TCellID>*>(v)) {
+			auto* vCopy = new Variable<TCellID>(*dynamic_cast<Variable<TCellID>*>(v));
+			m_variables.push_back(vCopy);
+
+		}
+		else if (dynamic_cast<Variable<Marks32>*>(v)) {
+			auto* vCopy = new Variable<Marks32>(*dynamic_cast<Variable<Marks32>*>(v));
+			m_variables.push_back(vCopy);
+
+		}
+		else {
+			throw GMDSException("VariableManager::VariableManager - Unknown variable type");
+		}
 	}
-	}
+}
 
 /*----------------------------------------------------------------------------*/
 void VariableManager::deleteVariable(const std::string& AName){

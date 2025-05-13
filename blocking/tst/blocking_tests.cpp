@@ -523,6 +523,4 @@ TEST_CASE("BlockingTestSuite - copy_blocking","[BlockingTestSuite]") {
     REQUIRE(blockingCopy.mesh().getNbEdges() == 12);
     REQUIRE(blockingCopy.mesh().getNbFaces() == 6);
     REQUIRE(blockingCopy.mesh().getNbRegions()== 1);
-
-
 }

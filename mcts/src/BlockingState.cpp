@@ -220,7 +220,7 @@ BlockingState::get_possible_block_removals() const
 	m_blocking->mesh().getAll<Node>(nodes);
 	std::set<TCellID> blocks_to_keep;
 	for (auto n : nodes) {
-		if (m_blocking->get_geom_dim(n) == 0) {
+		if (m_blocking->get_geom_dim(n) == cad::GeomMeshLinker::LinkPoint) {
 			// n is classified onto a geom point
 			// if it belongs to a single block, the corresponding block cannot
 			// be removed
@@ -266,7 +266,7 @@ BlockingState::get_possible_block_removals_limited() const
 	m_blocking->mesh().getAll<Node>(nodes);
 	std::set<TCellID> blocks_to_keep;
 	for (auto n : nodes) {
-		if (m_blocking->get_geom_dim(n) == 0) {
+		if (m_blocking->get_geom_dim(n) == cad::GeomMeshLinker::LinkPoint) {
 			// n is classified onto a geom point
 			// if it belongs to a single block, the corresponding block cannot
 			// be removed

@@ -1,0 +1,1 @@
+[38;5;214m D. [0m cross_3D[92m W. [0m cube[38;5;214m D. [0m cube_minus_corner[38;5;214m D. [0m cube_minus_edge[38;5;214m D. [0m cube_minus_opp_edges[38;5;214m D. [0m cube_minus_two_edges[92m W. [0m cube_with_holes[92m W. [0m cube_with_notch

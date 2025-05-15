@@ -32,15 +32,22 @@ POINT_DATA 8
 SCALARS GMDS_ID int 1
 LOOKUP_TABLE default
 0 1 2 3 4 5 6 7 
+SCALARS geom_link_dim_0 int 1
+LOOKUP_TABLE default
+0 0 0 0 0 0 0 0 
 SCALARS geom_link_id_0 int 1
 LOOKUP_TABLE default
-9 -1 -1 10 8 -1 -1 2 
+0 0 0 0 0 0 0 0 
 
 
 CELL_DATA 6
 SCALARS GMDS_ID int 1
 LOOKUP_TABLE default
 0 1 2 3 4 5 
+
+SCALARS geom_link_dim_0 int 1
+LOOKUP_TABLE default
+0 0 0 0 0 0 
 
 SCALARS geom_link_id_0 int 1
 LOOKUP_TABLE default

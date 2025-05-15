@@ -555,10 +555,26 @@ TEST_CASE("BlockingTestSuite - copy_blocking_check_values","[BlockingTestSuite]"
         REQUIRE(nBl.point().Y() == nBlCopy.point().Y());
         REQUIRE(nBl.point().Z() == nBlCopy.point().Z());
         auto nBl_mark = bl.mesh().newMark<Node>();
-        //auto nBlCopy_mark = blCopy.mesh().newMark<Node>();
+        auto nBlCopy_mark = blCopy.mesh().newMark<Node>();
         bl.mesh().mark(nBl,nBl_mark);
-        //blCopy.mesh().mark(nBlCopy,nBlCopy_mark);
-        //REQUIRE(nBl_mark == nBlCopy_mark);
+        blCopy.mesh().mark(nBlCopy,nBlCopy_mark);
+        REQUIRE(nBl_mark == nBlCopy_mark);
     }
 
+}
+
+TEST_CASE("BlockingTestSuite - copy_blocking_cut_one","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    gecko::blocking::Blocking blCopy(bl);
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    blCopy.mesh().getAll<Edge>(edges);
+
+    blCopy.cut_sheet(edges[0]);
+    REQUIRE(blCopy.mesh().getNbNodes() == 12);
+    REQUIRE(blCopy.mesh().getNbEdges() == 20);
+    REQUIRE(blCopy.mesh().getNbFaces() == 11);
+    REQUIRE(blCopy.mesh().getNbRegions()== 2);
 }

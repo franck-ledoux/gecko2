@@ -28,6 +28,30 @@ EdgeContainer::EdgeContainer( Mesh* AMesh)
 	if(m_model.has(E2R)){
 		m_E2R = new IndexedVector<TabCellID<size_undef> >();
 	}
+}/*----------------------------------------------------------------------------*/
+	EdgeContainer::EdgeContainer(const EdgeContainer& AC, Mesh* AMesh)
+	:m_mesh(AMesh),m_model(AMesh->getModel()),
+	 m_E2N(nullptr),m_E2E(nullptr),m_E2F(nullptr),m_E2R(nullptr)
+{
+	m_edge_ids = AC.m_edge_ids;
+
+	if(m_model.has(E2N))
+	{
+		m_E2N = new IndexedVector<TabCellID<2> >(*AC.m_E2N);
+		*m_E2N = *(AC.m_E2N);
+	}
+	if(m_model.has(E2E)){
+		m_E2E = new IndexedVector<TabCellID<size_undef> >(*AC.m_E2E);
+		*m_E2E = *(AC.m_E2E);
+	}
+	if(m_model.has(E2F)){
+		m_E2F = new IndexedVector<TabCellID<size_undef> >(*AC.m_E2F);
+		*m_E2F = *(AC.m_E2F);
+	}
+	if(m_model.has(E2R)){
+		m_E2R = new IndexedVector<TabCellID<size_undef> >(*AC.m_E2R);
+		*m_E2R = *(AC.m_E2R);
+	}
 }
 /*----------------------------------------------------------------------------*/
 EdgeContainer::~EdgeContainer()

@@ -11,17 +11,50 @@
 
 /*----------------------------------------------------------------------------*/
 namespace gmds{
-/*----------------------------------------------------------------------------*/
-FaceContainer::FaceContainer( Mesh* AMesh)
- :m_mesh(AMesh),m_model(AMesh->getModel()),
- m_T2N(nullptr),m_T2E(nullptr),m_T2F(nullptr),m_T2R(nullptr),
- m_Q2N(nullptr),m_Q2E(nullptr),m_Q2F(nullptr),m_Q2R(nullptr),
- m_P2N(nullptr),m_P2E(nullptr),m_P2F(nullptr),m_P2R(nullptr),
- m_triangles(nullptr), m_quads(nullptr), m_polygons(nullptr)
-{
+	/*----------------------------------------------------------------------------*/
+	FaceContainer::FaceContainer( Mesh* AMesh)
+	 :m_mesh(AMesh),m_model(AMesh->getModel()),
+	 m_T2N(nullptr),m_T2E(nullptr),m_T2F(nullptr),m_T2R(nullptr),
+	 m_Q2N(nullptr),m_Q2E(nullptr),m_Q2F(nullptr),m_Q2R(nullptr),
+	 m_P2N(nullptr),m_P2E(nullptr),m_P2F(nullptr),m_P2R(nullptr),
+	 m_triangles(nullptr), m_quads(nullptr), m_polygons(nullptr)
+	{
 
-	setConnectivityContainers();
-}
+		setConnectivityContainers();
+	}
+	/*----------------------------------------------------------------------------*/
+	FaceContainer::FaceContainer(const FaceContainer& AC, Mesh* AMesh)
+	 :m_mesh(AMesh),m_model(AMesh->getModel()),
+	 m_T2N(nullptr),m_T2E(nullptr),m_T2F(nullptr),m_T2R(nullptr),
+	 m_Q2N(nullptr),m_Q2E(nullptr),m_Q2F(nullptr),m_Q2R(nullptr),
+	 m_P2N(nullptr),m_P2E(nullptr),m_P2F(nullptr),m_P2R(nullptr),
+	 m_triangles(nullptr), m_quads(nullptr), m_polygons(nullptr)
+	{
+		m_face_ids = AC.m_face_ids;
+		m_face_types = AC.m_face_types;
+		if(m_model.has(F2N)){
+			m_T2N = new SmartVector<TabCellID<3> >(*AC.m_T2N);
+			m_Q2N = new SmartVector<TabCellID<4> >(*AC.m_Q2N);
+			m_P2N = new SmartVector<TabCellID<size_undef> >(*AC.m_P2N);
+		}
+		if(m_model.has(F2E)){
+			m_T2E = new SmartVector<TabCellID<3> >(*AC.m_T2E);
+			m_Q2E = new SmartVector<TabCellID<4> >(*AC.m_Q2E);
+			m_P2E = new SmartVector<TabCellID<size_undef> >(*AC.m_P2E);
+		}
+		if(m_model.has(F2F)){
+			m_T2F = new SmartVector<TabCellID<3> >(*AC.m_T2F);
+			m_Q2F = new SmartVector<TabCellID<4> >(*AC.m_Q2F);
+			m_P2F = new SmartVector<TabCellID<size_undef> >(*AC.m_P2F);
+		}
+		if(m_model.has(F2R)){
+			m_T2R = new SmartVector<TabCellID<2> >(*AC.m_T2R);
+			m_Q2R = new SmartVector<TabCellID<2> >(*AC.m_Q2R);
+			m_P2R = new SmartVector<TabCellID<2> >(*AC.m_P2R);
+		}
+		m_triangles = new TAccessor(this,this->m_mesh->getModel());
+		m_quads     = new QAccessor(this,this->m_mesh->getModel());
+		m_polygons  = new PAccessor(this,this->m_mesh->getModel());	}
 /*----------------------------------------------------------------------------*/
 FaceContainer::~FaceContainer()
 {

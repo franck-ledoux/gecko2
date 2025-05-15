@@ -26,6 +26,6 @@ add_subdirectory(gmds_core)
 add_subdirectory(blocking)
 add_subdirectory(mcts)
 
-#add_executable(gecko2 main_blocker.cpp)
-#target_link_libraries(gecko2 PRIVATE gmds_cad gmds_ig gmds_cadfac blocking mcts)
+add_executable(gecko2 main_blocker.cpp)
+target_link_libraries(gecko2 PRIVATE gmds_cad gmds_ig gmds_cadfac blocking mcts)
 

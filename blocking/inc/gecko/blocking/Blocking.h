@@ -324,6 +324,8 @@ class  Blocking
 	 */
 	std::vector<std::vector<Edge>> get_all_sheet_edge_sets();
 
+	void get_all_sheet_edges(const Edge AE, std::vector<Edge> &returnEdges);
+
 	/**@brief Get all the blocks of the chord defined from face @p AF. All the returned darts
 	 * belong to different blocks.
 	 * @param[in]  AF			the face we start from
@@ -351,6 +353,9 @@ class  Blocking
 	bool is_valid_connected();
 
 	Edge get_edge(const TCellID ANodeId0, const TCellID ANodeId1);
+
+	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);
+	std::vector<Blocking::Block> getBlocks(const TCellID ANodeId);
 
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
@@ -418,6 +423,13 @@ class  Blocking
 	 * @param[in] AE an edge we want to split in two edges
 	 */
 	void cut_sheet(const Edge AE);
+
+	/**@brief Split the sheet defined by edge @p AnEdgeId at the parameter @p AParam, which is included
+	 * 		 in ]0,1[. We will select the first end point of @p AE as a starting point for the cut and the application of the @p AParam.
+	 * @param[in] AnEdgeId an edge id we want to split in two edges
+	 * * @param[in] AParam a parameter included in ]0,1[
+	 */
+	void cut_sheet(const TCellID AnEdgeId, const double AParam);
 
 	/**@brief Collapse the chord starting from face @p AF by merging
 	 * nodes @p AN1 and @p AN2. The operation is possible if and only if:

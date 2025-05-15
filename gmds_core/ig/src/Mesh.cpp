@@ -483,7 +483,7 @@ Mesh::getMarks<Region>(const Region &ACell) const
 {
 	return (*m_marks[3])[ACell.id()];
 }
-/*----------------------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------*/
 Mesh::Mesh(MeshModel model) : m_model(model)
 {
 	m_nodes_container = new NodeContainer(this);
@@ -527,6 +527,52 @@ Mesh::Mesh(MeshModel model) : m_model(model)
 		m_marks_faces[i] = i;
 		m_marks_regions[i] = i;
 	}
+}
+/*----------------------------------------------------------------------------*/
+Mesh::Mesh(const Mesh &AOther) :m_model(AOther.m_model){
+	m_nodes_container = new NodeContainer(AOther.nodes(), this);
+	m_edges_container = new EdgeContainer(AOther.edges(),this);
+	m_faces_container = new FaceContainer(AOther.faces(),this);
+	m_regions_container = new RegionContainer(AOther.regions(),this);
+
+	m_node_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_edge_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_face_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_region_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	/* init all the bits to false*/
+	m_maskMarks_nodes = AOther.m_maskMarks_nodes;
+	m_maskMarks_edges =	AOther.m_maskMarks_edges;
+	m_maskMarks_faces = AOther.m_maskMarks_faces;
+	m_maskMarks_regions = AOther.m_maskMarks_regions;
+	m_usedMarks_nodes = AOther.m_usedMarks_nodes;
+	m_usedMarks_edges = AOther.m_usedMarks_edges;
+	m_usedMarks_faces = AOther.m_usedMarks_faces;
+	m_usedMarks_regions = AOther.m_usedMarks_regions;
+
+	m_nbUsedMarks_nodes = AOther.m_nbUsedMarks_nodes;
+	m_nbUsedMarks_edges = AOther.m_nbUsedMarks_edges;
+	m_nbUsedMarks_faces = AOther.m_nbUsedMarks_faces;
+	m_nbUsedMarks_regions = AOther.m_nbUsedMarks_regions;
+#ifdef _DEBUG
+	m_maxNbUsedMarks_nodes = 0;
+	m_maxNbUsedMarks_edges = 0;
+	m_maxNbUsedMarks_faces = 0;
+	m_maxNbUsedMarks_regions = 0;
+#endif     // _DEBUG
+
+	m_marks[0]= getVariable<Marks32, GMDS_NODE>("mark");
+	m_marks[1]= getVariable<Marks32, GMDS_EDGE>("mark");
+	m_marks[2]= getVariable<Marks32, GMDS_FACE>("mark");
+	m_marks[3]= getVariable<Marks32, GMDS_REGION>("mark");
+
+	for (auto i = 0; i < 32; ++i)
+	{
+		m_marks_nodes[i] = i;
+		m_marks_edges[i] = i;
+		m_marks_faces[i] = i;
+		m_marks_regions[i] = i;
+	}
+
 }
 /*----------------------------------------------------------------------------*/
 Mesh::~Mesh()

@@ -84,6 +84,11 @@ namespace gmds{
         virtual ~Variable() {}
 
 /*------------------------------------------------------------------------*/
+        Variable(const Variable& another) {
+            m_name = another.m_name;
+            m_data = another.m_data;
+        };
+/*------------------------------------------------------------------------*/
 /** \brief  overload operator[] const
  */
         T const& operator[](const TCellID& i) const { return m_data[i]; }

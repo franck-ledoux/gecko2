@@ -65,6 +65,7 @@ class Mesh
 	 */
 	explicit Mesh(MeshModel model);
 
+	explicit Mesh(const Mesh &AOther);
  public:
 	NodeContainer &nodes() const
 	{
@@ -1215,8 +1216,8 @@ class Mesh
 
 	/*------------------------------------------------------------------------*/
 	/** \brief Change the mesh model but DO NOT build the new entities/adjacnecies
-         *
-         * \param the mesh model
+		 *
+		 * \param the mesh model
 	 */
 	void changeModelWithoutDoctor(const MeshModel &AModel);
 
@@ -1225,15 +1226,15 @@ class Mesh
 	MeshModel m_model;
 
 	/** Cells container */
-	NodeContainer *m_nodes_container;
-	EdgeContainer *m_edges_container;
-	FaceContainer *m_faces_container;
-	RegionContainer *m_regions_container;
+	NodeContainer *m_nodes_container{};
+	EdgeContainer *m_edges_container{};
+	FaceContainer *m_faces_container{};
+	RegionContainer *m_regions_container{};
 
-	VariableManager *m_node_variable_manager;
-	VariableManager *m_edge_variable_manager;
-	VariableManager *m_face_variable_manager;
-	VariableManager *m_region_variable_manager;
+	VariableManager *m_node_variable_manager{};
+	VariableManager *m_edge_variable_manager{};
+	VariableManager *m_face_variable_manager{};
+	VariableManager *m_region_variable_manager{};
 
 	std::list<CellGroup<Node> *> m_clouds;
 	std::list<CellGroup<Edge> *> m_lines;
@@ -1243,11 +1244,11 @@ class Mesh
 	/** geometrical classification. Useful in some cases,
          *  WARNING it must be activated in the mesh interface.
 	 */
-	Variable<cad::GeomEntity *> *classification[4];
+	Variable<cad::GeomEntity *> *classification[4]{};
 
 	/** Boolean marks management
 	 */
-	Variable<Marks32> *m_marks[4];
+	Variable<Marks32> *m_marks[4]{};
 
 	/* marks currently used*/
 	Marks32 m_usedMarks_nodes;
@@ -1266,10 +1267,10 @@ class Mesh
 	TInt m_marks_faces[32] {};
 	TInt m_marks_regions[32] {};
 	/* number of used marks*/
-	TInt m_nbUsedMarks_nodes;
-	TInt m_nbUsedMarks_edges;
-	TInt m_nbUsedMarks_faces;
-	TInt m_nbUsedMarks_regions;
+	TInt m_nbUsedMarks_nodes{};
+	TInt m_nbUsedMarks_edges{};
+	TInt m_nbUsedMarks_faces{};
+	TInt m_nbUsedMarks_regions{};
 
 #	ifdef _DEBUG
 	TInt m_maxNbUsedMarks_nodes;

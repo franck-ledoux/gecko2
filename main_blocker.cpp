@@ -8,8 +8,8 @@
 #include <gmds/io/IGMeshIOService.h>
 #include <gmds/io/VTKReader.h>
 /*----------------------------------------------------------------------------*/
-#include <gecko/cblock/BlockingClassifier.h>
-#include <gecko/cblock/Blocking.h>
+#include <gecko/blocking/BlockingClassifier.h>
+#include <gecko/blocking/Blocking.h>
 #include <gecko/mcts/BlockingState.h>
 #include <gecko/mcts/BlockingRewardFunction.h>
 #include <iostream>
@@ -23,7 +23,7 @@ using json = nlohmann::json;
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gecko;
-using namespace gecko::cblock;
+using namespace gecko::blocking;
 using namespace gecko::mctsc;
 /*---------------------------------------------------------------------------*/
 json read_param_file(const std::string& AFileName) {
@@ -57,8 +57,8 @@ void
 display_info(std::shared_ptr<BlockingState> state)
 {
 	auto bl = state->get_blocking();
-	std::cout << "Blocking " << bl.get() << " (N,E,F,N): " << bl->get_nb_cells<0>() << ", " << bl->get_nb_cells<1>() << ", " << bl->get_nb_cells<2>() << ", "
-	          << bl->get_nb_cells<3>() << std::endl;
+	std::cout << "Blocking " << bl.get() << " (N,E,F,B): " << bl->mesh().getNbNodes() << ", " << bl->mesh().getNbEdges() << ", " << bl->mesh().getNbFaces() << ", "
+			  << bl->mesh().getNbRegions() << std::endl;
 	auto errors = BlockingClassifier(bl.get()).detect_classification_errors();
 	std::cout << "\t non captured points (" << errors.non_captured_points.size() << "): ";
 	for (auto i : errors.non_captured_points) {
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 	 init_geom(geom_model, file_geom);
 
 	 // We initialize the blocking structure from the geom model
-	 cblock::Blocking bl(&geom_model, false);
+	 blocking::Blocking bl(&geom_model, false);
 	 // and we add the initial block structure afterward
 	 if(with_init_blocking) {
 		  Mesh init_blocks(MeshModel(DIM3 | R | N | R2N | N2R));
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
 
 	 BlockingRewardFunction reward_function;
 
-	 auto init_state = std::make_shared<BlockingState>(std::make_shared<cblock::Blocking>(bl));
+	 auto init_state = std::make_shared<BlockingState>(std::make_shared<blocking::Blocking>(bl));
 	 auto optimal_score = init_state->get_expected_optimal_score();
 	 std::cout << "Expected optimal score: " << optimal_score << std::endl;
 	 std::cout << "=======================================" << std::endl;

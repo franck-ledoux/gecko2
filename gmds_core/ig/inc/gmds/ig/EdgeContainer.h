@@ -29,6 +29,7 @@ namespace gmds{
     public:
 
         explicit EdgeContainer(Mesh* AMesh);
+        explicit EdgeContainer(const EdgeContainer& AC, Mesh* AMesh);
         virtual ~EdgeContainer();
 
         /*------------------------------------------------------------------------*/

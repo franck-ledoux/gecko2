@@ -5,6 +5,7 @@
 #include <gmds/cad/GeomManager.h>
 /*----------------------------------------------------------------------------*/
 #include <vector>
+#include <set>
 /*----------------------------------------------------------------------------*/
 using namespace gmds;
 using namespace gecko;
@@ -179,11 +180,13 @@ double
 BlockingState::computeMinEdgeLenght() const
 {
 	double minusEdge = 1000;
-	auto listEdges= m_blocking->get_all_edges();
+	std::vector<gecko::blocking::Blocking::Edge> listEdges;
+	m_blocking->mesh().getAll<Edge>(listEdges);
 
 	for(auto edge : listEdges){
-		auto pointsCurrentEdge =m_blocking->get_nodes_of_edge(edge);
-		double edgeLength = gmds::math::Segment(pointsCurrentEdge[0]->info().point, pointsCurrentEdge[1]->info().point).computeLength();
+
+		auto pointsCurrentEdge = edge.get<Node>();
+		double edgeLength = gmds::math::Segment(pointsCurrentEdge[0].point(), pointsCurrentEdge[1].point()).computeLength();
 		if(edgeLength<minusEdge){
 			minusEdge=edgeLength;
 		}
@@ -212,16 +215,18 @@ BlockingState::updateMemory(double AScore)
 std::vector<std::shared_ptr<IAction>>
 BlockingState::get_possible_block_removals() const
 {
-	auto nodes = m_blocking->get_all_nodes();
+
+	std::vector<gecko::blocking::Blocking::Node> nodes;
+	m_blocking->mesh().getAll<Node>(nodes);
 	std::set<TCellID> blocks_to_keep;
 	for (auto n : nodes) {
-		if (n->info().geom_dim == 0) {
+		if (m_blocking->get_geom_dim(n) == 0) {
 			// n is classified onto a geom point
 			// if it belongs to a single block, the corresponding block cannot
 			// be removed
-			auto n_blocks = m_blocking->get_blocks_of_node(n);
+			auto n_blocks = m_blocking->getBlocks(n);
 			if (n_blocks.size() == 1) {
-				blocks_to_keep.insert(n_blocks[0]->info().topo_id);
+				blocks_to_keep.insert(n_blocks[0].id());
 			}
 		}
 	}
@@ -240,12 +245,13 @@ BlockingState::get_possible_block_removals() const
 	}*/
 
 	// all the other blocks can be removed
-	auto all_blocks = m_blocking->get_all_id_blocks();
+	std::vector<Blocking::Block> all_blocks;
+	m_blocking->mesh().getAll<Region>(all_blocks);
 	for (auto b : all_blocks) {
 		//We check if b is a block to keep?
-		if (blocks_to_keep.find(b) == blocks_to_keep.end()){
+		if (blocks_to_keep.find(b.id()) == blocks_to_keep.end()){
 			// b is not to keep, we remove it
-			actions.push_back(std::make_shared<BlockRemovalAction>(b));
+			actions.push_back(std::make_shared<BlockRemovalAction>(b.id()));
 		}
 	}
 
@@ -256,16 +262,17 @@ BlockingState::get_possible_block_removals() const
 std::vector<std::shared_ptr<IAction>>
 BlockingState::get_possible_block_removals_limited() const
 {
-	auto nodes = m_blocking->get_all_nodes();
+	std::vector<gecko::blocking::Blocking::Node> nodes;
+	m_blocking->mesh().getAll<Node>(nodes);
 	std::set<TCellID> blocks_to_keep;
 	for (auto n : nodes) {
-		if (n->info().geom_dim == 0) {
+		if (m_blocking->get_geom_dim(n) == 0) {
 			// n is classified onto a geom point
 			// if it belongs to a single block, the corresponding block cannot
 			// be removed
-			auto n_blocks = m_blocking->get_blocks_of_node(n);
+			auto n_blocks = m_blocking->getBlocks(n);
 			if (n_blocks.size() == 1) {
-				blocks_to_keep.insert(n_blocks[0]->info().topo_id);
+				blocks_to_keep.insert(n_blocks[0].id());
 			}
 		}
 	}
@@ -273,23 +280,25 @@ BlockingState::get_possible_block_removals_limited() const
 	// identify blocks with their centroid inside the geometry
 	cad::GeomManager *geom = m_blocking->geom_model();
 
-	auto blocks = m_blocking->get_all_blocks();
-	for (auto b : blocks) {
-		gmds::math::Point pt = m_blocking->get_center_of_block(b);
-
-		bool is_inside = geom->getVolume(1)->isIn(pt);
-		if(is_inside) {
-			blocks_to_keep.insert(m_blocking->get_block_id(b));
-		}
-	}
+	// std::vector<Blocking::Block> blocks;
+	// m_blocking->mesh().getAll<Region>(blocks);
+	// for (auto b : blocks) {
+	// 	gmds::math::Point pt = m_blocking->get_center_of_block(b);
+	//
+	// 	bool is_inside = geom->getVolume(1)->isIn(pt);
+	// 	if(is_inside) {
+	// 		blocks_to_keep.insert(m_blocking->get_block_id(b));
+	// 	}
+	// }
 
 	// all the other blocks can be removed
-	auto all_blocks = m_blocking->get_all_id_blocks();
+	std::vector<Blocking::Block> all_blocks;
+	m_blocking->mesh().getAll<Region>(all_blocks);
 	for (auto b : all_blocks) {
 		//We check if b is a block to keep?
-		if (blocks_to_keep.find(b) == blocks_to_keep.end()){
+		if (blocks_to_keep.find(b.id()) == blocks_to_keep.end()){
 			// b is not to keep, we remove it
-			actions.push_back(std::make_shared<BlockRemovalAction>(b));
+			actions.push_back(std::make_shared<BlockRemovalAction>(b.id()));
 		}
 	}
 
@@ -306,16 +315,19 @@ BlockingState::get_possible_cuts() const
 	auto non_captured_points = non_captured_entities.non_captured_points;
 	auto non_captured_curves = non_captured_entities.non_captured_curves;
 
-	auto all_block_edges = m_blocking->get_all_edges();
+	// auto all_block_edges = m_blocking->get_all_edges();
+	std::vector<gecko::blocking::Blocking::Edge> edges;
+	m_blocking->mesh().getAll<Edge>(edges);
+
 	for (auto p : non_captured_points) {
 		// the point p is not captured. We look for a cut along a block edge to capture it
-		auto [edge_cut, param_cut,dist_cut]  = m_blocking->get_cut_info(p,all_block_edges);
+		auto [edge_cut, param_cut,dist_cut]  = m_blocking->get_cut_info(p,edges);
 		// We only consider cut of edge that occur inside the edge and not on one of
 		// its end points (so for param O or 1)
 		if (epsilon < param_cut  && param_cut <1.0-epsilon) {
 			auto e2cut = edge_cut;
 			gmds::math::Point pointCapt = m_blocking->geom_model()->getPoint(p)->point();
-		    list_cuts.insert(std::make_pair(pointCapt,std::make_pair(e2cut->info().topo_id,param_cut)));
+		    list_cuts.insert(std::make_pair(pointCapt,std::make_pair(e2cut.id(),param_cut)));
 		    // TODO: verify if we always have a cut that is possible for a point???
 		    // As we cut the edge std::get<0>(action)->info().topo_id, we remove it to avoid multiple actions on the same edge
 		    /*std::vector<Blocking::Edge> edges_to_remove;
@@ -351,13 +363,13 @@ BlockingState::get_possible_cuts() const
 			math::Point(maxXYX[0], maxXYX[1], minXYX[2])
 		};
 		for (auto p:bb_corners) {
-			auto cut_info_p = m_blocking->get_cut_info(p, all_block_edges);
+			auto cut_info_p = m_blocking->get_cut_info(p, edges);
 			auto param_cut = std::get<1>(cut_info_p);
 			// We only consider cut of edge that occur inside the edge and not on one of
 			// its end points (so for param O or 1)
 			if (epsilon < param_cut  && param_cut < 1.0-epsilon) {
 				auto e2cut = std::get<0>(cut_info_p);
-				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut->info().topo_id, std::get<1>(cut_info_p))));
+				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut.id(), std::get<1>(cut_info_p))));
 				// TODO: verify if we always have a cut that is possible for a point???
 				// As we cut the edge std::get<0>(action)->info().topo_id, we remove it to avoid multiple actions on the same edge
 				/*std::vector<Blocking::Edge> edges_to_remove;
@@ -420,30 +432,32 @@ BlockingState::get_possible_cuts_limited() const
 	auto non_captured_points = non_captured_entities.non_captured_points;
 	auto non_captured_curves = non_captured_entities.non_captured_curves;
 
-	auto all_block_edges = m_blocking->get_all_edges();
+	std::vector<Edge> all_edges;
+	m_blocking->mesh().getAll<Edge>(all_edges);
 	for (auto p : non_captured_points) {
 		// the point p is not captured. We look for a cut along a block edge to capture it
-		auto action = m_blocking->get_cut_info(p,all_block_edges);
+		auto action = m_blocking->get_cut_info(p,all_edges);
 		auto param_cut = std::get<1>(action);
 		// We only consider cut of edge that occur inside the edge and not on one of
 		// its end points (so for param O or 1)
 		if (epsilon < param_cut  && param_cut <1.0-epsilon) {
 			auto e2cut = std::get<0>(action);
 			gmds::math::Point pointCapt = m_blocking->geom_model()->getPoint(p)->point();
-		    list_cuts.insert(std::make_pair(pointCapt,std::make_pair(e2cut->info().topo_id, std::get<1>(action))));
+		    list_cuts.insert(std::make_pair(pointCapt,std::make_pair(e2cut.id(), std::get<1>(action))));
 		    // TODO: verify if we always have a cut that is possible for a point???
 		    // As we cut the edge std::get<0>(action)->info().topo_id, we remove it to avoid multiple actions on the same edge
 		    std::vector<Blocking::Edge> edges_to_remove;
 		    m_blocking->get_all_sheet_edges(e2cut,edges_to_remove);
 
 
+
 			// Loop through each element to delete
 			for (auto e : edges_to_remove) {
 				// Find the element in the vector
-				auto it = find(all_block_edges.begin(), all_block_edges.end(), e);
+				auto it = find(all_edges.begin(), all_edges.end(), e);
 				// If the element is found, erase it
-				if (it != all_block_edges.end()) {
-					all_block_edges.erase(it);
+				if (it != all_edges.end()) {
+					all_edges.erase(it);
 				}
 			}
 		}
@@ -466,13 +480,13 @@ BlockingState::get_possible_cuts_limited() const
 			math::Point(maxXYX[0], maxXYX[1], minXYX[2])
 		};
 		for (auto p:bb_corners) {
-			auto cut_info_p = m_blocking->get_cut_info(p, all_block_edges);
+			auto cut_info_p = m_blocking->get_cut_info(p, all_edges);
 			auto param_cut = std::get<1>(cut_info_p);
 			// We only consider cut of edge that occur inside the edge and not on one of
 			// its end points (so for param O or 1)
 			if (epsilon < param_cut  && param_cut < 1.0-epsilon) {
 				auto e2cut = std::get<0>(cut_info_p);
-				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut->info().topo_id, std::get<1>(cut_info_p))));
+				list_cuts.insert(std::make_pair(p,std::make_pair(e2cut.id(), std::get<1>(cut_info_p))));
 				// TODO: verify if we always have a cut that is possible for a point???
 				// As we cut the edge std::get<0>(action)->info().topo_id, we remove it to avoid multiple actions on the same edge
 				std::vector<Blocking::Edge> edges_to_remove;
@@ -481,10 +495,10 @@ BlockingState::get_possible_cuts_limited() const
 				// Loop through each element to delete
 				for (auto e : edges_to_remove) {
 					// Find the element in the vector
-					auto it = find(all_block_edges.begin(), all_block_edges.end(), e);
+					auto it = find(all_edges.begin(), all_edges.end(), e);
 					// If the element is found, erase it
-					if (it != all_block_edges.end()) {
-						all_block_edges.erase(it);
+					if (it != all_edges.end()) {
+						all_edges.erase(it);
 					}
 				}
 			}

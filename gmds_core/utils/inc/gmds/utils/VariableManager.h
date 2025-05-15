@@ -29,6 +29,8 @@ namespace gmds{
 		~VariableManager();
 
 		/*------------------------------------------------------------------------*/
+		VariableManager(const VariableManager& other);
+		/*------------------------------------------------------------------------*/
 		/** \brief  creation of a variable allocated in the stack. The domain of the
 		 * 			variable is initialized to [0,initSize].
 		 */

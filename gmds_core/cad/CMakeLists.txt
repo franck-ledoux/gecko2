@@ -29,7 +29,8 @@ target_compile_features(${GECKO_LIB} PUBLIC cxx_std_14)
 #LIBRARY TO INSTALL
 target_link_libraries(${GECKO_LIB}
         PUBLIC
-        gmds_io)
+        gmds_io
+        gmds_cadfac)
 
 # INCLUDE TO INSTALL
 target_include_directories(${GECKO_LIB} PUBLIC

@@ -38,6 +38,7 @@ namespace gmds{
          * \param AMesh the mesh this face container builds faces for
          */
 		explicit FaceContainer(Mesh* AMesh);
+		explicit FaceContainer(const FaceContainer& AC, Mesh* AMesh);
 
 		/*------------------------------------------------------------------------*/
 		/** \brief Destructor

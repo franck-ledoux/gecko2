@@ -40,6 +40,19 @@ FACManager::~FACManager()
 
 }
 /*----------------------------------------------------------------------------*/
+FACManager::FACManager(const FACManager &other) : m_mesh(other.m_mesh){
+	m_volumes = other.m_volumes;
+	m_surfaces = other.m_surfaces;
+	m_curves = other.m_curves;
+	m_points = other.m_points;
+
+	m_map_node_var_to_point = other.m_map_node_var_to_point;
+	m_map_edge_var_to_curve = other.m_map_edge_var_to_curve;
+	m_map_face_var_to_surf = other.m_map_face_var_to_surf;
+
+}
+
+/*----------------------------------------------------------------------------*/
 void
 FACManager::initFrom3DMesh(Mesh *AFromMesh)
 {

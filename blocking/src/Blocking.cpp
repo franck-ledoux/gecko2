@@ -369,6 +369,24 @@ Blocking::is_valid_connected() {
 }
 
 /*----------------------------------------------------------------------------*/
+math::Point
+Blocking::get_centroid_point(const Blocking::Block &ABlock) {
+	auto nodes = ABlock.get<Node>();
+	int sumX = 0;
+	int sumY = 0;
+	int sumZ = 0;
+
+	for (auto n : nodes) {
+		sumX += n.X();
+		sumY += n.Y();
+		sumZ += n.Z();
+	}
+
+	return math::Point(sumX/8.0, sumY/8.0, sumZ/8.0);
+
+}
+
+/*----------------------------------------------------------------------------*/
 void Blocking::init_from_bounding_box() {
 	m_mesh.clear();
 

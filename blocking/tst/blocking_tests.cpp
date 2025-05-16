@@ -578,3 +578,19 @@ TEST_CASE("BlockingTestSuite - copy_blocking_cut_one","[BlockingTestSuite]") {
     REQUIRE(blCopy.mesh().getNbFaces() == 11);
     REQUIRE(blCopy.mesh().getNbRegions()== 2);
 }
+
+TEST_CASE("BlockingTestSuite - centroide_cube","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    std::vector<gecko::blocking::Blocking::Block> blocks;
+    bl.mesh().getAll<Region>(blocks);
+    REQUIRE(blocks.size() == 1);
+
+    auto centroide_p = bl.get_centroid_point(blocks[0]);
+
+    REQUIRE(centroide_p.X() == 0.0);
+    REQUIRE(centroide_p.Y() == 0.0);
+    REQUIRE(centroide_p.Z() == 0.0);
+}

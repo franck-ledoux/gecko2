@@ -352,6 +352,8 @@ class  Blocking
 
 	bool is_valid_connected();
 
+	math::Point get_centroid_point(const Blocking::Block &ABlock);
+
 	Edge get_edge(const TCellID ANodeId0, const TCellID ANodeId1);
 
 	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);

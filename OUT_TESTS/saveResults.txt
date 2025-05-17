@@ -1,24 +1,24 @@
-D. cross_3D - 369.99s
-W. cube - 0.02s
-W. cube_minus_corner - 0.62s
+W. cross_3D - 15033.63s
+W. cube - 0.01s
+W. cube_minus_corner - 0.84s
 W. cube_minus_edge - 0.30s
-W. cube_minus_opp_edges - 1.54s
-W. cube_minus_two_edges - 1.01s
-W. cube_with_holes - 2439.08s
-W. cube_with_notch - 0.67s
-W. cube_without_two_cubes - 3239.88s
-E. encoches (-11) - 0.25s
-W. hole - 0.97s
-E. polycube (-11) - 0.12s
-E. polycubeRefine (-11) - 0.36s
+W. cube_minus_opp_edges - 4.77s
+W. cube_minus_two_edges - 1983.15s
+W. cube_with_holes - 13705.72s
+W. cube_with_notch - 0.78s
+W. cube_without_two_cubes - 3356.47s
+E. encoches (-11) - 0.16s
+W. hole - 34.88s
+E. polycube (-11) - 0.10s
+E. polycubeRefine (-11) - 0.62s
 W. simple_cube - 0.01s
-W. T_shape - 0.52s
-E. teeth (-11) - 2.19s
+W. T_shape - 0.72s
+E. teeth (-11) - 0.70s
 W. tet_in_box - 0.01s
-W. U_shape - 0.42s
-W. XXYZ - 8.49s
-W. XYZ - 2.34s
+W. U_shape - 0.46s
+W. XXYZ - 59.07s
+W. XYZ - 5.21s
 -----------------------------------------------------------------------
-(total, win, lost, draw, errors) = (20, 15, 0, 1, 4)
-Total execution time: 6068.77s
+(total, win, lost, draw, errors) = (20, 16, 0, 0, 4)
+Total execution time: 34187.60s
 -----------------------------------------------------------------------

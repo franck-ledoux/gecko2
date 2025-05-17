@@ -397,6 +397,9 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 	}
 	for(auto mapElmt : captCurvesMap){
 		if(!alreadyClass(mapElmt.second.second)){
+
+			//m_blocking->save_vtk_blocking("temp_save_debug");
+
 			auto c = m_geom_model->getCurve(mapElmt.second.first);
 			auto c_end_points = c->points();
 			auto end_point_0 = c_end_points[0];

@@ -1,1 +1,1 @@
-{"links":[{"child":23,"parent":21},{"child":22,"parent":21}],"nodes":[{"data":"","depth":0,"id":21,"reward":162572000.0,"visits":1001},{"data":"","depth":1,"id":23,"reward":162410000.0,"visits":1000},{"data":"","depth":1,"id":22,"reward":162000.0,"visits":1}]}
+{"links":[{"child":19,"parent":18}],"nodes":[{"data":"","depth":0,"id":18,"reward":162572410.0,"visits":1001},{"data":"","depth":1,"id":19,"reward":162572410.0,"visits":1001}]}

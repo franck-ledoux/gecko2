@@ -280,16 +280,16 @@ BlockingState::get_possible_block_removals_limited() const
 	// identify blocks with their centroid inside the geometry
 	cad::GeomManager *geom = m_blocking->geom_model();
 
-	// std::vector<Blocking::Block> blocks;
-	// m_blocking->mesh().getAll<Region>(blocks);
-	// for (auto b : blocks) {
-	// 	gmds::math::Point pt = m_blocking->get_center_of_block(b);
-	//
-	// 	bool is_inside = geom->getVolume(1)->isIn(pt);
-	// 	if(is_inside) {
-	// 		blocks_to_keep.insert(m_blocking->get_block_id(b));
-	// 	}
-	// }
+	std::vector<Blocking::Block> blocks;
+	m_blocking->mesh().getAll<Region>(blocks);
+	for (auto b : blocks) {
+		gmds::math::Point pt = m_blocking->get_centroid_point(b);
+
+		bool is_inside = geom->getVolume(1)->isIn(pt);
+		if(is_inside) {
+			blocks_to_keep.insert(b.id());
+		}
+	}
 
 	// all the other blocks can be removed
 	std::vector<Blocking::Block> all_blocks;

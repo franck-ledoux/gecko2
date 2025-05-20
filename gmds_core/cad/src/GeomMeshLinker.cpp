@@ -21,23 +21,9 @@ GeomMeshLinker::GeomMeshLinker(Mesh *AMesh, GeomManager *AGeometry) : m_link_id(
 /*----------------------------------------------------------------------------*/
 GeomMeshLinker::~GeomMeshLinker()
 {
-
 	clear();
-}
-
-/*----------------------------------------------------------------------------*/
-GeomMeshLinker::GeomMeshLinker(const GeomMeshLinker &AMeshLinker) : m_link_id(m_global_link_id++) {
-	m_mesh= new Mesh(*AMeshLinker.m_mesh);
-	m_geometry = new FACManager(*((FACManager*)AMeshLinker.m_geometry));
-
-	m_node_classification_dim = new Variable<int>(*AMeshLinker.m_node_classification_dim);
-	m_node_classification_id = new Variable<int>(*AMeshLinker.m_node_classification_id);
-	m_edge_classification_dim = new Variable<int>(*AMeshLinker.m_edge_classification_dim);
-	m_edge_classification_id = new Variable<int>(*AMeshLinker.m_edge_classification_id);
-	m_face_classification_dim = new Variable<int>(*AMeshLinker.m_face_classification_dim);
-	m_face_classification_id = new Variable<int>(*AMeshLinker.m_face_classification_id);
-	m_region_classification_dim = new Variable<int>(*AMeshLinker.m_region_classification_dim);
-	m_region_classification_id = new Variable<int>(*AMeshLinker.m_region_classification_id);
+	m_mesh = nullptr;
+	m_geometry = nullptr;
 }
 
 
@@ -46,39 +32,37 @@ void
 GeomMeshLinker::clear()
 {
 	if (m_mesh != nullptr) {
-		m_mesh->deleteVariable(GMDS_NODE, m_node_classification_dim);
-		m_mesh->deleteVariable(GMDS_NODE, m_node_classification_id);
-		m_mesh->deleteVariable(GMDS_EDGE, m_node_classification_dim);
-		m_mesh->deleteVariable(GMDS_EDGE, m_edge_classification_id);
-		m_mesh->deleteVariable(GMDS_FACE, m_face_classification_dim);
-		m_mesh->deleteVariable(GMDS_FACE, m_face_classification_id);
-		m_mesh->deleteVariable(GMDS_REGION, m_region_classification_dim);
-		m_mesh->deleteVariable(GMDS_REGION, m_region_classification_id);
+		m_mesh->deleteVariable(GMDS_NODE, "geom_link_dim");
+		m_mesh->deleteVariable(GMDS_NODE, "geom_link_id");
+		m_mesh->deleteVariable(GMDS_EDGE, "geom_link_dim");
+		m_mesh->deleteVariable(GMDS_EDGE, "geom_link_id");
+		m_mesh->deleteVariable(GMDS_FACE, "geom_link_dim");
+		m_mesh->deleteVariable(GMDS_FACE, "geom_link_id");
+		m_mesh->deleteVariable(GMDS_REGION, "geom_link_dim");
+		m_mesh->deleteVariable(GMDS_REGION, "geom_link_id");
 	}
-	m_mesh = nullptr;
-	m_geometry = nullptr;
 }
 /*----------------------------------------------------------------------------*/
 void
 GeomMeshLinker::setMesh(Mesh *AMesh)
 {
+	m_mesh = AMesh;
 	if (m_mesh != nullptr) {
 		clear();
 	}
 
-	m_mesh = AMesh;
 
-	m_node_classification_dim = m_mesh->newVariable<int, GMDS_NODE>("geom_link_dim_" + std::to_string(m_link_id));
-	m_node_classification_id = m_mesh->newVariable<int, GMDS_NODE>("geom_link_id_" + std::to_string(m_link_id));
+	m_node_classification_dim = m_mesh->newVariable<int, GMDS_NODE>("geom_link_dim");
+	m_node_classification_id = m_mesh->newVariable<int, GMDS_NODE>("geom_link_id");
 
-	m_edge_classification_dim = m_mesh->newVariable<int, GMDS_EDGE>("geom_link_dim_" + std::to_string(m_link_id));
-	m_edge_classification_id = m_mesh->newVariable<int, GMDS_EDGE>("geom_link_id_" + std::to_string(m_link_id));
+	m_edge_classification_dim = m_mesh->newVariable<int, GMDS_EDGE>("geom_link_dim");
+	m_edge_classification_id = m_mesh->newVariable<int, GMDS_EDGE>("geom_link_id");
 
-	m_face_classification_dim = m_mesh->newVariable<int, GMDS_FACE>("geom_link_dim_" + std::to_string(m_link_id));
-	m_face_classification_id = m_mesh->newVariable<int, GMDS_FACE>("geom_link_id_" + std::to_string(m_link_id));
+	m_face_classification_dim = m_mesh->newVariable<int, GMDS_FACE>("geom_link_dim");
+	m_face_classification_id = m_mesh->newVariable<int, GMDS_FACE>("geom_link_id");
 
-	m_region_classification_dim = m_mesh->newVariable<int, GMDS_REGION>("geom_link_dim_" + std::to_string(m_link_id));
-	m_region_classification_id = m_mesh->newVariable<int, GMDS_REGION>("geom_link_id_" + std::to_string(m_link_id));
+	m_region_classification_dim = m_mesh->newVariable<int, GMDS_REGION>("geom_link_dim");
+	m_region_classification_id = m_mesh->newVariable<int, GMDS_REGION>("geom_link_id");
 
 }
 /*----------------------------------------------------------------------------*/

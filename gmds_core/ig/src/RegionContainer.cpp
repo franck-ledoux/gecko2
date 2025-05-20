@@ -122,16 +122,13 @@ RegionContainer::~RegionContainer()
 	if(m_P2R)
 		delete m_P2R;
 
-	if(m_tet)
-		delete m_tet;
-	if(m_pyra)
+
+	delete	m_tet;
 		delete m_pyra;
-	if(m_prism3)
 		delete m_prism3;
-	if(m_hex)
 		delete m_hex;
-	if(m_poly)
 		delete m_poly;
+
 }
 /*----------------------------------------------------------------------------*/
 void RegionContainer::setConnectivityContainers()

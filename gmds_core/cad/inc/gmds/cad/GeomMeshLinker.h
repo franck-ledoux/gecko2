@@ -53,8 +53,6 @@ namespace gmds{
               */
             GeomMeshLinker(Mesh* AMesh, GeomManager* AGeometry);
 
-            GeomMeshLinker(const GeomMeshLinker& AMeshLinker);
-
             /*------------------------------------------------------------------------*/
             /** \brief  Destructor
              */

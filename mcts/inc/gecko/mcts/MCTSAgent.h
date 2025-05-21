@@ -66,6 +66,8 @@ public:
      */
     void run(std::shared_ptr<IState> ARootState);
 
+	void promote_child_has_root(MCTSTree* new_root);
+
     /**@brief Compute the best solution by traversing the tree from its root to a leaf. We consider
      * here the best solution as being the most visited node at each level.
      *
@@ -82,6 +84,8 @@ public:
      */
 	 std::shared_ptr<IState> get_most_visited_child();
 	 std::shared_ptr<IState> get_most_winning_child();
+
+	MCTSTree* get_most_winning_node();
     /**@brief provides the number of iterations done by the algorithm
      */
     int get_nb_iterations() const {return m_nb_iterations;}
@@ -95,6 +99,9 @@ private:
     * @return the generated action
     */
     std::shared_ptr<IAction> get_random_action(std::shared_ptr<IState> AState) const;
+
+
+
 private:
 
     /**@brief Selection induces a decision policy, known as the tree policy, to navigate
@@ -127,6 +134,8 @@ private:
     void back_propagate(MCTSTree* ANode, double AReward, GAME_RESULT AResult);
 
     void export_tree();
+
+
 private:
     /** the tree we build during the run() process */
     MCTSTree* m_tree;

@@ -536,9 +536,9 @@ Mesh::Mesh(const Mesh &AOther) :m_model(AOther.m_model){
 	m_regions_container = new RegionContainer(AOther.regions(),this);
 
 	m_node_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
-	m_edge_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
-	m_face_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
-	m_region_variable_manager = new VariableManager(*AOther.m_node_variable_manager);
+	m_edge_variable_manager = new VariableManager(*AOther.m_edge_variable_manager);
+	m_face_variable_manager = new VariableManager(*AOther.m_face_variable_manager);
+	m_region_variable_manager = new VariableManager(*AOther.m_region_variable_manager);
 	/* init all the bits to false*/
 	m_maskMarks_nodes = AOther.m_maskMarks_nodes;
 	m_maskMarks_edges =	AOther.m_maskMarks_edges;

@@ -20,6 +20,7 @@ Blocking::Blocking(cad::GeomManager *AGeomModel, bool AInitAsBoundingBox)
 m_mesh(MeshModel(DIM3|R|F|E|N|R2N|F2N|E2N|R2F|F2R|F2E|E2F)),
 m_mesh_linker(&m_mesh,m_geom_model)
 {
+	m_is_in =  m_mesh.newVariable<int,GMDS_REGION>("is_in");
 
 	if (AInitAsBoundingBox) {
 		init_from_bounding_box();
@@ -29,6 +30,7 @@ m_mesh_linker(&m_mesh,m_geom_model)
 /*----------------------------------------------------------------------------*/
 Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh),
 m_mesh_linker(ABl.m_mesh_linker) {
+	m_is_in =  m_mesh.getVariable<int,GMDS_REGION>("is_in");
 
 }
 /*----------------------------------------------------------------------------*/
@@ -322,8 +324,8 @@ Blocking::getBlocks(const TCellID ANodeId) {
 	return blocks;
 }
 /*----------------------------------------------------------------------------*/
-bool Blocking::get_is_in(const Blocking::Block &ABlock) {
-	return (*m_is_in)[ABlock.id()];
+int Blocking::get_is_in(Blocking::Block &ABlock) {
+	return m_is_in->value(ABlock.id());
 }
 
 /*----------------------------------------------------------------------------*/
@@ -486,10 +488,17 @@ Blocking::Block Blocking::create_block(const TCellID &AN1,
 	const TCellID &AN8) {
 
 	auto newBlock = m_mesh.newHex(AN1, AN2, AN3, AN4, AN5, AN6, AN7, AN8);
+	bool inside_volume = geom_model()->getVolume(1)->isIn(newBlock.center());
+	if (inside_volume) {
+		m_is_in->set(newBlock.id(),1);
+	}
+	else {
+		m_is_in->set(newBlock.id(),0);
+	}
 
-	math::Point pt = get_centroid_point(newBlock);
-	bool is_inside = geom_model()->getVolume(1)->isIn(pt);
-	m_is_in->set(newBlock.id(),is_inside);
+
+
+	return newBlock;
 }
 
 

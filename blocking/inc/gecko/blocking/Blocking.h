@@ -360,7 +360,7 @@ class  Blocking
 	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);
 	std::vector<Blocking::Block> getBlocks(const TCellID ANodeId);
 
-	bool get_is_in(const Blocking::Block &ABlock);
+	int get_is_in(Blocking::Block &ABlock);
 
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
@@ -527,7 +527,7 @@ class  Blocking
 	gmds::Mesh m_mesh;
 	gmds::cad::GeomMeshLinker m_mesh_linker;
 
-	Variable<bool>* m_is_in =  m_mesh.newVariable<bool,GMDS_REGION>("is_in");
+	Variable<int>* m_is_in;
 };
 /*----------------------------------------------------------------------------*/
 }     // namespace mctsblock

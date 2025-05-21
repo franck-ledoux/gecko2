@@ -69,6 +69,16 @@ std::shared_ptr<IState> MCTSAgent::get_most_winning_child() {
 	 return node->get_state();
 }
 /*---------------------------------------------------------------------------*/
+MCTSTree *MCTSAgent::get_most_winning_node() {
+	MCTSTree* node = m_tree;
+
+	if (!node->is_terminal() && node->has_children()){
+		node=node->get_most_winning_child();
+	}
+	return node;
+}
+
+/*---------------------------------------------------------------------------*/
 MCTSTree* MCTSAgent::expand(MCTSTree* ANode) {
     if(!ANode->is_fully_expanded() && !ANode->is_terminal())
         return  ANode->expand();
@@ -203,10 +213,19 @@ void MCTSAgent::export_tree() {
 /*---------------------------------------------------------------------------*/
 void MCTSAgent::run(std::shared_ptr<IState> ARootState) {
     //check that an existing tree was not used during a previous iteration
-    if(m_tree)
-        delete m_tree;
+    if(!m_tree)
+    	m_tree  = new MCTSTree(ARootState);
     //Build the initial tree
-    m_tree  = new MCTSTree(ARootState);
+    //m_tree  = new MCTSTree(ARootState);
+	else {
+		for (auto c : m_tree->get_children()) {
+			if (c->get_state() == ARootState) {
+				promote_child_has_root(c);
+			}
+		}
+
+
+	}
 
     int i=0;
     auto time0 = std::chrono::steady_clock::now();
@@ -264,5 +283,17 @@ MCTSTree* MCTSAgent::select(MCTSTree* ANode) {
     }
     //We have reached a terminal node here
     return  node;
+}
+/*---------------------------------------------------------------------------*/
+void MCTSAgent::promote_child_has_root(MCTSTree *new_root) {
+	if (!new_root)
+		throw std::invalid_argument("Cannot promote null node to root.");
+
+	MCTSTree* parent = new_root->get_parent();
+	if (parent) {
+		// Facultatif : on pourrait enlever new_root de la liste des enfants de son parent ici
+		new_root->set_parent(nullptr);
+	}
+	m_tree = new_root;
 }
 /*---------------------------------------------------------------------------*/

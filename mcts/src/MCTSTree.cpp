@@ -43,6 +43,10 @@ MCTSTree* MCTSTree::get_parent() const {
     return  m_parent;
 }
 /*---------------------------------------------------------------------------*/
+void MCTSTree::set_parent(MCTSTree *AParent) {
+	m_parent = AParent;
+}
+/*---------------------------------------------------------------------------*/
 bool MCTSTree::is_terminal() const {
     return m_state->is_terminal();
 }

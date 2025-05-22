@@ -283,10 +283,10 @@ BlockingState::get_possible_block_removals_limited() const
 	std::vector<Blocking::Block> blocks;
 	m_blocking->mesh().getAll<Region>(blocks);
 	for (auto b : blocks) {
-		gmds::math::Point pt = m_blocking->get_centroid_point(b);
-
-		bool is_inside = geom->getVolume(1)->isIn(pt);
-		if(is_inside) {
+		// gmds::math::Point pt = m_blocking->get_centroid_point(b);
+		//
+		// bool is_inside = geom->getVolume(1)->isIn(pt);
+		if(m_blocking->get_is_in(b) == 1) {
 			blocks_to_keep.insert(b.id());
 		}
 	}

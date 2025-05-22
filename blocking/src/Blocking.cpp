@@ -20,15 +20,17 @@ Blocking::Blocking(cad::GeomManager *AGeomModel, bool AInitAsBoundingBox)
 m_mesh(MeshModel(DIM3|R|F|E|N|R2N|F2N|E2N|R2F|F2R|F2E|E2F)),
 m_mesh_linker(&m_mesh,m_geom_model)
 {
+	m_is_in =  m_mesh.newVariable<int,GMDS_REGION>("is_in");
+
 	if (AInitAsBoundingBox) {
 		init_from_bounding_box();
 	}
 }
 
 /*----------------------------------------------------------------------------*/
-Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh),
-m_mesh_linker(&m_mesh, m_geom_model) {
-
+Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh), m_mesh_linker(&m_mesh, m_geom_model)
+ {
+	m_is_in =  m_mesh.getVariable<int,GMDS_REGION>("is_in");
 }
 /*----------------------------------------------------------------------------*/
 void Blocking::reset_classification() {
@@ -321,6 +323,11 @@ Blocking::getBlocks(const TCellID ANodeId) {
 	return blocks;
 }
 /*----------------------------------------------------------------------------*/
+int Blocking::get_is_in(Blocking::Block &ABlock) {
+	return m_is_in->value(ABlock.id());
+}
+
+/*----------------------------------------------------------------------------*/
 std::vector<Blocking::Block>
 Blocking::getBlocks(const Blocking::Node ANode) {
 	return getBlocks(ANode.id());
@@ -470,6 +477,32 @@ Blocking::save_vtk_blocking(const std::string &AFileName) {
 	writer_edge.write(edge_filename);
 }
 /*----------------------------------------------------------------------------*/
+Blocking::Block Blocking::create_block(const TCellID &AN1,
+	const TCellID &AN2,
+	const TCellID &AN3,
+	const TCellID &AN4,
+	const TCellID &AN5,
+	const TCellID &AN6,
+	const TCellID &AN7,
+	const TCellID &AN8) {
+
+	auto newBlock = m_mesh.newHex(AN1, AN2, AN3, AN4, AN5, AN6, AN7, AN8);
+	bool inside_volume = geom_model()->getVolume(1)->isIn(newBlock.center());
+	if (inside_volume) {
+		m_is_in->set(newBlock.id(),1);
+	}
+	else {
+		m_is_in->set(newBlock.id(),0);
+	}
+
+
+
+	return newBlock;
+}
+
+
+/*----------------------------------------------------------------------------*/
+
 void Blocking::remove_block(Block AB) {
 	auto b_faces = AB.get<Face>();
 	auto b_nodes = AB.get<Node>();
@@ -1207,15 +1240,25 @@ Blocking::cut_sheet(const Edge AE, const Node AN, const double AParam) {
 
 		set_geom_link(new_inner_face, get_geom_dim(r), get_geom_id(r));
 
-		auto first_block = m_mesh.newHex(
-			f_node_ids[0], f_node_ids[1],
+		// auto first_block = m_mesh.newHex(
+		// 	f_node_ids[0], f_node_ids[1],
+		// 	f_node_ids[2], f_node_ids[3],
+		// 	map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+		// 	map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
+		auto first_block = create_block(f_node_ids[0], f_node_ids[1],
 			f_node_ids[2], f_node_ids[3],
 			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
 			map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]]);
 		set_geom_link(first_block, get_geom_dim(r), get_geom_id(r));
 
-		auto snd_block = m_mesh.newHex(
-			map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+
+		// auto snd_block = m_mesh.newHex(
+		// 	map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
+		// 	map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]],
+		// 	sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
+		// 	sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);
+
+		auto snd_block = create_block(map_node_to_new_node[f_node_ids[0]], map_node_to_new_node[f_node_ids[1]],
 			map_node_to_new_node[f_node_ids[2]], map_node_to_new_node[f_node_ids[3]],
 			sheet_n2n[f_node_ids[0]], sheet_n2n[f_node_ids[1]],
 			sheet_n2n[f_node_ids[2]], sheet_n2n[f_node_ids[3]]);

@@ -28,10 +28,9 @@ m_mesh_linker(&m_mesh,m_geom_model)
 }
 
 /*----------------------------------------------------------------------------*/
-Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh),
-m_mesh_linker(ABl.m_mesh_linker) {
+Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh), m_mesh_linker(&m_mesh, m_geom_model)
+ {
 	m_is_in =  m_mesh.getVariable<int,GMDS_REGION>("is_in");
-
 }
 /*----------------------------------------------------------------------------*/
 void Blocking::reset_classification() {

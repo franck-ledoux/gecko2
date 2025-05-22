@@ -5,6 +5,8 @@ project(gecko2)
 # Compilation options mainly for testing purpose
 #==============================================================================
 option(WITH_TEST "Build test"   ON)
+
+#add_compile_options(-DCGAL_DISABLE_ROUNDING_MATH_CHECK=ON)
 #==============================================================================
 add_subdirectory(external/Catch2-3.8.0)
 add_subdirectory(external/Predicates_psm)

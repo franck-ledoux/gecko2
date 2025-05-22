@@ -9,7 +9,7 @@
 using namespace gecko;
 using namespace gecko::blocking;
 /*----------------------------------------------------------------------------*/
-BlockingClassifier::BlockingClassifier(Blocking *ABlocking) : m_blocking(ABlocking), m_geom_model(ABlocking->geom_model()) {}
+BlockingClassifier::BlockingClassifier(std::shared_ptr<Blocking> ABlocking) : m_blocking(ABlocking), m_geom_model(ABlocking->geom_model()) {}
 /*----------------------------------------------------------------------------*/
 BlockingClassifier::~BlockingClassifier() {}
 /*----------------------------------------------------------------------------*/

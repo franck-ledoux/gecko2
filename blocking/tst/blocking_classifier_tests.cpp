@@ -96,7 +96,7 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp_class(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     std::set<TCellID> m_boundary_node_ids;
     std::set<TCellID> m_boundary_edge_ids;
@@ -124,7 +124,7 @@ TEST_CASE("BlockingTestSuite - split_and_capt_with_reset", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp_class(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     std::set<TCellID> m_boundary_node_ids;
     std::set<TCellID> m_boundary_edge_ids;
@@ -190,7 +190,7 @@ TEST_CASE("BlockingTestSuite - split_and_capt_without_reset", "[blocking]") {
     gmds::cad::FACManager geom_model;
     setUp_class(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     std::set<TCellID> m_boundary_node_ids;
     std::set<TCellID> m_boundary_edge_ids;
@@ -250,7 +250,7 @@ TEST_CASE("BlockingTestSuite - split_until_and_capt_without_reset", "[blocking]"
     gmds::cad::FACManager geom_model;
     setUp_class(geom_model);
     gecko::blocking::Blocking bl(&geom_model,true);
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     std::vector<gecko::blocking::Blocking::Edge> edges;
     bl.mesh().getAll<Edge>(edges);
@@ -375,7 +375,7 @@ TEST_CASE("BlockingTestSuite - split_three_and_finale_capt","[blocking]") {
     REQUIRE(m_boundary_edge_ids.size() == 48);
     REQUIRE(m_boundary_face_ids.size() == 24);
 
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     cl.clear_classification();
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
@@ -393,7 +393,7 @@ TEST_CASE("BlockingTestSuite - copy_blocking_and_classification","[BlockingTestS
     gmds::cad::FACManager geom_model;
     setUp_class(geom_model);
     gecko::blocking::Blocking bl(&geom_model, true);
-    gecko::blocking::BlockingClassifier cl(&bl);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
 
     std::set<TCellID> m_boundary_node_ids;
     std::set<TCellID> m_boundary_edge_ids;

@@ -21,7 +21,7 @@ BlockingState::BlockingState(std::shared_ptr<Blocking> AB, int ADepth, std::dequ
 {
 //	m_blocking->reset_classification();
 	m_blocking->extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
-	BlockingClassifier(m_blocking.get()).try_and_capture(m_boundary_node_ids,m_boundary_edge_ids, m_boundary_face_ids);
+	BlockingClassifier(m_blocking).try_and_capture(m_boundary_node_ids,m_boundary_edge_ids, m_boundary_face_ids);
 	updateMemory(computeScore());
 
 	m_expected_optimal_score = weight_nodes * m_blocking->geom_model()->getNbPoints()
@@ -161,7 +161,7 @@ BlockingState::computeScore()
 double
 BlockingState::computeScoreClassification()
 {
-	auto errors = BlockingClassifier(m_blocking.get()).detect_classification_errors();
+	auto errors = BlockingClassifier(m_blocking).detect_classification_errors();
 
 	return weight_nodes*(m_blocking->geom_model()->getNbPoints()-errors.non_captured_points.size())+
 			 weight_edges*(m_blocking->geom_model()->getNbCurves()-errors.non_captured_curves.size())+
@@ -302,7 +302,7 @@ BlockingState::get_possible_cuts() const
 	double epsilon = 1e-2;
 	std::set<std::pair<gmds::math::Point,std::pair<TCellID, double>>> list_cuts;
 	// We look which geometric points and curves are not yet captured
-	auto non_captured_entities = BlockingClassifier(m_blocking.get()).detect_classification_errors();
+	auto non_captured_entities = BlockingClassifier(m_blocking).detect_classification_errors();
 	auto non_captured_points = non_captured_entities.non_captured_points;
 	auto non_captured_curves = non_captured_entities.non_captured_curves;
 

@@ -594,3 +594,50 @@ TEST_CASE("BlockingTestSuite - centroide_cube","[BlockingTestSuite]") {
     REQUIRE(centroide_p.Y() == 0.0);
     REQUIRE(centroide_p.Z() == 0.0);
 }
+
+TEST_CASE("BlockingTestSuite - test_clone_blocking","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp(geom_model);
+    gecko::blocking::Blocking bl(&geom_model,true);
+
+    std::vector<gecko::blocking::Blocking::Edge> edges;
+    bl.mesh().getAll<Edge>(edges);
+    bl.cut_sheet(edges[0]);
+
+
+    auto blClone = gecko::blocking::Blocking::clone(std::make_shared<gecko::blocking::Blocking>(bl));
+
+    REQUIRE(blClone.mesh().getNbNodes() == 12);
+    REQUIRE(blClone.mesh().getNbEdges() == 20);
+    REQUIRE(blClone.mesh().getNbFaces() ==11);
+    REQUIRE(blClone.mesh().getNbRegions() == 2);
+
+    for (auto e_id : blClone.mesh().edges()) {
+        auto e = blClone.mesh().get<Edge>(e_id);
+        auto nodes_e = e.get<Node>();
+        auto faces_e = e.get<Face>();
+
+        REQUIRE(nodes_e.size() == 2);
+        REQUIRE(faces_e.size() != 0);
+    }
+
+    for (auto f_id : blClone.mesh().faces()) {
+        auto f = blClone.mesh().get<Face>(f_id);
+        auto nodes_f = f.get<Node>();
+        auto edges_f = f.get<Edge>();
+        auto regions_f = f.get<Region>();
+
+        REQUIRE(nodes_f.size() == 4);
+        REQUIRE(edges_f.size() == 4);
+        REQUIRE(regions_f.size() != 0);
+    }
+
+    for (auto r_id : blClone.mesh().regions()) {
+        auto r = blClone.mesh().get<Region>(r_id);
+        auto nodes_r = r.get<Node>();
+        auto faces_r = r.get<Face>();
+
+        REQUIRE(nodes_r.size() == 8);
+        REQUIRE(faces_r.size() == 6);
+    }
+}

@@ -45,7 +45,7 @@ class BlockingClassifier
 	/** @brief Constructor
 	 * @param[in] ABlocking a blocking structure
 	 */
-	BlockingClassifier(Blocking *ABlocking);
+	BlockingClassifier(std::shared_ptr<Blocking> ABlocking);
 
 	/** @brief  Destructor
 	 */
@@ -235,7 +235,7 @@ class BlockingClassifier
  private:
 
 	/*** the associated geometric model*/
-	Blocking *m_blocking;
+	std::shared_ptr<Blocking> m_blocking;
 	/*** the associated geometric model*/
 	cad::GeomManager *m_geom_model;
 };

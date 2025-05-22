@@ -495,6 +495,8 @@ class  Blocking
 	 * @param[in] AFileName 		the name used for the file
 	 */
 	void save_vtk_blocking(const std::string &AFileName);
+
+	static Blocking clone(std::shared_ptr<Blocking> ABlocking);
  private:
 	/**\brief Order the edges of @p AEdges accordingly to their distance to @p AP.
 	 * 		 More specifically, we orthogonaly project @p AP on each edge of @p AEdges.

@@ -359,6 +359,13 @@ class  Blocking
 	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);
 	std::vector<Blocking::Block> getBlocks(const TCellID ANodeId);
 
+	TCellID get_new_id_edge(TCellID APreviousEdgeId);
+	TCellID get_new_id_block(TCellID APreviousBlockId);
+
+	static void set_new_id(Blocking& instance,Blocking::Block ABlock, TCellID APreviousId);
+	static void set_new_id(Blocking& instance,Blocking::Edge AEdge, TCellID APreviousId);
+
+
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
 	 *=================================================================*/
@@ -525,6 +532,15 @@ class  Blocking
 	/*** the underlying n-g-map model*/
 	gmds::Mesh m_mesh;
 	gmds::cad::GeomMeshLinker m_mesh_linker;
+
+	/*** When we apply an action, we need to know the new id generated during the clone process.
+	 * This variable save the link between the old id, with the new one.
+	 */
+	Variable<TCellID>* m_new_edge_id;
+	/*** When we apply an action, we need to know the new id generated during the clone process.
+	 * This variable save the link between the old id, with the new one.
+	 */
+	Variable<TCellID>* m_new_block_id;
 };
 /*----------------------------------------------------------------------------*/
 }     // namespace mctsblock

@@ -20,6 +20,9 @@ Blocking::Blocking(cad::GeomManager *AGeomModel, bool AInitAsBoundingBox)
 m_mesh(MeshModel(DIM3|R|F|E|N|R2N|F2N|E2N|R2F|F2R|F2E|E2F)),
 m_mesh_linker(&m_mesh,m_geom_model)
 {
+
+	m_new_edge_id =  m_mesh.newVariable<TCellID,GMDS_EDGE>("new_edge_id");
+	m_new_block_id =  m_mesh.newVariable<TCellID,GMDS_REGION>("new_block_id");
 	if (AInitAsBoundingBox) {
 		init_from_bounding_box();
 	}
@@ -28,6 +31,9 @@ m_mesh_linker(&m_mesh,m_geom_model)
 /*----------------------------------------------------------------------------*/
 Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh),
 m_mesh_linker(&m_mesh, m_geom_model) {
+
+	m_new_edge_id =  m_mesh.getVariable<TCellID,GMDS_EDGE>("new_edge_id");
+	m_new_block_id =  m_mesh.getVariable<TCellID,GMDS_REGION>("new_block_id");
 
 }
 /*----------------------------------------------------------------------------*/
@@ -326,6 +332,26 @@ Blocking::getBlocks(const Blocking::Node ANode) {
 	return getBlocks(ANode.id());
 }
 
+/*----------------------------------------------------------------------------*/
+TCellID Blocking::get_new_id_edge(TCellID APreviousEdgeId) {
+	return m_new_edge_id->value(APreviousEdgeId);
+}
+
+/*----------------------------------------------------------------------------*/
+TCellID Blocking::get_new_id_block(TCellID APreviousBlockId) {
+	return m_new_block_id->value(APreviousBlockId);
+}
+
+/*----------------------------------------------------------------------------*/
+void
+Blocking::set_new_id(Blocking &instance,Blocking::Block ABlock, TCellID APreviousId){
+	instance.m_new_block_id->set( APreviousId,ABlock.id());
+}
+
+/*----------------------------------------------------------------------------*/
+void Blocking::set_new_id(Blocking &instance, Blocking::Edge AEdge, TCellID APreviousId) {
+	instance.m_new_edge_id->set( APreviousId,AEdge.id());
+}
 /*----------------------------------------------------------------------------*/
 bool
 Blocking::is_valid_connected() {
@@ -1451,6 +1477,8 @@ Blocking Blocking::clone(std::shared_ptr<Blocking> ABlocking) {
 		auto new_e = newBlocking.mesh().newEdge(n0_new_e, n1_new_e);
 
 		e2e[old_e.id()] = new_e.id();
+		set_new_id(newBlocking,new_e,old_e_id);
+
 	}
 	for (auto old_f_id: ABlocking->mesh().faces()) {
 		auto old_f = ABlocking->mesh().get<Face>(old_f_id);
@@ -1492,6 +1520,7 @@ Blocking Blocking::clone(std::shared_ptr<Blocking> ABlocking) {
 		auto n7_new_r = newBlocking.mesh().get<Node>(id_n7_new_r);
 
 		auto new_r = newBlocking.mesh().newHex(n0_new_r,n1_new_r,n2_new_r,n3_new_r,n4_new_r,n5_new_r,n6_new_r,n7_new_r);
+		set_new_id(newBlocking,new_r,old_r_id);
 	}
 
 	gmds::MeshDoctor doc(&newBlocking.mesh());

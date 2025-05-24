@@ -295,8 +295,7 @@ Blocking::move_node(Node AN, math::Point &ALoc) {
 
 /*----------------------------------------------------------------------------*/
 Edge Blocking::get_edge(const TCellID ANodeId0, const TCellID ANodeId1) {
-	auto edges = m_mesh.edges();
-	for (auto e_id: edges) {
+	for (auto e_id: m_mesh.edges()) {
 		auto e = m_mesh.get<Edge>(e_id);
 		auto e_nodes = e.getIDs<Node>();
 		auto n0 = e_nodes[0];

@@ -22,6 +22,7 @@ BlockingState::BlockingState(std::shared_ptr<Blocking> AB, int ADepth, std::dequ
 {
 //	m_blocking->reset_classification();
 	m_blocking->extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
 	BlockingClassifier(m_blocking).try_and_capture(m_boundary_node_ids,m_boundary_edge_ids, m_boundary_face_ids);
 	updateMemory(computeScore());
 

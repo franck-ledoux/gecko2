@@ -260,6 +260,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 	// 1. WE CHECK NODE
 	//===================================================================
 	try_and_classify_nodes(ANodeIds);
+
 	std::vector<std::pair<int, Blocking::Node>> classNodes;
 	for (auto nId : ANodeIds) {
 		auto n = m_blocking->mesh().get<Node>(nId);
@@ -395,9 +396,9 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			}
 		}
 	}
+
 	for(auto mapElmt : captCurvesMap){
 		if(!alreadyClass(mapElmt.second.second)){
-
 			//m_blocking->save_vtk_blocking("temp_save_debug");
 
 			auto c = m_geom_model->getCurve(mapElmt.second.first);
@@ -426,6 +427,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 					m_blocking->set_geom_link(e_mn,cad::GeomMeshLinker::LinkCurve,c->id());
 				}
 			}
+
 			is_captured_curves[c->id()]= true;
 		}
 	}

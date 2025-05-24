@@ -35,7 +35,7 @@ def list_vtk_files(dir):
 if __name__ == "__main__":
 
     if len(sys.argv) != 5:
-        print("Usage: ./check.py <mcts program> <param.json> <test case directory> <out directory>")
+        print("Usage: ./check.py <mcts program> <test case directory> <param.json> <out directory>")
     else:
         nb_cases = nb_wins = nb_errors = nb_lost = nb_draws = 0
         exe = os.path.join(os.getcwd(), sys.argv[1])

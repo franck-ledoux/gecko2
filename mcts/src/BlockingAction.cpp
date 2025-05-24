@@ -25,10 +25,9 @@ std::shared_ptr<IState>
 EdgeCutAction::apply_on(std::shared_ptr<IState> AState) const
 {
 	auto current_state = std::dynamic_pointer_cast<BlockingState>(AState);
-	auto new_blocking = gecko::blocking::Blocking::clone(current_state->get_blocking());//std::make_shared<gecko::blocking::Blocking>(* current_state->get_blocking());
-
-	new_blocking.cut_sheet(new_blocking.get_new_id_edge(m_edge_id), m_cut_param);
-	auto next_state =  std::make_shared<BlockingState>(std::make_shared<blocking::Blocking>(new_blocking), current_state->get_depth()+1, current_state->get_memory());
+	auto new_blocking = std::make_shared<gecko::blocking::Blocking>(* current_state->get_blocking());
+	new_blocking->cut_sheet(m_edge_id, m_cut_param);
+	auto next_state =  std::make_shared<BlockingState>(new_blocking, current_state->get_depth()+1, current_state->get_memory());
 	return next_state;
 }
 /*----------------------------------------------------------------------------*/

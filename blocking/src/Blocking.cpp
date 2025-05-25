@@ -20,6 +20,9 @@ Blocking::Blocking(cad::GeomManager *AGeomModel, bool AInitAsBoundingBox)
 m_mesh(MeshModel(DIM3|R|F|E|N|R2N|F2N|E2N|R2F|F2R|F2E|E2F)),
 m_mesh_linker(&m_mesh,m_geom_model)
 {
+
+	m_new_edge_id =  m_mesh.newVariable<TCellID,GMDS_EDGE>("new_edge_id");
+	m_new_block_id =  m_mesh.newVariable<TCellID,GMDS_REGION>("new_block_id");
 	m_is_in =  m_mesh.newVariable<int,GMDS_REGION>("is_in");
 
 	if (AInitAsBoundingBox) {
@@ -28,8 +31,11 @@ m_mesh_linker(&m_mesh,m_geom_model)
 }
 
 /*----------------------------------------------------------------------------*/
-Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh), m_mesh_linker(&m_mesh, m_geom_model)
- {
+Blocking::Blocking(const Blocking &ABl) : m_geom_model(ABl.m_geom_model), m_mesh(ABl.m_mesh),
+m_mesh_linker(&m_mesh, m_geom_model) {
+
+	m_new_edge_id =  m_mesh.getVariable<TCellID,GMDS_EDGE>("new_edge_id");
+	m_new_block_id =  m_mesh.getVariable<TCellID,GMDS_REGION>("new_block_id");
 	m_is_in =  m_mesh.getVariable<int,GMDS_REGION>("is_in");
 }
 /*----------------------------------------------------------------------------*/
@@ -291,8 +297,7 @@ Blocking::move_node(Node AN, math::Point &ALoc) {
 
 /*----------------------------------------------------------------------------*/
 Edge Blocking::get_edge(const TCellID ANodeId0, const TCellID ANodeId1) {
-	auto edges = m_mesh.edges();
-	for (auto e_id: edges) {
+	for (auto e_id: m_mesh.edges()) {
 		auto e = m_mesh.get<Edge>(e_id);
 		auto e_nodes = e.getIDs<Node>();
 		auto n0 = e_nodes[0];
@@ -333,6 +338,26 @@ Blocking::getBlocks(const Blocking::Node ANode) {
 	return getBlocks(ANode.id());
 }
 
+/*----------------------------------------------------------------------------*/
+TCellID Blocking::get_new_id_edge(TCellID APreviousEdgeId) {
+	return m_new_edge_id->value(APreviousEdgeId);
+}
+
+/*----------------------------------------------------------------------------*/
+TCellID Blocking::get_new_id_block(TCellID APreviousBlockId) {
+	return m_new_block_id->value(APreviousBlockId);
+}
+
+/*----------------------------------------------------------------------------*/
+void
+Blocking::set_new_id(Blocking &instance,Blocking::Block ABlock, TCellID APreviousId){
+	instance.m_new_block_id->set( APreviousId,ABlock.id());
+}
+
+/*----------------------------------------------------------------------------*/
+void Blocking::set_new_id(Blocking &instance, Blocking::Edge AEdge, TCellID APreviousId) {
+	instance.m_new_edge_id->set( APreviousId,AEdge.id());
+}
 /*----------------------------------------------------------------------------*/
 bool
 Blocking::is_valid_connected() {
@@ -1466,6 +1491,87 @@ Blocking::get_projection_info(const math::Point &AP, std::vector<Blocking::Edge>
 		dist_coord.push_back(get_projection_info(AP, e));
 	}
 	return dist_coord;
+}
+
+/*----------------------------------------------------------------------------*/
+Blocking Blocking::clone(std::shared_ptr<Blocking> ABlocking) {
+	Blocking newBlocking(ABlocking->geom_model());
+	std::map<TCellID, TCellID> n2n;
+	std::map<TCellID, TCellID> e2e;
+	std::map<TCellID, TCellID> f2f;
+	std::map<TCellID, TCellID> r2r;
+
+	for (auto old_n_id : ABlocking->mesh().nodes()) {
+		auto old_n = ABlocking->mesh().get<Node>(old_n_id);
+		auto new_n = newBlocking.mesh().newNode(old_n.X(), old_n.Y(), old_n.Z());
+		new_n.id();
+		n2n[old_n.id()] = new_n.id();
+	}
+	for (auto old_e_id: ABlocking->mesh().edges()) {
+		auto old_e = ABlocking->mesh().get<Edge>(old_e_id);
+		auto nodes_old_e = old_e.get<Node>();
+
+		auto id_n0_new_e = n2n[nodes_old_e[0].id()];
+		auto id_n1_new_e = n2n[nodes_old_e[1].id()];
+
+		auto n0_new_e = newBlocking.mesh().get<Node>(id_n0_new_e);
+		auto n1_new_e = newBlocking.mesh().get<Node>(id_n1_new_e);
+		auto new_e = newBlocking.mesh().newEdge(n0_new_e, n1_new_e);
+
+		e2e[old_e.id()] = new_e.id();
+		set_new_id(newBlocking,new_e,old_e_id);
+
+	}
+	for (auto old_f_id: ABlocking->mesh().faces()) {
+		auto old_f = ABlocking->mesh().get<Face>(old_f_id);
+		auto nodes_old_f = old_f.get<Node>();
+
+		auto id_n0_new_f = n2n[nodes_old_f[0].id()];
+		auto id_n1_new_f = n2n[nodes_old_f[1].id()];
+		auto id_n2_new_f = n2n[nodes_old_f[2].id()];
+		auto id_n3_new_f = n2n[nodes_old_f[3].id()];
+
+		auto n0_new_f = newBlocking.mesh().get<Node>(id_n0_new_f);
+		auto n1_new_f = newBlocking.mesh().get<Node>(id_n1_new_f);
+		auto n2_new_f = newBlocking.mesh().get<Node>(id_n2_new_f);
+		auto n3_new_f = newBlocking.mesh().get<Node>(id_n3_new_f);
+
+		auto new_f = newBlocking.mesh().newQuad(n0_new_f, n1_new_f, n2_new_f, n3_new_f);
+		f2f[old_f.id()] = new_f.id();
+	}
+	for (auto old_r_id: ABlocking->mesh().regions()) {
+		auto old_r = ABlocking->mesh().get<Region>(old_r_id);
+		auto nodes_old_r = old_r.get<Node>();
+
+		auto id_n0_new_r = n2n[nodes_old_r[0].id()];
+		auto id_n1_new_r = n2n[nodes_old_r[1].id()];
+		auto id_n2_new_r = n2n[nodes_old_r[2].id()];
+		auto id_n3_new_r = n2n[nodes_old_r[3].id()];
+		auto id_n4_new_r = n2n[nodes_old_r[4].id()];
+		auto id_n5_new_r = n2n[nodes_old_r[5].id()];
+		auto id_n6_new_r = n2n[nodes_old_r[6].id()];
+		auto id_n7_new_r = n2n[nodes_old_r[7].id()];
+
+		auto n0_new_r = newBlocking.mesh().get<Node>(id_n0_new_r);
+		auto n1_new_r = newBlocking.mesh().get<Node>(id_n1_new_r);
+		auto n2_new_r = newBlocking.mesh().get<Node>(id_n2_new_r);
+		auto n3_new_r = newBlocking.mesh().get<Node>(id_n3_new_r);
+		auto n4_new_r = newBlocking.mesh().get<Node>(id_n4_new_r);
+		auto n5_new_r = newBlocking.mesh().get<Node>(id_n5_new_r);
+		auto n6_new_r = newBlocking.mesh().get<Node>(id_n6_new_r);
+		auto n7_new_r = newBlocking.mesh().get<Node>(id_n7_new_r);
+
+		auto new_r = newBlocking.mesh().newHex(n0_new_r,n1_new_r,n2_new_r,n3_new_r,n4_new_r,n5_new_r,n6_new_r,n7_new_r);
+		set_new_id(newBlocking,new_r,old_r_id);
+	}
+
+	gmds::MeshDoctor doc(&newBlocking.mesh());
+	doc.buildFacesAndR2F();
+	doc.buildF2E(newBlocking.mesh().getModel());
+	doc.buildF2R(newBlocking.mesh().getModel());
+	doc.updateUpwardConnectivity();
+
+	return newBlocking;
 }
 
 /*----------------------------------------------------------------------------*/

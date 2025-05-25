@@ -59,7 +59,7 @@ display_info(std::shared_ptr<BlockingState> state)
 	auto bl = state->get_blocking();
 	std::cout << "Blocking " << bl.get() << " (N,E,F,B): " << bl->mesh().getNbNodes() << ", " << bl->mesh().getNbEdges() << ", " << bl->mesh().getNbFaces() << ", "
 			  << bl->mesh().getNbRegions() << std::endl;
-	auto errors = BlockingClassifier(bl.get()).detect_classification_errors();
+	auto errors = BlockingClassifier(bl).detect_classification_errors();
 	std::cout << "\t non captured points (" << errors.non_captured_points.size() << "): ";
 	for (auto i : errors.non_captured_points) {
 		auto pi = bl->geom_model()->getPoint(i)->point();

@@ -360,6 +360,12 @@ class  Blocking
 	std::vector<Blocking::Block> getBlocks(const Blocking::Node ANode);
 	std::vector<Blocking::Block> getBlocks(const TCellID ANodeId);
 
+	TCellID get_new_id_edge(TCellID APreviousEdgeId);
+	TCellID get_new_id_block(TCellID APreviousBlockId);
+
+	static void set_new_id(Blocking& instance,Blocking::Block ABlock, TCellID APreviousId);
+	static void set_new_id(Blocking& instance,Blocking::Edge AEdge, TCellID APreviousId);
+
 	int get_is_in(Blocking::Block &ABlock);
 
 	/**================================================================
@@ -483,6 +489,8 @@ class  Blocking
 	 * @param[in] AFileName 		the name used for the file
 	 */
 	void save_vtk_blocking(const std::string &AFileName);
+
+	static Blocking clone(std::shared_ptr<Blocking> ABlocking);
  private:
 	/**================================================================
 	 *  TOPOLOGICAL OPERATIONS THAT MODIFY ALSO GEOMETRY
@@ -527,6 +535,14 @@ class  Blocking
 	gmds::Mesh m_mesh;
 	gmds::cad::GeomMeshLinker m_mesh_linker;
 
+	/*** When we apply an action, we need to know the new id generated during the clone process.
+	 * This variable save the link between the old id, with the new one.
+	 */
+	Variable<TCellID>* m_new_edge_id;
+	/*** When we apply an action, we need to know the new id generated during the clone process.
+	 * This variable save the link between the old id, with the new one.
+	 */
+	Variable<TCellID>* m_new_block_id;
 	Variable<int>* m_is_in;
 };
 /*----------------------------------------------------------------------------*/

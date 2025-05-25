@@ -181,9 +181,12 @@ int main(int argc, char* argv[])
 		  std::cout << "Iteration " << i << ", nb runs: " << agent.get_nb_iterations() - 1;
 		  std::cout << ", timing: " << agent.get_nb_seconds() << " s." << std::endl;
 
-		  current_state = std::dynamic_pointer_cast<BlockingState>(agent.get_most_winning_child());
-		  display_info(current_state);
-		  current_state->get_blocking()->save_vtk_blocking("loop_" + std::to_string(i));
+
+	 		current_state = std::dynamic_pointer_cast<BlockingState>(agent.get_most_winning_child());
+
+
+	 	display_info(current_state);
+	 	current_state->get_blocking()->save_vtk_blocking("loop_" + std::to_string(i));
 
 	 }
 	 std::cout << "=======================================" << std::endl;

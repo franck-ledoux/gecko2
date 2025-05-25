@@ -48,6 +48,7 @@ struct CellInfo
 	 * @param ATopoDim Cell dimension
 	 * @param AGeomDim on-classify geometric cell dimension (4 if not classified)
 	 * @param AGeomId on-classify geometric cell unique id
+	 * @param  IsInInfo a boolean to know if the cell is in the vol
 	 */
 	CellInfo(cad::GeomManager *AManager = nullptr, const int ATopoDim = 4, const int AGeomDim = 4, const int AGeomId = NullID) :
 	  topo_dim(ATopoDim), geom_manager(AManager), geom_dim(AGeomDim), geom_id(AGeomId)
@@ -365,6 +366,7 @@ class  Blocking
 	static void set_new_id(Blocking& instance,Blocking::Block ABlock, TCellID APreviousId);
 	static void set_new_id(Blocking& instance,Blocking::Edge AEdge, TCellID APreviousId);
 
+	int get_is_in(Blocking::Block &ABlock);
 
 	/**================================================================
 	 *  GEOMETRIC OPERATIONS
@@ -379,21 +381,6 @@ class  Blocking
 	 * @param ALoc the new node location
 	 */
 	void move_node(Node AN, math::Point &ALoc);
-
-	/**================================================================
-	 *  TOPOLOGICAL OPERATIONS THAT MODIFY ALSO GEOMETRY
-	 *=================================================================*/
-	/** Create a single hexahedral block in the blocking structure
-	 * @return The created block
-	 */
-	Block create_block(const math::Point &AP1,
-	                   const math::Point &AP2,
-	                   const math::Point &AP3,
-	                   const math::Point &AP4,
-	                   const math::Point &AP5,
-	                   const math::Point &AP6,
-	                   const math::Point &AP7,
-	                   const math::Point &AP8);
 
 	/** Removes the block @AB from the structure
 	 * @param[in] ABlockId the block id to remove
@@ -505,6 +492,21 @@ class  Blocking
 
 	static Blocking clone(std::shared_ptr<Blocking> ABlocking);
  private:
+	/**================================================================
+	 *  TOPOLOGICAL OPERATIONS THAT MODIFY ALSO GEOMETRY
+	 *=================================================================*/
+	/** Create a single hexahedral block in the blocking structure
+	 * @return The created block
+	 */
+	Block create_block(const TCellID &AN1,
+		const TCellID &AN2,
+		const TCellID &AN3,
+		const TCellID &AN4,
+		const TCellID &AN5,
+		const TCellID &AN6,
+		const TCellID &AN7,
+		const TCellID &AN8);
+
 	/**\brief Order the edges of @p AEdges accordingly to their distance to @p AP.
 	 * 		 More specifically, we orthogonaly project @p AP on each edge of @p AEdges.
 	 * 		 For each edge, we store the distance between @p AP and the edge and the coordinate
@@ -541,6 +543,7 @@ class  Blocking
 	 * This variable save the link between the old id, with the new one.
 	 */
 	Variable<TCellID>* m_new_block_id;
+	Variable<int>* m_is_in;
 };
 /*----------------------------------------------------------------------------*/
 }     // namespace mctsblock

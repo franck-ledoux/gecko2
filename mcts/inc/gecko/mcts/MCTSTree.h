@@ -33,6 +33,8 @@ public:
      */
    MCTSTree* get_parent() const;
 
+	void set_parent(MCTSTree* AParent);
+
     /**@brief Provides the action that allows to create this node from its
      *        parent
      * @return an action, which can be null for the root
@@ -74,6 +76,7 @@ public:
      * @return true if the node has at least one child, false otherwise
      */
     bool has_children() const;
+
 
     /** total reward of the current node */
 	 double cumulative_reward;

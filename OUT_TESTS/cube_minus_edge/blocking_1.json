@@ -1,1 +1,1 @@
-{"links":[{"child":8,"parent":7},{"child":9,"parent":8}],"nodes":[{"data":"","depth":0,"id":7,"reward":121929808.0,"visits":1001},{"data":"","depth":1,"id":8,"reward":121929808.0,"visits":1001},{"data":"","depth":2,"id":9,"reward":121808000.0,"visits":1000}]}
+{"links":[{"child":4,"parent":1},{"child":5,"parent":4}],"nodes":[{"data":"","depth":1,"id":1,"reward":182955616.0,"visits":1502},{"data":"","depth":2,"id":4,"reward":182833808.0,"visits":1501},{"data":"","depth":3,"id":5,"reward":182712000.0,"visits":1500}]}

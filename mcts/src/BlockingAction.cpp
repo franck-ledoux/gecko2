@@ -56,10 +56,11 @@ std::shared_ptr<IState>
 BlockRemovalAction::apply_on(std::shared_ptr<IState> AState) const
 {
 	auto current_state = std::dynamic_pointer_cast<BlockingState>(AState);
-	auto new_blocking = gecko::blocking::Blocking::clone(current_state->get_blocking());//std::make_shared<gecko::blocking::Blocking>(* current_state->get_blocking());
+	auto new_blocking = std::make_shared<blocking::Blocking>(* current_state->get_blocking());
+	//auto new_blocking = gecko::blocking::Blocking::clone(current_state->get_blocking());//std::make_shared<gecko::blocking::Blocking>(* current_state->get_blocking());
 
-	new_blocking.remove_block(new_blocking.get_new_id_block(m_block_id));
-	auto next_state =  std::make_shared<BlockingState>(std::make_shared<blocking::Blocking>(new_blocking), current_state->get_depth()+1, current_state->get_memory());
+	new_blocking->remove_block(m_block_id);
+	auto next_state =  std::make_shared<BlockingState>(new_blocking, current_state->get_depth()+1, current_state->get_memory());
 	return next_state;
 }
 /*----------------------------------------------------------------------------*/

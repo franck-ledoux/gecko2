@@ -16,12 +16,12 @@ POINTS 18 float
 0 3 10
 3 3 10
 3 3 0
-0 0 7
-3 0 7
-3 3 7
-0 3 7
-3 10 7
-0 10 7
+0 0 3
+3 0 3
+3 3 3
+0 3 3
+3 10 3
+0 10 3
 
 CELLS 33 99
 2 13 7
@@ -96,12 +96,12 @@ POINT_DATA 18
 SCALARS GMDS_ID int 1
 LOOKUP_TABLE default
 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 
-SCALARS geom_link_dim_0 int 1
+SCALARS geom_link_dim int 1
 LOOKUP_TABLE default
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-SCALARS geom_link_id_0 int 1
+1 1 1 1 1 1 1 1 2 2 2 2 2 2 1 1 2 2 
+SCALARS geom_link_id int 1
 LOOKUP_TABLE default
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+4 2 9 11 3 1 10 15 11 9 14 18 19 20 13 5 16 13 
 
 
 CELL_DATA 33
@@ -109,11 +109,11 @@ SCALARS GMDS_ID int 1
 LOOKUP_TABLE default
 0 1 2 3 4 5 6 7 12 13 14 15 16 17 18 19 21 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 
 
-SCALARS geom_link_dim_0 int 1
+SCALARS geom_link_dim int 1
 LOOKUP_TABLE default
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0 2 2 2 2 0 0 0 
 
-SCALARS geom_link_id_0 int 1
+SCALARS geom_link_id int 1
 LOOKUP_TABLE default
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+20 10 20 5 19 7 19 8 11 11 9 9 14 14 18 18 0 0 -1 -1 -1 -1 -1 -1 -1 -1 16 16 13 13 -1 -1 -1 
 

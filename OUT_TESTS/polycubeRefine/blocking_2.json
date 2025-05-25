@@ -1,0 +1,1 @@
+{"links":[{"child":34,"parent":26},{"child":33,"parent":26},{"child":32,"parent":26}],"nodes":[{"data":"","depth":2,"id":26,"reward":704900.0,"visits":4},{"data":"","depth":3,"id":34,"reward":241500.0,"visits":1},{"data":"","depth":3,"id":33,"reward":201300.0,"visits":1},{"data":"","depth":3,"id":32,"reward":80600.0,"visits":1}]}

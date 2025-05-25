@@ -1,0 +1,6 @@
+W. cross_3D - 64.42s
+W. cube - 0.01s
+W. cube_minus_corner - 0.80s
+W. cube_minus_edge - 0.31s
+W. cube_minus_opp_edges - 2.20s
+W. cube_minus_two_edges - 1.10s

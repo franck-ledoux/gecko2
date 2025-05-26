@@ -4,3 +4,21 @@ W. cube_minus_corner - 0.80s
 W. cube_minus_edge - 0.31s
 W. cube_minus_opp_edges - 2.20s
 W. cube_minus_two_edges - 1.10s
+D. cube_with_holes - 19.75s
+D. cube_with_notch - 2.58s
+D. cube_without_two_cubes - 23.68s
+D. encoches - 52.07s
+D. hole - 6.95s
+D. polycube - 7775.58s
+D. polycubeRefine - 11507.01s
+W. simple_cube - 0.02s
+D. T_shape - 3.05s
+D. teeth - 6393.86s
+W. tet_in_box - 0.01s
+D. U_shape - 1045.10s
+W. XXYZ - 2885.63s
+W. XYZ - 1001.67s
+-----------------------------------------------------------------------
+(total, win, lost, draw, errors) = (20, 10, 0, 10, 0)
+Total execution time: 30785.79s
+-----------------------------------------------------------------------

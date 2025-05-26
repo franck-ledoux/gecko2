@@ -11,6 +11,7 @@ pygmds/tst/__pycache__
 *.DS_Store
 cmake-build-*/
 build*/
+OUT_TESTS/
 .vs
 
 # Thumbnails

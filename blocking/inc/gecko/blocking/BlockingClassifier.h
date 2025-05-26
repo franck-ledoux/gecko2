@@ -4,6 +4,7 @@
 /*----------------------------------------------------------------------------*/
 #include <gecko/blocking/Blocking.h>
 /*----------------------------------------------------------------------------*/
+#include <memory>
 #include <string>
 #include <tuple>
 #include <type_traits>

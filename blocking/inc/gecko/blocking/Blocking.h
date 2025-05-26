@@ -2,6 +2,7 @@
 #ifndef GECKO_BLOCKING_BLOCKING_H_
 #define GECKO_BLOCKING_BLOCKING_H_
 /*----------------------------------------------------------------------------*/
+#include <memory>
 #include <string>
 #include <tuple>
 

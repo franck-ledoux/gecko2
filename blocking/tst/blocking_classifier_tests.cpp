@@ -32,6 +32,27 @@ setUp_class(gmds::cad::FACManager &AGeomManager)
 	AGeomManager.initFrom3DMesh(&m_vol);
 }
 
+void
+setUp_class_complexe(gmds::cad::FACManager &AGeomManager)
+{
+    gmds::Mesh m_vol(gmds::MeshModel(gmds::DIM3 | gmds::R | gmds::F | gmds::E | gmds::N |
+                                     gmds::R2N | gmds::R2F | gmds::R2E | gmds::F2N |
+                                     gmds::F2R | gmds::F2E
+                                     | gmds::E2F | gmds::E2N | gmds::N2E));
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/AxisAlign/cube_with_notch.vtk";
+    gmds::IGMeshIOService ioService(&m_vol);
+    gmds::VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(gmds::N | gmds::R);
+    vtkReader.read(vtk_file);
+    gmds::MeshDoctor doc(&m_vol);
+    doc.buildFacesAndR2F();
+    doc.buildEdgesAndX2E();
+    doc.updateUpwardConnectivity();
+
+    AGeomManager.initFrom3DMesh(&m_vol);
+}
+
 std::tuple<int,int,int,int> get_node_statistics_class(gecko::blocking::Blocking& ABlocking){
     auto nb_on_vertex=0;
     auto nb_on_curve=0;
@@ -457,4 +478,45 @@ TEST_CASE("BlockingTestSuite - copy_blocking_and_classification","[BlockingTestS
     //     auto dim = bl.get_geom_dim(b);
     //     REQUIRE(dim == cad::GeomMeshLinker::LinkVolume);
     // }
+}
+
+TEST_CASE("BlockingTestSuite - test_capt_cube_with_notch","[BlockingTestSuite]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class_complexe(geom_model);
+    Mesh m(MeshModel(DIM3 | N | E | F | R | R2N | F2N | E2N));
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir+"/block_cube_with_notch.vtk";
+
+    gmds::IGMeshIOService ioService(&m);
+    gmds::VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(gmds::N | gmds::R);
+    vtkReader.read(vtk_file);
+
+    REQUIRE(m.getNbNodes()==36);
+
+    gecko::blocking::Blocking bl(&geom_model, false);
+    bl.init_from_mesh(m);
+
+    REQUIRE(bl.mesh().getNbNodes()==36);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    REQUIRE(m_boundary_node_ids.size() == 36);
+    REQUIRE(m_boundary_edge_ids.size() == 68);
+    REQUIRE(m_boundary_face_ids.size() == 34);
+
+    cl.clear_classification();
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    auto errors = cl.detect_classification_errors();
+
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+
+
 }

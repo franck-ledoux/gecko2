@@ -55,7 +55,7 @@ BlockingState::build_actions_selection() const
 {
 	auto actions = get_possible_cuts();
 	// apply the cut on the blocking, dont use the state
-	auto block_removals = get_possible_block_removals_limited();
+	auto block_removals = get_possible_block_removals();
 	actions.insert(actions.end(),block_removals.begin(),block_removals.end());
 
 	/*TODO Here we could filter equivalent actions!!!
@@ -110,10 +110,12 @@ BlockingState::lost()
 {
 	bool val = false;
 	//we lost if we don't have actions to perform
-	if (!win() 	&& (get_actions_selection().empty() ||
-		(m_memory_scores.size() > 1 && m_memory_scores[m_memory_scores.size()-1] < m_memory_scores[m_memory_scores.size()-2]) ||
-		computeMinEdgeLenght()<0.001))
+	if (!win() 	&& get_actions_selection().empty())
  		return true;
+	else if ((m_memory_scores.size() > 1 && m_memory_scores[m_memory_scores.size()-1] < m_memory_scores[m_memory_scores.size()-2]) ||
+		computeMinEdgeLenght()<0.001) {
+		return false;
+	}
 	return false;
 	// We lost if the new score have a worst quality than the previous one
 	/*if (m_memory_scores.size() > 1 && m_memory_scores[m_memory_scores.size()] < m_memory_scores[m_memory_scores.size()-1]) {

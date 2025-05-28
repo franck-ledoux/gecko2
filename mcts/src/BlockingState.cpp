@@ -55,7 +55,7 @@ BlockingState::build_actions_selection() const
 {
 	auto actions = get_possible_cuts();
 	// apply the cut on the blocking, dont use the state
-	auto block_removals = get_possible_block_removals();
+	auto block_removals = get_possible_block_removals_limited();
 	actions.insert(actions.end(),block_removals.begin(),block_removals.end());
 
 	/*TODO Here we could filter equivalent actions!!!

@@ -12,14 +12,14 @@ POINTS 12 float
 0 10 10
 10 10 10
 10 0 10
-0 6 0
-10 6 0
-10 6 10
-0 6 10
+0 0 9
+10 0 9
+10 10 9
+0 10 9
 
 CELLS 2 18
-8 1 2 6 5 8 9 10 11 
-8 8 9 10 11 0 3 7 4 
+8 0 3 2 1 8 9 10 11 
+8 8 9 10 11 4 7 6 5 
 
 CELL_TYPES 2
 12 
@@ -30,10 +30,10 @@ LOOKUP_TABLE default
 0 1 2 3 4 5 6 7 8 9 10 11 
 SCALARS geom_link_dim int 1
 LOOKUP_TABLE default
-0 1 0 1 0 1 1 1 2 2 2 2 
+0 1 0 1 0 1 1 1 0 2 2 1 
 SCALARS geom_link_id int 1
 LOOKUP_TABLE default
--1 7 -1 30 -1 2 14 16 23 30 34 28 
+-1 7 -1 30 -1 2 14 16 -1 27 29 3 
 
 
 CELL_DATA 2
@@ -43,7 +43,7 @@ LOOKUP_TABLE default
 
 SCALARS is_in int 1
 LOOKUP_TABLE default
-1 0 
+0 0 
 
 SCALARS geom_link_dim int 1
 LOOKUP_TABLE default

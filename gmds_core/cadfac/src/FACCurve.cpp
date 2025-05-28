@@ -103,8 +103,8 @@ FACCurve::tangent(const int AParam) const
 				Node n1 = m_support->get<Node>(e_node_ids[1]);
 				if (p == 0)
 					return (n1.point() - n0.point()).getNormalize();
-				if (p == 1)
-					return (n0.point() - n1.point()).getNormalize();
+				// if (p == 1)
+				// 	return (n0.point() - n1.point()).getNormalize();
 
 			}
 
@@ -114,8 +114,8 @@ FACCurve::tangent(const int AParam) const
 				Node n1 = m_support->get<Node>(e_node_ids[1]);
 				if (p == 1)
 					return (n1.point() - n0.point()).getNormalize();
-				if (p == 0)
-					return (n0.point() - n1.point()).getNormalize();
+				// if (p == 0)
+				// 	return (n0.point() - n1.point()).getNormalize();
 			}
 		}
 		else if (nb_node_occurrences[e_node_ids[1]] == 1) {
@@ -127,8 +127,8 @@ FACCurve::tangent(const int AParam) const
 					Node n1 = m_support->get<Node>(e_node_ids[1]);
 					if (p==0)
 						return (n0.point() - n1.point()).getNormalize();
-					if (p==1)
-						return (n1.point() - n0.point()).getNormalize();
+					// if (p==1)
+					// 	return (n1.point() - n0.point()).getNormalize();
 				}
 			    if (e_node_ids[1] == end1_node_id ) {
 					// return edge vector
@@ -136,8 +136,8 @@ FACCurve::tangent(const int AParam) const
 					Node n1 = m_support->get<Node>(e_node_ids[1]);
 			    	if (p==1)
 						return (n0.point() - n1.point()).getNormalize();
-			    	if (p==0)
-			    		return (n1.point() - n0.point()).getNormalize();
+			    	// if (p==0)
+			    	// 	return (n1.point() - n0.point()).getNormalize();
 				}
 			}
 		}

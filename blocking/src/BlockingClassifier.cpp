@@ -300,9 +300,6 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			throw GMDSException("Capture of curves with 1 end point is not yet supported");
 		}
 		if (c_end_points.size() == 2) {
-			if (c->id() == 13 || c->id() == 12) {
-				bool ouais = false;
-			}
 			auto end_point_0 = c_end_points[0];
 			auto end_point_1 = c_end_points[1];
 			// We check if those end points are already captured?
@@ -323,6 +320,10 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 				// The two end points of the curve are already captured, we can look for a path going
 				// from n0 ton n1 among the nodes of ANodeIDs
 				// We look for each node, if a block edge is aligned enough with the curve
+
+				if (c->id()==2) {
+					bool found_captured = false;
+				}
 
 				// ============ END POINT 0 first =======================
 				auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);

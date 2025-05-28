@@ -53,7 +53,9 @@ Vous pouvez par exemple tester les fichiers présents dans `gecko2/test_data` co
 
 # Test systèmes en Python
 
-Le répertoire `valid` contient un unique script Python qui permet de lancer une version du programme
+### `check.py` — Tester l'ensemble des formes d'un répertoire
+
+Le répertoire `valid` contient un script Python qui permet de lancer une version du programme
 `gecko2`sur un ensemble de modèles situés dans le même répertoire. Il fonctionne comme suit sous réserve que vous
 ayez **Python3** installé (pas d'environnement spécifique pour l'instant) :
 
@@ -78,6 +80,38 @@ en mode *Release* à l'aide de l'IDE CLion :
 ```shell
 ./valid/check.py cmake-build-release/gecko2 test_data/AxisAlign test_data/params.json OUT_TESTS
 ```
+
+### `checkListShapes.py` — Tester un sous-ensemble de formes
+
+Ce nouveau script permet de tester uniquement certaines formes listées dans un fichier `.json`.
+
+### Utilisation :
+
+```bash
+./valid/checkListShapes.py <gecko2_path> <input_dir> <default_params.json> <output_dir> <shape_list.json>
+```
+
+- `shape_list.json` : fichier JSON contenant **les noms des formes** (sans extension `.vtk`)
+
+### Exemple :
+
+```bash
+./valid/checkListShapes.py cmake-build-release/gecko2 test_data/AxisAlign test_data/params.json OUT_TESTS test_data/AxisAlign/shortDataTest.json
+```
+
+### Exemple de `shortDataTest.json` :
+
+```json
+[
+  "cube",
+  "cube_minus_corner",
+  "cube_minus_edge",
+  "simple_cube",
+  "XYZ"
+]
+```
+
+###  Résultats
 Au fur et à mesure de l'exécution du programme `cmake-build-release/gecko2` sur les modèles du répertoire
 `test_data/AxisAlign`, vous obtiendrez les résultats suivants. Chaque ligne indique le résultat obtenu sur le modèle 
 sous la forme `<W|L|D|E>. nom_du_modele [(code d'erreur si E)]`. La lettre `W` indique une victoire,  la lettre `L` 
@@ -110,3 +144,9 @@ indique une défaite, la lettre `D` indique une égalité, et la lettre `E` indi
 (total, win, lost, draw, errors) = (21, 6, 0, 5, 10)
 -----------------------------------------------------------------------
 ```
+- `W` : victoire
+- `L` : défaite
+- `D` : égalité
+- `E` : erreur (code retourné entre parenthèses)
+
+---

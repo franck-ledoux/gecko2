@@ -1,0 +1,17 @@
+[
+  "cube",
+  "cube_minus_corner",
+  "cube_minus_edge",
+  "cube_minus_opp_edges",
+  "cube_minus_two_edges",
+  "cube_with_notch",
+  "encoches",
+  "hole",
+  "simple_cube",
+  "T_shape",
+  "teeth",
+  "tet_in_box",
+  "U_shape",
+  "XXYZ",
+  "XYZ"
+]

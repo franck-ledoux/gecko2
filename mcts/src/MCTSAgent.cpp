@@ -102,11 +102,15 @@ std::pair<double,MCTSAgent::GAME_RESULT> MCTSAgent::simulate(MCTSTree* ANode) {
     if(!state->win() && !state->is_terminal()) {
 		  //TODO checker cette boucle.
         for (int d = 0; d < m_simulation_depth && !found_win && !found_lost; d++) {
+        	auto bs = std::dynamic_pointer_cast<gecko::mctsc::BlockingState>(state);
+
             if (!state->is_terminal()) {
 	            auto a = get_random_action(state);
 
             	if(a== nullptr){
-            		std::cout<<"Error in simulate()"<<std::endl;;
+            		//std::cout<<"Error in simulate()"<<std::endl;;
+            		//bs->get_blocking()->save_vtk_blocking("simulation_error");
+            		//auto score = bs->computeScore();
             	return std::make_pair(m_reward_function->evaluate(state),LOST);
             }
             			//exit(55); //si cela se produit verifier qu'un etat non terminal a bien une list d'action non vide, state.lost() ordre des elements conditionnels

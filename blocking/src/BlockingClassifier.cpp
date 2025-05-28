@@ -278,7 +278,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 
 	std::map<TCellID ,bool> is_captured_curves;
 	std::map<TCellID ,bool> is_captured_surfaces;
-	std::map<size_t,std::pair<int,std::vector<TCellID>>> captCurvesMap;
+	std::map<size_t,std::vector<std::pair<int,std::vector<TCellID>>>> captCurvesMap;
 
 
 	// PAS CONTINU
@@ -300,6 +300,9 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			throw GMDSException("Capture of curves with 1 end point is not yet supported");
 		}
 		if (c_end_points.size() == 2) {
+			if (c->id() == 13 || c->id() == 12) {
+				bool ouais = false;
+			}
 			auto end_point_0 = c_end_points[0];
 			auto end_point_1 = c_end_points[1];
 			// We check if those end points are already captured?
@@ -341,7 +344,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 						m_blocking->set_geom_link(first_edge,cad::GeomMeshLinker::LinkCurve,c->id());
 						is_captured_curves[c->id()]= true;
 					}
-					// second case, the two edges have a common node, it is over
+					// second case, we check if the two edges have a common node, it is over
 					else {
 						auto found_common_node = false;
 						Blocking::Node common_node;
@@ -364,7 +367,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 							is_captured_curves[c->id()]= true;
 						}
 						else {
-							// We need the shortest path that connect the end points of our two edges
+							//Third case, We need the shortest path that connect the end points of our two edges
 							auto src_node = first_nodes[0];
 							if (m_blocking->get_geom_dim(first_nodes[0]) == cad::GeomMeshLinker::LinkPoint && m_blocking->get_geom_id(first_nodes[0]) == end_point_0->id()) src_node = first_nodes[1];
 							auto dest_node = second_nodes[0];
@@ -388,7 +391,8 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 							auto average_w = spw / sp.size();
 							if (average_w < 1000) {
 								// arbitrary value to avoid to classify wrong paths
-								captCurvesMap.insert({sp.size(),{c->id(),sp}});
+								//captCurvesMap.insert({sp.size(),{c->id(),sp}});
+								captCurvesMap[sp.size()].push_back({c->id(),sp});
 							}
 						}
 					}
@@ -397,38 +401,75 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 		}
 	}
 
-	for(auto mapElmt : captCurvesMap){
-		if(!alreadyClass(mapElmt.second.second)){
-			//m_blocking->save_vtk_blocking("temp_save_debug");
+	// for(auto mapElmt : captCurvesMap){
+	// 	if(!alreadyClass(mapElmt.second.second)){
+	// 		m_blocking->save_vtk_blocking("temp_save_debug");
+	//
+	// 		auto c = m_geom_model->getCurve(mapElmt.second.first);
+	// 		auto c_end_points = c->points();
+	// 		auto end_point_0 = c_end_points[0];
+	// 		auto end_point_1 = c_end_points[1];
+	// 		auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);
+	// 		auto info1 = find_aligned_edge(end_point_1, c->tangent(1), AEdgeIds);
+	// 		auto first_edge = info0.second;
+	// 		auto second_edge = info1.second;
+	//
+	// 		m_blocking->set_geom_link(first_edge,cad::GeomMeshLinker::LinkCurve,c->id());
+	// 		m_blocking->set_geom_link(second_edge,cad::GeomMeshLinker::LinkCurve,c->id());
+	//
+	// 		for (auto i = 0; i < mapElmt.second.second.size(); i++) {
+	// 			auto n_id = mapElmt.second.second[i];
+	// 			auto n = m_blocking->mesh().get<Node>(n_id);
+	// 			m_blocking->set_geom_link(n,cad::GeomMeshLinker::LinkCurve,c->id());
+	// 			auto nPoint = n.point();
+	// 			c->project(nPoint);
+	//
+	// 			if (i > 0) {
+	// 				auto m_id = mapElmt.second.second[i - 1];
+	// 				auto e_mn = m_blocking->get_edge(n_id, m_id);
+	// 				m_blocking->set_geom_link(e_mn,cad::GeomMeshLinker::LinkCurve,c->id());
+	// 			}
+	// 		}
+	//
+	// 		is_captured_curves[c->id()]= true;
+	// 	}
+	// }
+	for (const auto& mapElmt : captCurvesMap) {
+		const auto& pairs = mapElmt.second;
+		for (const auto& curveInfo : pairs) {
+			int curve_id = curveInfo.first;
+			const std::vector<TCellID>& chemin = curveInfo.second;
 
-			auto c = m_geom_model->getCurve(mapElmt.second.first);
-			auto c_end_points = c->points();
-			auto end_point_0 = c_end_points[0];
-			auto end_point_1 = c_end_points[1];
-			auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);
-			auto info1 = find_aligned_edge(end_point_1, c->tangent(1), AEdgeIds);
-			auto first_edge = info0.second;
-			auto second_edge = info1.second;
+			if (!alreadyClass(chemin)) {
+				auto c = m_geom_model->getCurve(curve_id);
+				auto c_end_points = c->points();
+				auto end_point_0 = c_end_points[0];
+				auto end_point_1 = c_end_points[1];
+				auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);
+				auto info1 = find_aligned_edge(end_point_1, c->tangent(1), AEdgeIds);
+				auto first_edge = info0.second;
+				auto second_edge = info1.second;
 
-			m_blocking->set_geom_link(first_edge,cad::GeomMeshLinker::LinkCurve,c->id());
-			m_blocking->set_geom_link(second_edge,cad::GeomMeshLinker::LinkCurve,c->id());
+				m_blocking->set_geom_link(first_edge, cad::GeomMeshLinker::LinkCurve, c->id());
+				m_blocking->set_geom_link(second_edge, cad::GeomMeshLinker::LinkCurve, c->id());
 
-			for (auto i = 0; i < mapElmt.second.second.size(); i++) {
-				auto n_id = mapElmt.second.second[i];
-				auto n = m_blocking->mesh().get<Node>(n_id);
-				m_blocking->set_geom_link(n,cad::GeomMeshLinker::LinkCurve,c->id());
-				auto nPoint = n.point();
-				c->project(nPoint);
+				for (size_t i = 0; i < chemin.size(); ++i) {
+					auto n_id = chemin[i];
+					auto n = m_blocking->mesh().get<Node>(n_id);
+					m_blocking->set_geom_link(n, cad::GeomMeshLinker::LinkCurve, c->id());
 
-				if (i > 0) {
-					auto m_id = mapElmt.second.second[i - 1];
-					//auto e_mn = m_blocking->mesh().get<Edge>();
-					auto e_mn = m_blocking->get_edge(n_id, m_id);
-					m_blocking->set_geom_link(e_mn,cad::GeomMeshLinker::LinkCurve,c->id());
+					auto nPoint = n.point();
+					c->project(nPoint);
+
+					if (i > 0) {
+						auto m_id = chemin[i - 1];
+						auto e_mn = m_blocking->get_edge(n_id, m_id);
+						m_blocking->set_geom_link(e_mn, cad::GeomMeshLinker::LinkCurve, c->id());
+					}
 				}
-			}
 
-			is_captured_curves[c->id()]= true;
+				is_captured_curves[c->id()] = true;
+			}
 		}
 	}
 

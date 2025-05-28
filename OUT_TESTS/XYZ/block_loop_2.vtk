@@ -45,11 +45,11 @@ LOOKUP_TABLE default
 CELL_DATA 3
 SCALARS GMDS_ID int 1
 LOOKUP_TABLE default
-0 1 2 
+0 3 4 
 
 SCALARS is_in int 1
 LOOKUP_TABLE default
-0 0 0 
+1 0 0 
 
 SCALARS geom_link_dim int 1
 LOOKUP_TABLE default

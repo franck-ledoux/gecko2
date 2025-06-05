@@ -300,9 +300,6 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			throw GMDSException("Capture of curves with 1 end point is not yet supported");
 		}
 		if (c_end_points.size() == 2) {
-			if (c->id() == 13 || c->id() == 12) {
-				bool ouais = false;
-			}
 			auto end_point_0 = c_end_points[0];
 			auto end_point_1 = c_end_points[1];
 			// We check if those end points are already captured?
@@ -460,6 +457,10 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 
 					auto nPoint = n.point();
 					c->project(nPoint);
+					//TODO check the function
+					n.setX(nPoint.X());
+					n.setY(nPoint.Y());
+					n.setZ(nPoint.Z());
 
 					if (i > 0) {
 						auto m_id = chemin[i - 1];

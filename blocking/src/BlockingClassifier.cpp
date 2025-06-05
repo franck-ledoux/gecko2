@@ -457,6 +457,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 
 					auto nPoint = n.point();
 					c->project(nPoint);
+					n.setPoint(nPoint);
 
 					if (i > 0) {
 						auto m_id = chemin[i - 1];

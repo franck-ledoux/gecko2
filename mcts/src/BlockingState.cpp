@@ -292,7 +292,45 @@ BlockingState::get_possible_block_removals_limited() const
 		if(m_blocking->get_is_in(b) == 1) {
 			blocks_to_keep.insert(b.id());
 		}
+		std::vector<gecko::blocking::Blocking::Face> facesB;
+		b.getAll<Face>(facesB);
+
+		std::set<TCellID> visitedEdgesId;
+		std::vector<Node> nodesB;
+		b.getAll<Node>(nodesB);
+
+		for (auto f : facesB) {
+			std::vector<gecko::blocking::Blocking::Edge> edgesF;
+			f.getAll<Edge>(edgesF);
+
+			for (auto e : edgesF) {
+				// Skip already processed edges
+				auto edgeId = e.id();
+				if (visitedEdgesId.count(edgeId)) continue;  // Already processed
+				visitedEdgesId.insert(edgeId);
+
+
+				auto classEDim = m_blocking->get_geom_dim(e);
+				if (classEDim == cad::GeomMeshLinker::NoLink) continue;
+				std::vector<gecko::blocking::Blocking::Face> facesE;
+				e.getAll<Face>(facesE);
+
+				bool multiBlocks = false;
+
+				for (auto fE : facesE) {
+					std::vector<gecko::blocking::Blocking::Block> blocksF;
+
+					if (fE.nbRegions() != 1) {
+						multiBlocks = true;
+					}
+				}
+				if (!multiBlocks) {
+					blocks_to_keep.insert(b.id());
+				}
+			}
+		}
 	}
+
 
 	// all the other blocks can be removed
 	std::vector<Blocking::Block> all_blocks;

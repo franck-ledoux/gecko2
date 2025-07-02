@@ -170,7 +170,10 @@ TEST_CASE("BlockingTestSuite - classify_encoches", "[blocking]") {
     IGMeshIOService ioService(&init_blocks);
     VTKReader vtkReader(&ioService);
     vtkReader.setCellOptions(N | R);
-    vtkReader.read("/home/legoffn/travail/encadrement/paul/build_gecko2/gecko2/test_data/encoches_final.vtk");
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/encoches_final.vtk";
+
+    vtkReader.read(vtk_file);
     MeshDoctor doc(&init_blocks);
     doc.updateUpwardConnectivity();
     bl.init_from_mesh(init_blocks);

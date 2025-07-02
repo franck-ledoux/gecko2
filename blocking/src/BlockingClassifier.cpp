@@ -485,7 +485,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 			found_one_uncaptured_curve = true;
 	}
 	if(!found_one_uncaptured_curve){
-		//we can try and capture surfaces so
+		//we can try and capture surfaces
 		//we store in a map the color of boundary block faces
 
 		//we use the boundary faces only, AFaceIds vector is only bnd faces
@@ -1252,10 +1252,11 @@ std::map<Blocking::Face, int>
 BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABndFaces)
 {
 	std::map<Blocking::Face, int> colored_faces;
-
+	auto mark_bnd  = m_blocking->mesh().newMark<Face>();
+	auto mark_done = m_blocking->mesh().newMark<Face>();
 	//we initialize faces as being not colored
 	for (auto f : ABndFaces) {
-		colored_faces.insert(std::pair<Blocking::Face, int>(f, 0));
+		m_blocking->mesh().mark(f, mark_bnd);
 	}
 	int current_color = 0;
 	bool finish = false;
@@ -1263,14 +1264,11 @@ BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABnd
 	while (!finish) {
 		finish = true;
 		current_color++;
-		if (current_color> 100) {
-			m_blocking->save_vtk_blocking("color_problem");
-		}
 		Blocking::Face seed_face;
 		bool found_seed = false;
-		for (auto face_color : colored_faces) {
-			if (face_color.second == 0) {
-				seed_face = face_color.first;
+		for (const auto& f : ABndFaces) {
+			if (m_blocking->mesh().isMarked(f, mark_bnd) && !m_blocking->mesh().isMarked(f, mark_done)) {
+				seed_face = f;
 				found_seed = true;
 				finish = false;
 				break;
@@ -1284,6 +1282,7 @@ BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABnd
 				auto current_face = *front.begin();
 				front.erase(front.begin());
 				colored_faces[current_face] = current_color;
+				m_blocking->mesh().mark(current_face, mark_done);
 				auto edges_f = m_blocking->mesh().get<Face>(current_face.id()).get<Edge>();
 				for (auto e : edges_f) {
 					// if the  edge e is not classified on a curve
@@ -1291,8 +1290,10 @@ BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABnd
 						// We get adjacent faces
 						auto e_faces = m_blocking->mesh().get<Edge>(e.id()).get<Face>();
 						for (auto f : e_faces) {
-							if (colored_faces[f] == 0 && m_blocking->mesh().get<Face>(f.id()).get<Region>().size() == 1) {
+							if (!m_blocking->mesh().isMarked(f,mark_done) &&
+								m_blocking->mesh().isMarked(f,mark_bnd)){//m_blocking->mesh().get<Face>(f.id()).get<Region>().size() == 1) {
 								front.insert(f);
+								//m_blocking->mesh().mark(f, mark_done);
 							}
 						}
 					}
@@ -1300,6 +1301,13 @@ BlockingClassifier::blocking_color_faces(const std::vector<Blocking::Face>& ABnd
 			}
 		}
 	}
+	for (auto f : ABndFaces) {
+		m_blocking->mesh().unmark(f, mark_bnd);
+		m_blocking->mesh().unmark(f, mark_done);
+
+	}
+	m_blocking->mesh().freeMark<Face>(mark_bnd);
+	m_blocking->mesh().freeMark<Face>(mark_done);
 	return colored_faces;
 }
 /*----------------------------------------------------------------------------*/

@@ -1405,4 +1405,7 @@ BlockingClassifier::check_cut_possible(int pointId, std::vector<std::vector<Bloc
    }
    return cutPossible;
 }*/
+void BlockingClassifier::write(std::string filename) {
+    m_blocking->save_vtk_blocking(filename);
+}
 /*----------------------------------------------------------------------------*/

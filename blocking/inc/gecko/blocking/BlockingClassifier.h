@@ -136,6 +136,8 @@ class BlockingClassifier
 	 */
 	bool checkValidity(ClassificationErrors &AErrors);
 
+    void write(std::string filename);
+
  private:
 	/**@brief This method check if a 0-cell of the blocking structure is classified
 	 * on the geometrical point @p AP.

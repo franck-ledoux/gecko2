@@ -53,6 +53,27 @@ setUp_class_complexe(gmds::cad::FACManager &AGeomManager)
     AGeomManager.initFrom3DMesh(&m_vol);
 }
 
+void
+setUp_class_encoches(gmds::cad::FACManager &AGeomManager)
+{
+    gmds::Mesh m_vol(gmds::MeshModel(gmds::DIM3 | gmds::R | gmds::F | gmds::E | gmds::N |
+                                     gmds::R2N | gmds::R2F | gmds::R2E | gmds::F2N |
+                                     gmds::F2R | gmds::F2E
+                                     | gmds::E2F | gmds::E2N | gmds::N2E));
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/AxisAlign/encoches.vtk";
+    gmds::IGMeshIOService ioService(&m_vol);
+    gmds::VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(gmds::N | gmds::R);
+    vtkReader.read(vtk_file);
+    gmds::MeshDoctor doc(&m_vol);
+    doc.buildFacesAndR2F();
+    doc.buildEdgesAndX2E();
+    doc.updateUpwardConnectivity();
+
+    AGeomManager.initFrom3DMesh(&m_vol);
+}
+
 std::tuple<int,int,int,int> get_node_statistics_class(gecko::blocking::Blocking& ABlocking){
     auto nb_on_vertex=0;
     auto nb_on_curve=0;
@@ -132,6 +153,83 @@ TEST_CASE("BlockingTestSuite - classify_box", "[blocking]") {
     cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
 
     auto errors = cl.detect_classification_errors();
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+}
+
+TEST_CASE("BlockingTestSuite - classify_encoches", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class_encoches(geom_model);
+    gecko::blocking::Blocking bl(&geom_model, false);
+    Mesh init_blocks(MeshModel(DIM3 | R | N | R2N | N2R));
+    IGMeshIOService ioService(&init_blocks);
+    VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(N | R);
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/encoches_final.vtk";
+
+    vtkReader.read(vtk_file);
+    MeshDoctor doc(&init_blocks);
+    doc.updateUpwardConnectivity();
+    bl.init_from_mesh(init_blocks);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    {
+        auto var_f = bl.mesh().newVariable<int, gmds::GMDS_FACE>("Fext");
+        auto var_e = bl.mesh().newVariable<int, gmds::GMDS_EDGE>("Eext");
+        for (auto f_id: m_boundary_face_ids) {
+            (*var_f)[f_id] = 1;
+        }
+        for (auto e_id: m_boundary_edge_ids) {
+            (*var_e)[e_id] = 1;
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | F);
+            vtkWriter.setDataOptions(gmds::N | gmds::F);
+            vtkWriter.write("fext.vtk");
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | E);
+            vtkWriter.setDataOptions(gmds::N | gmds::E);
+            vtkWriter.write("eext.vtk");
+        }
+    }
+
+    REQUIRE(m_boundary_face_ids.size() == 56);
+    REQUIRE(m_boundary_edge_ids.size() == 112);
+    REQUIRE(m_boundary_node_ids.size() == 58);
+
+
+
+    cl.clear_classification();
+    auto nb_unclassified_nodes = cl.try_and_classify_nodes(m_boundary_node_ids);
+    cl.write("aaa");
+    cl.clear_classification();
+//    REQUIRE(nb_unclassified_nodes==30);
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    cl.write("bbb");
+    bl.save_vtk_blocking("poyop");
+
+    auto errors = cl.detect_classification_errors();
+
+    REQUIRE(geom_model.getNbPoints()==20);
+    REQUIRE(geom_model.getNbCurves()==30);
+    REQUIRE(geom_model.getNbSurfaces()==12);
 
     REQUIRE(errors.non_captured_points.size()==0);
     REQUIRE(errors.non_captured_curves.size()==0);

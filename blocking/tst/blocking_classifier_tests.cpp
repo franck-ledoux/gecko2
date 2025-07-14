@@ -329,12 +329,166 @@ TEST_CASE("BlockingTestSuite - classify_b0_1", "[blocking]") {
 //    REQUIRE(geom_model.getNbCurves()==30);
 //    REQUIRE(geom_model.getNbSurfaces()==12);
 
-//    REQUIRE(errors.non_captured_points.size()==0);
-//    REQUIRE(errors.non_captured_curves.size()==0);
-//    REQUIRE(errors.non_captured_surfaces.size()==0);
-//    REQUIRE(errors.non_classified_nodes.size()==0);
-//    REQUIRE(errors.non_classified_edges.size()==0);
-//    REQUIRE(errors.non_classified_faces.size()==0);
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+}
+
+TEST_CASE("BlockingTestSuite - classify_b0_noassoc_1", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class_b0(geom_model);
+    gecko::blocking::Blocking bl(&geom_model, false);
+    Mesh init_blocks(MeshModel(DIM3 | R | N | R2N | N2R));
+    IGMeshIOService ioService(&init_blocks);
+    VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(N | R);
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/Curve/b0_blocking_noassoc_1.vtk";
+
+    vtkReader.read(vtk_file);
+    MeshDoctor doc(&init_blocks);
+    doc.updateUpwardConnectivity();
+    bl.init_from_mesh(init_blocks);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    {
+        auto var_f = bl.mesh().newVariable<int, gmds::GMDS_FACE>("Fext");
+        auto var_e = bl.mesh().newVariable<int, gmds::GMDS_EDGE>("Eext");
+        for (auto f_id: m_boundary_face_ids) {
+            (*var_f)[f_id] = 1;
+        }
+        for (auto e_id: m_boundary_edge_ids) {
+            (*var_e)[e_id] = 1;
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | F);
+            vtkWriter.setDataOptions(gmds::N | gmds::F);
+            vtkWriter.write("fext.vtk");
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | E);
+            vtkWriter.setDataOptions(gmds::N | gmds::E);
+            vtkWriter.write("eext.vtk");
+        }
+    }
+
+//    REQUIRE(m_boundary_face_ids.size() == 56);
+//    REQUIRE(m_boundary_edge_ids.size() == 112);
+//    REQUIRE(m_boundary_node_ids.size() == 58);
+
+
+
+    cl.clear_classification();
+    auto nb_unclassified_nodes = cl.try_and_classify_nodes(m_boundary_node_ids);
+    cl.write("aaa");
+    cl.clear_classification();
+//    REQUIRE(nb_unclassified_nodes==30);
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    cl.write("bbb");
+    bl.save_vtk_blocking("poyop");
+
+    auto errors = cl.detect_classification_errors();
+
+//    REQUIRE(geom_model.getNbPoints()==20);
+//    REQUIRE(geom_model.getNbCurves()==30);
+//    REQUIRE(geom_model.getNbSurfaces()==12);
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
+}
+
+TEST_CASE("BlockingTestSuite - classify_b0_noassoc_2", "[blocking]") {
+    gmds::cad::FACManager geom_model;
+    setUp_class_b0(geom_model);
+    gecko::blocking::Blocking bl(&geom_model, false);
+    Mesh init_blocks(MeshModel(DIM3 | R | N | R2N | N2R));
+    IGMeshIOService ioService(&init_blocks);
+    VTKReader vtkReader(&ioService);
+    vtkReader.setCellOptions(N | R);
+    std::string dir(TEST_SAMPLES_DIR);
+    std::string vtk_file = dir + "/Curve/b0_blocking_noassoc_2.vtk";
+
+    vtkReader.read(vtk_file);
+    MeshDoctor doc(&init_blocks);
+    doc.updateUpwardConnectivity();
+    bl.init_from_mesh(init_blocks);
+    gecko::blocking::BlockingClassifier cl(std::make_shared<gecko::blocking::Blocking>(bl));
+
+    std::set<TCellID> m_boundary_node_ids;
+    std::set<TCellID> m_boundary_edge_ids;
+    std::set<TCellID> m_boundary_face_ids;
+    bl.extract_boundary(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    {
+        auto var_f = bl.mesh().newVariable<int, gmds::GMDS_FACE>("Fext");
+        auto var_e = bl.mesh().newVariable<int, gmds::GMDS_EDGE>("Eext");
+        for (auto f_id: m_boundary_face_ids) {
+            (*var_f)[f_id] = 1;
+        }
+        for (auto e_id: m_boundary_edge_ids) {
+            (*var_e)[e_id] = 1;
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | F);
+            vtkWriter.setDataOptions(gmds::N | gmds::F);
+            vtkWriter.write("fext.vtk");
+        }
+        {
+            IGMeshIOService ioService(&(bl.mesh()));
+            VTKWriter vtkWriter(&ioService);
+            vtkWriter.setCellOptions(N | E);
+            vtkWriter.setDataOptions(gmds::N | gmds::E);
+            vtkWriter.write("eext.vtk");
+        }
+    }
+
+//    REQUIRE(m_boundary_face_ids.size() == 56);
+//    REQUIRE(m_boundary_edge_ids.size() == 112);
+//    REQUIRE(m_boundary_node_ids.size() == 58);
+
+
+
+    cl.clear_classification();
+    auto nb_unclassified_nodes = cl.try_and_classify_nodes(m_boundary_node_ids);
+    cl.write("aaa");
+    cl.clear_classification();
+//    REQUIRE(nb_unclassified_nodes==30);
+    cl.try_and_capture(m_boundary_node_ids, m_boundary_edge_ids, m_boundary_face_ids);
+
+    cl.write("bbb");
+    bl.save_vtk_blocking("poyop");
+
+    auto errors = cl.detect_classification_errors();
+
+//    REQUIRE(geom_model.getNbPoints()==20);
+//    REQUIRE(geom_model.getNbCurves()==30);
+//    REQUIRE(geom_model.getNbSurfaces()==12);
+
+    REQUIRE(errors.non_captured_points.size()==0);
+    REQUIRE(errors.non_captured_curves.size()==0);
+    REQUIRE(errors.non_captured_surfaces.size()==0);
+    REQUIRE(errors.non_classified_nodes.size()==0);
+    REQUIRE(errors.non_classified_edges.size()==0);
+    REQUIRE(errors.non_classified_faces.size()==0);
 }
 
 TEST_CASE("BlockingTestSuite - split_and_capt_with_reset", "[blocking]") {

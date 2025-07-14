@@ -551,6 +551,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 							m_blocking->set_geom_link(n,cad::GeomMeshLinker::LinkSurface,s->id());
 							auto nPoint = n.point();
 							s->project(nPoint);
+                            n.setPoint(nPoint);
 						}
 					}
 					// And the edges

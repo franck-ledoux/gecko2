@@ -216,8 +216,9 @@ BlockingClassifier::find_aligned_edge(cad::GeomPoint *APoint, const math::Vector
 	}
 	// Among the candidates, does one aligned with tangent0?
 	bool found_aligned = false;
+    double dist = -std::numeric_limits<double>::max();
 	Blocking::Edge aligned_edge;
-	for (auto i = 0; i < candidates.size() && !found_aligned; i++) {
+	for (auto i = 0; i < candidates.size(); i++) {
 		auto c = candidates[i];
 		auto c_nodes = c.get<Node>();
 		// We go from 1 to 0
@@ -227,9 +228,13 @@ BlockingClassifier::find_aligned_edge(cad::GeomPoint *APoint, const math::Vector
 			c_vec = c_nodes[1].point() - c_nodes[0].point();
 		}
 		c_vec.normalize();
-		if (c_vec.dot(ATangent) > 0.7) {
-			found_aligned = true;
-			aligned_edge = c;
+        auto dotproduct = c_vec.dot(ATangent);
+		if (dotproduct > 0.7) {
+            if(dotproduct > dist) {
+                found_aligned = true;
+                aligned_edge = c;
+                dist = dotproduct;
+            }
 		}
 	}
 	return std::make_pair(found_aligned, aligned_edge);

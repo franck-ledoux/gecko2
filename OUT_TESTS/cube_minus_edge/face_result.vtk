@@ -75,9 +75,9 @@ LOOKUP_TABLE default
 
 SCALARS geom_link_dim int 1
 LOOKUP_TABLE default
-3 3 3 3 3 3 3 3 3 3 3 4 3 3 3 3 
+3 3 3 3 3 3 3 4 3 3 3 4 3 3 3 3 
 
 SCALARS geom_link_id int 1
 LOOKUP_TABLE default
-4 4 1 1 5 5 2 7 8 7 7 1 4 6 7 3 
+4 4 1 1 5 5 2 1 8 7 7 1 4 6 7 3 
 

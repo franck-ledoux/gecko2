@@ -167,12 +167,19 @@ int main(int argc, char* argv[])
 	                 params.at("max_mcts_iteration_time"),
 	                 params.at("simulation_depth"));
 
+	MCTSAgent agent1(&reward_function, &select_function,
+					params.at("nb_mcts_iter"),
+					params.at("max_mcts_iteration_time"),
+					params.at("simulation_depth"));
 	 agent.activate_debug_mode("blocking", MCTSAgent::OUT_END_ONLY, 1000);
 	 auto current_state = init_state;
 	 display_info(init_state);
 	 auto nb_loop_iter = params.at("nb_loop_iter");
 
 	init_state->get_blocking()->save_vtk_blocking("loop_init");
+	agent1.gloutonny_approach(current_state);
+	std::cout << "END GLOUTONNY APPROACH" << std::endl;
+
 
 	 for (auto i = 0; i < nb_loop_iter && !current_state->win() && !current_state->lost(); i++) {
 	 	  std::cout << "=======================================" << std::endl;

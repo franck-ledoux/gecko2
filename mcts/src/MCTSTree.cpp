@@ -35,6 +35,10 @@ std::shared_ptr<IState> MCTSTree::get_state() const {
     return m_state;
 }
 /*---------------------------------------------------------------------------*/
+std::vector<std::shared_ptr<IAction>> MCTSTree::get_actions() const {
+	return m_actions;
+}
+/*---------------------------------------------------------------------------*/
 std::shared_ptr<IAction> MCTSTree::get_action() const {
     return m_action;
 }

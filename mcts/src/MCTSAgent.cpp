@@ -5,8 +5,10 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 /*---------------------------------------------------------------------------*/
+#include <thread>
 #include <gecko/mcts/MCTSAgent.h>
 #include <gecko/mcts/BlockingState.h>
+
 /*---------------------------------------------------------------------------*/
 using json = nlohmann::json;
 /*---------------------------------------------------------------------------*/
@@ -215,6 +217,37 @@ void MCTSAgent::export_tree() {
 }
 
 /*---------------------------------------------------------------------------*/
+void MCTSAgent::gloutonny_approach(std::shared_ptr<IState> ARootState) {
+
+	auto currentState = std::dynamic_pointer_cast<gecko::mctsc::BlockingState>(ARootState);
+	//auto currentState= ARootState;
+	auto bestState = currentState;
+	double bestScore = -1.0;
+	int limit = 0;
+	while (!currentState->is_terminal()) {
+		if (limit >30) {
+			break;
+		}
+		std::cout <<limit<<std::endl;
+		auto actions = currentState.get()->get_actions_selection();
+		for (auto action : actions) {
+			auto newState =std::dynamic_pointer_cast<gecko::mctsc::BlockingState>(action->apply_on(currentState));
+			//auto newState = action->apply_on(currentState);
+			auto currentScore = newState->computeScore();
+			if (currentScore > bestScore) {
+				bestScore = currentScore;
+				bestState = newState;
+			}
+		}
+		currentState = bestState;
+		std::cout<<currentState<<std::endl;
+		limit += 1;
+		bestScore = -1.0;
+	}
+	currentState->get_blocking()->save_vtk_blocking("result_gloutonny_approach");
+}
+
+/*---------------------------------------------------------------------------*/
 void MCTSAgent::run(std::shared_ptr<IState> ARootState) {
     //check that an existing tree was not used during a previous iteration
     if(!m_tree)
@@ -227,8 +260,6 @@ void MCTSAgent::run(std::shared_ptr<IState> ARootState) {
 				promote_child_has_root(c);
 			}
 		}
-
-
 	}
 
     int i=0;

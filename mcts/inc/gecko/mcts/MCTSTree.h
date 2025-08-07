@@ -41,6 +41,11 @@ public:
      */
     std::shared_ptr<IAction> get_action() const;
 
+	/**@brief Provides the actions that possible to do
+	* @return return all the possibles action from a node
+	*/
+	std::vector<std::shared_ptr<IAction>> get_actions() const;
+
     /** Return the child that can be reached applying the action @p AAction.
      * It returns the node if it exists, but do not create it otherwise.
      * @param[in] AAction

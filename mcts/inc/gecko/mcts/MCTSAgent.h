@@ -61,6 +61,11 @@ public:
     /**@brief desactivate the debug output mode*/
     void desactivate_debug_output();
 
+	/**@brief Launch the gloutonny approach
+	* @param ARootState the state we start from to build the MCSTree
+	*/
+	void gloutonny_approach(std::shared_ptr<IState> ARootState);
+
     /**@brief Launch the algorithm
      * @param ARootState the state we start from to build the MCSTree
      */

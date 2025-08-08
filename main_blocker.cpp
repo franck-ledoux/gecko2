@@ -132,6 +132,7 @@ int main(int argc, char* argv[])
 	 std::cout<<"Nb MCTS iterations:\t\t "<<params.at("nb_mcts_iter")<<std::endl;
 	 std::cout<<"Nb loop iterations:\t\t "<<params.at("nb_loop_iter")<<std::endl;
 	 std::cout<<"UCT C value:\t\t\t "<<params.at("uct_C")<<std::endl;
+	 std::cout<<"UCT D value:\t\t\t "<<params.at("uct_D")<<std::endl;
 	 std::cout<<"MCTS Simulation depth:\t\t "<<params.at("simulation_depth")<<std::endl;
 	 std::cout<<"MCTS iteration max time (s):\t "<<params.at("max_mcts_iteration_time")<<std::endl;
 	 std::cout << "=======================================" << std::endl;
@@ -160,7 +161,7 @@ int main(int argc, char* argv[])
 	 auto optimal_score = init_state->get_expected_optimal_score();
 	 std::cout << "Expected optimal score: " << optimal_score << std::endl;
 	 std::cout << "=======================================" << std::endl;
-	 SPUCTSelectionFunction select_function(params.at("uct_C"), optimal_score);
+	 SPUCTSelectionFunction select_function(params.at("uct_C"), params.at("uct_D"));
 
 	 MCTSAgent agent(&reward_function, &select_function,
 	                 params.at("nb_mcts_iter"),

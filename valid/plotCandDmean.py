@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-# Données extraites des summaries
+# Data extracted (C, D, AvgTime)
 data = [
     (0.5, 100, 549.97),
     (0.5, 1000, 675.74),
@@ -22,20 +21,28 @@ data = [
     (6.0, 1000000, 785.98),
 ]
 
-# Séparer les colonnes
-C_vals = np.array([x[0] for x in data])
-D_vals = np.array([x[1] for x in data])
-AvgTime = np.array([x[2] for x in data])
+# Prepare labels for X-axis: e.g. "C=0.5, D=100"
+labels = [f"C={c}, D={int(d)}" for c, d, _ in data]
+avg_times = [t for _, _, t in data]
 
-fig = plt.figure(figsize=(10,7))
-ax = fig.add_subplot(111, projection='3d')
+# Figure size
+plt.figure(figsize=(15, 7))
 
-# On peut utiliser une échelle logarithmique pour D
-ax.scatter(C_vals, D_vals, AvgTime, c=AvgTime, cmap='viridis', s=60)
-ax.set_xlabel('Paramètre C')
-ax.set_ylabel('Paramètre D (log scale)')
-ax.set_zlabel('AvgTime (s)')
-ax.set_yscale('log')
+# Plot bars
+bars = plt.bar(range(len(data)), avg_times, color='skyblue')
 
-plt.title('Moyenne des temps (AvgTime) en fonction des paramètres C et D')
+# Add value labels above bars
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, yval + 5, f"{yval:.1f}", ha='center', va='bottom', fontsize=8)
+
+# X-axis parameters
+plt.xticks(ticks=range(len(data)), labels=labels, rotation=45, ha='right')
+
+# Labels and title
+plt.ylabel('Average Time (s)')
+plt.xlabel('Parameters (C, D)')
+plt.title('Average Time (AvgTime) over 10 runs depending on parameters C and D')
+
+plt.tight_layout()
 plt.show()

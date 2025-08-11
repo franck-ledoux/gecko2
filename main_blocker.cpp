@@ -178,8 +178,8 @@ int main(int argc, char* argv[])
 	 auto nb_loop_iter = params.at("nb_loop_iter");
 
 	init_state->get_blocking()->save_vtk_blocking("loop_init");
-	agent1.gloutonny_approach(current_state);
-	std::cout << "END GLOUTONNY APPROACH" << std::endl;
+	// agent1.gloutonny_approach(current_state);
+	// std::cout << "END GLOUTONNY APPROACH" << std::endl;
 
 
 	 for (auto i = 0; i < nb_loop_iter && !current_state->win() && !current_state->lost(); i++) {

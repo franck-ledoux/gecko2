@@ -261,6 +261,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                                     std::set<TCellID> &AEdgeIds,
                                     std::set<TCellID> &AFaceIds)
 {
+    clear_classification();
 	//===================================================================
 	// 1. WE CHECK NODE
 	//===================================================================
@@ -521,15 +522,21 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 						}
 					}
 				}
-				for (auto e : edges_f) {
-					if (m_blocking->get_geom_dim(e) == cad::GeomMeshLinker::LinkCurve) {
-						for (auto c : s_curves) {
-							if (c->id() == m_blocking->get_geom_id(e)) {
-								nb_edges_on_curve++;
-							}
-						}
-					}
-				}
+                for (auto c : s_curves) {
+                    bool found = false;
+                    for (auto e : edges_f) {
+                        if (m_blocking->get_geom_dim(e) == cad::GeomMeshLinker::LinkCurve) {
+                            if (c->id() == m_blocking->get_geom_id(e)) {
+                                nb_edges_on_curve++;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(found) {
+                        continue;
+                    }
+                }
 
 				if (nb_nodes_on_point >= 1 && nb_edges_on_curve >= 2) {
 					color_of_this_surface = f.second;

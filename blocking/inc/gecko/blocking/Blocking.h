@@ -492,6 +492,9 @@ class  Blocking
 	void save_vtk_blocking(const std::string &AFileName);
 
 	static Blocking clone(std::shared_ptr<Blocking> ABlocking);
+
+    void snapNodes(std::map<int, gmds::math::Point> &pos);
+    void restoreNodes(const std::map<int, gmds::math::Point> &pos);
  private:
 	/**================================================================
 	 *  TOPOLOGICAL OPERATIONS THAT MODIFY ALSO GEOMETRY

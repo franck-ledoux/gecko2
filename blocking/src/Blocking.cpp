@@ -500,6 +500,33 @@ Blocking::save_vtk_blocking(const std::string &AFileName) {
 	writer_edge.setCellOptions(N | E);
 	writer_edge.setDataOptions(N | E);
 	writer_edge.write(edge_filename);
+
+    {
+        std::map<int, gmds::math::Point> pos;
+        snapNodes(pos);
+
+        std::string block_filename = "block_" + AFileName + "_snap.vtk";
+        std::string edge_filename = "edge_" + AFileName + "_snap.vtk";
+        std::string face_filename = "face_" + AFileName + "_snap.vtk";
+
+        VTKWriter writer_block(&ios);
+        writer_block.setCellOptions(N | R);
+        writer_block.setDataOptions(N | R);
+        writer_block.write(block_filename);
+
+        VTKWriter writer_face(&ios);
+        writer_face.setCellOptions(N | F);
+        writer_face.setDataOptions(N | F);
+        writer_face.write(face_filename);
+
+        VTKWriter writer_edge(&ios);
+        writer_edge.setCellOptions(N | E);
+        writer_edge.setDataOptions(N | E);
+        writer_edge.write(edge_filename);
+
+        restoreNodes(pos);
+    }
+
 }
 /*----------------------------------------------------------------------------*/
 Blocking::Block Blocking::create_block(const TCellID &AN1,
@@ -1697,3 +1724,42 @@ Blocking::smooth_volumes(const int ANbIterations) {
 	}
 }
 
+/*----------------------------------------------------------------------------*/
+void
+Blocking::snapNodes(std::map<int, gmds::math::Point> &APos)
+{
+    APos.clear();
+
+    auto nodes = this->mesh().nodes();
+    for(auto current_node_id: nodes) {
+        auto current_node = this->mesh().get<Node>(current_node_id);
+        math::Point pos = current_node.point();
+
+        APos.insert(std::make_pair(current_node_id, pos));
+
+        if (this->get_geom_dim(current_node) == cad::GeomMeshLinker::NoLink) {
+            continue;
+        } else if (this->get_geom_dim(current_node) == cad::GeomMeshLinker::LinkPoint) {
+            auto p = m_geom_model->getPoint(this->get_geom_id(current_node));
+            p->project(pos);
+        } else if (this->get_geom_dim(current_node) == cad::GeomMeshLinker::LinkCurve) {
+            auto c = m_geom_model->getCurve(this->get_geom_id(current_node));
+            c->project(pos);
+        } else if (this->get_geom_dim(current_node) == cad::GeomMeshLinker::LinkSurface) {
+            auto s = m_geom_model->getSurface(this->get_geom_id(current_node));
+            s->project(pos);
+        }
+        current_node.setPoint(pos);
+    }
+}
+/*----------------------------------------------------------------------------*/
+void
+Blocking::restoreNodes(const std::map<int, gmds::math::Point> &APos)
+{
+    auto nodes = this->mesh().nodes();
+    for(auto current_node_id: nodes) {
+        auto current_node = this->mesh().get<Node>(current_node_id);
+        current_node.setPoint(APos.at(current_node_id));
+    }
+}
+/*----------------------------------------------------------------------------*/

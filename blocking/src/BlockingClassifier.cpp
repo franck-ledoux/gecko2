@@ -3,7 +3,9 @@
 #include <gmds/utils/Exception.h>
 /*----------------------------------------------------------------------------*/
 #include "gecko/blocking/Graph.h"
+#include <algorithm>
 #include <limits>
+#include <string>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 /*----------------------------------------------------------------------------*/
 using namespace gecko;
@@ -512,35 +514,60 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
 
 				auto nodes_f = m_blocking->mesh().get<Face>(f.first.id()).get<Node>();
 				auto edges_f = m_blocking->mesh().get<Face>(f.first.id()).get<Edge>();
-				// We check if the face has 1 node classified on a point and 2 edges class on curves
-				for (auto n : nodes_f) {
-					if (m_blocking->get_geom_dim(n) == cad::GeomMeshLinker::LinkPoint) {
-						for (auto p : s_points) {
-							if (p->id() == m_blocking->get_geom_id(n)) {
-								nb_nodes_on_point++;
-							}
-						}
-					}
-				}
-                for (auto c : s_curves) {
-                    bool found = false;
-                    for (auto e : edges_f) {
+//				// We check if the face has 1 node classified on a point and 2 edges class on curves
+//				for (auto n : nodes_f) {
+//					if (m_blocking->get_geom_dim(n) == cad::GeomMeshLinker::LinkPoint) {
+//						for (auto p : s_points) {
+//							if (p->id() == m_blocking->get_geom_id(n)) {
+//								nb_nodes_on_point++;
+//							}
+//						}
+//					}
+//				}
+//                for (auto c : s_curves) {
+//                    bool found = false;
+//                    for (auto e : edges_f) {
+//                        if (m_blocking->get_geom_dim(e) == cad::GeomMeshLinker::LinkCurve) {
+//                            if (c->id() == m_blocking->get_geom_id(e)) {
+//                                nb_edges_on_curve++;
+//                                found = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    if(found) {
+//                        continue;
+//                    }
+//                }
+//
+//				if (nb_nodes_on_point >= 1 && nb_edges_on_curve >= 2) {
+//					color_of_this_surface = f.second;
+//				}
+
+                // We check if one of the nodes of the face is adjacent to
+                // two edges of the face classified on two different
+                // curves of the surface
+                std::map<int, std::set<int>> node_on_curve_found;
+                for(auto c: s_curves) {
+                    for (auto e: edges_f) {
                         if (m_blocking->get_geom_dim(e) == cad::GeomMeshLinker::LinkCurve) {
-                            if (c->id() == m_blocking->get_geom_id(e)) {
-                                nb_edges_on_curve++;
-                                found = true;
-                                break;
+                            auto cid = m_blocking->get_geom_id(e);
+                            if (c->id() == cid) {
+                                auto nodes_e = e.get<Node>();
+                                for (auto n: nodes_e) {
+                                    node_on_curve_found[n.id()].insert(cid);
+                                }
                             }
                         }
                     }
-                    if(found) {
-                        continue;
+                }
+                for(auto n: node_on_curve_found) {
+                    if(n.second.size() > 1) {
+                        color_of_this_surface = f.second;
+//                        std::cout<<"FOUND "<<s->id()<<" "<<f.first.id()<<std::endl;
+                        break;
                     }
                 }
-
-				if (nb_nodes_on_point >= 1 && nb_edges_on_curve >= 2) {
-					color_of_this_surface = f.second;
-				}
 			}
 			for (auto f : map_faces_colored) {
 				// We do nothing if the color of the face is 0, and any edges is class on a curve,

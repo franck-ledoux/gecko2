@@ -7,6 +7,7 @@
 /*----------------------------------------------------------------------------*/
 #include <limits.h>
 #include <set>
+#include <string>
 #include <map>
 #include <memory>
 /*----------------------------------------------------------------------------*/
@@ -76,6 +77,8 @@ private:
 
   std::map<gmds::TCellID , std::vector<gmds::TCellID> > m_shortest_path_nodes;
   std::map<gmds::TCellID , double > m_shortest_path_weight;
+
+  double m_epsilon = 10e-5;
 };
 /*----------------------------------------------------------------------------*/
 }     // namespace mctsblock

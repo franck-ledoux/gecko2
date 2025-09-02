@@ -317,7 +317,7 @@ Graph::buildShortestPaths(const gmds::TCellID ASrc)
 			auto neigh = getAdjNodes(cur);
 			auto cur_dist = m_dist[cur];
 			for (auto n_info : neigh) {
-				if (n_info.second == cur_dist - m_dist[n_info.first])
+				if (m_epsilon > std::abs(n_info.second - cur_dist + m_dist[n_info.first]))
 					cur = n_info.first;
 			}
 		}

@@ -138,6 +138,9 @@ class BlockingClassifier
 
     void write(std::string filename);
 
+    void snapNodes(std::map<int, gmds::math::Point> &pos);
+    void restoreNodes(const std::map<int, gmds::math::Point> &pos);
+
  private:
 	/**@brief This method check if a 0-cell of the blocking structure is classified
 	 * on the geometrical point @p AP.

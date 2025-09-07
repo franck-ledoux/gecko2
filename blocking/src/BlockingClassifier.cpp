@@ -267,13 +267,63 @@ bool BlockingClassifier::alreadyClass(std::vector<TCellID> listElements)
 int
 BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                                     std::set<TCellID> &AEdgeIds,
-                                    std::set<TCellID> &AFaceIds)
-{
+                                    std::set<TCellID> &AFaceIds) {
+
+    //===================================================================
+    // prep work
+    //===================================================================
     clear_classification();
-	//===================================================================
-	// 1. WE CHECK NODE
-	//===================================================================
-	try_and_classify_nodes(ANodeIds);
+
+    //===================================================================
+    // keep only ridges (edges adjacent to either one block or three blocks)
+    // valid only for polycuboids
+    //===================================================================
+    auto edges_working_set = AEdgeIds;
+    {
+        std::map<VirtualEdge, TCellID> ve_2_e;
+        for(auto e: edges_working_set) {
+            auto nids = m_blocking->mesh().get<Edge>(e).getIDs<Node>();
+            ve_2_e.emplace(VirtualEdge(nids[0], nids[1]), e);
+        }
+        std::map<VirtualEdge, int> edges_marked;
+        std::vector<Region> blocks;
+        m_blocking->mesh().getAll(blocks);
+        for(auto b: blocks) {
+            auto r_nodes = b.getIDs<Node>();
+            std::vector<VirtualEdge> v_edges = {
+                    VirtualEdge(r_nodes[0],r_nodes[1]),
+                    VirtualEdge(r_nodes[1],r_nodes[2]),
+                    VirtualEdge(r_nodes[2],r_nodes[3]),
+                    VirtualEdge(r_nodes[3],r_nodes[0]),
+                    VirtualEdge(r_nodes[4],r_nodes[5]),
+                    VirtualEdge(r_nodes[5],r_nodes[6]),
+                    VirtualEdge(r_nodes[6],r_nodes[7]),
+                    VirtualEdge(r_nodes[7],r_nodes[4]),
+                    VirtualEdge(r_nodes[0],r_nodes[4]),
+                    VirtualEdge(r_nodes[1],r_nodes[5]),
+                    VirtualEdge(r_nodes[2],r_nodes[6]),
+                    VirtualEdge(r_nodes[3],r_nodes[7])
+            };
+            for(auto ve: v_edges) {
+                edges_marked[ve] = edges_marked[ve] + 1;
+            }
+        }
+
+        std::set<TCellID> edges_ridge;
+        for(auto ve_e: ve_2_e) {
+            if(edges_marked.at(ve_e.first) == 1
+            || edges_marked.at(ve_e.first) == 3) {
+                edges_ridge.insert(ve_e.second);
+            }
+        }
+
+        edges_working_set = edges_ridge;
+    }
+
+    //===================================================================
+    // 1. WE CHECK NODE
+    //===================================================================
+    try_and_classify_nodes(ANodeIds);
 
 	std::vector<std::pair<int, Blocking::Node>> classNodes;
 	for (auto nId : ANodeIds) {
@@ -336,8 +386,8 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                 // We look for each node, if a block edge is aligned enough with the curve
 
                 // ============ END POINT 0 first =======================
-                auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);
-                auto info1 = find_aligned_edge(end_point_1, c->tangent(1), AEdgeIds);
+                auto info0 = find_aligned_edge(end_point_0, c->tangent(0), edges_working_set);
+                auto info1 = find_aligned_edge(end_point_1, c->tangent(1), edges_working_set);
                 if (info0.first && info1.first) {
                     // means we found two edge tangential to the curve at its extremities
                     // We can try to capture the curve
@@ -397,8 +447,8 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                                }*/
 
                             // build the graph
-                            // filter out nodes and edges already classified
-                            // it segfaults if it is empty, so for now we just do not treat this curve
+                            // - filter out nodes and edges already classified
+                            // - it segfaults if it is empty, so for now we just do not treat this curve
                             // if there are no nodes
                             std::set<TCellID> nodes_to_keep;
                             std::set<TCellID> edges_to_keep;
@@ -408,10 +458,14 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                                     nodes_to_keep.insert(ni);
                                 }
                             }
-                            for(auto ei: AEdgeIds) {
+                            for(auto ei: edges_working_set) {
+
+
+
                                 auto ei_nodes = m_blocking->mesh().get<Edge>(ei).get<Node>();
-                                if(m_blocking->get_geom_dim(ei_nodes[0]) == cad::GeomMeshLinker::NoLink
-                                   && m_blocking->get_geom_dim(ei_nodes[1]) == cad::GeomMeshLinker::NoLink) {
+//                                if(m_blocking->get_geom_dim(ei_nodes[0]) == cad::GeomMeshLinker::NoLink
+//                                   && m_blocking->get_geom_dim(ei_nodes[1]) == cad::GeomMeshLinker::NoLink) {
+                                if(nodes_to_keep.find(ei_nodes[0].id()) != nodes_to_keep.end() && nodes_to_keep.find(ei_nodes[1].id()) != nodes_to_keep.end()) {
                                     edges_to_keep.insert(ei);
                                 }
                             }
@@ -462,8 +516,8 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                     auto c_end_points = c->points();
                     auto end_point_0 = c_end_points[0];
                     auto end_point_1 = c_end_points[1];
-                    auto info0 = find_aligned_edge(end_point_0, c->tangent(0), AEdgeIds);
-                    auto info1 = find_aligned_edge(end_point_1, c->tangent(1), AEdgeIds);
+                    auto info0 = find_aligned_edge(end_point_0, c->tangent(0), edges_working_set);
+                    auto info1 = find_aligned_edge(end_point_1, c->tangent(1), edges_working_set);
                     auto first_edge = info0.second;
                     auto second_edge = info1.second;
 

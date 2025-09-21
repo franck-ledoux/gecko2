@@ -183,6 +183,10 @@ double
 BlockingState::computeMinEdgeLenght() const
 {
 	double minusEdge = 1000;
+
+    std::map<int, gmds::math::Point> pos;
+    m_blocking->snapNodes(pos);
+
 	std::vector<gecko::blocking::Blocking::Edge> listEdges;
 	m_blocking->mesh().getAll<Edge>(listEdges);
 
@@ -194,6 +198,7 @@ BlockingState::computeMinEdgeLenght() const
 			minusEdge=edgeLength;
 		}
 	}
+    m_blocking->restoreNodes(pos);
 
 	return minusEdge;
 

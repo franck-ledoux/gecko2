@@ -212,11 +212,15 @@ BlockingClassifier::find_aligned_edge(cad::GeomPoint *APoint, const math::Vector
 	std::vector<Blocking::Edge> candidates;
 	for (auto eid : AEdgeIds) {
 		auto e = m_blocking->mesh().get<Edge>(eid);
-		auto e_nodes = e.get<Node>();
-		if (( m_blocking->get_geom_dim(e_nodes[0]) == cad::GeomMeshLinker::LinkPoint && ( m_blocking->get_geom_id(e_nodes[0]) == APoint->id()))
-		    || ( m_blocking->get_geom_dim(e_nodes[1]) == cad::GeomMeshLinker::LinkPoint && m_blocking->get_geom_id(e_nodes[1]) == APoint->id())) {
-			candidates.push_back(e);
-		}
+        if(m_blocking->get_geom_dim(e) != cad::GeomMeshLinker::LinkCurve) {
+            auto e_nodes = e.get<Node>();
+            if ((m_blocking->get_geom_dim(e_nodes[0]) == cad::GeomMeshLinker::LinkPoint &&
+                 (m_blocking->get_geom_id(e_nodes[0]) == APoint->id()))
+                || (m_blocking->get_geom_dim(e_nodes[1]) == cad::GeomMeshLinker::LinkPoint &&
+                    m_blocking->get_geom_id(e_nodes[1]) == APoint->id())) {
+                candidates.push_back(e);
+            }
+        }
 	}
 	// Among the candidates, does one aligned with tangent0?
 	bool found_aligned = false;
@@ -317,7 +321,7 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
             }
         }
 
-        edges_working_set = edges_ridge;
+//        edges_working_set = edges_ridge;
     }
 
     //===================================================================
@@ -1520,6 +1524,7 @@ BlockingClassifier::check_cut_possible(int pointId, std::vector<std::vector<Bloc
 }*/
 void BlockingClassifier::write(std::string filename) {
     m_blocking->save_vtk_blocking(filename);
+}
 /*----------------------------------------------------------------------------*/
 void
 BlockingClassifier::snapNodes(std::map<int, gmds::math::Point> &APos)

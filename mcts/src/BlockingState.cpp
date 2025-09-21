@@ -114,7 +114,7 @@ BlockingState::lost()
  		return true;
 	else if ((m_memory_scores.size() > 1 && m_memory_scores[m_memory_scores.size()-1] < m_memory_scores[m_memory_scores.size()-2]) ||
 		computeMinEdgeLenght()<0.001) {
-		return false;
+		return true;
 	}
 	return false;
 	// We lost if the new score have a worst quality than the previous one

@@ -485,8 +485,11 @@ BlockingClassifier::try_and_capture(std::set<TCellID> &ANodeIds,
                                 gmds::math::Point e_center = m_blocking->mesh().get<Edge>(i).center();
                                 gmds::math::Point e_center_proj = e_center;
                                 c->project(e_center_proj);
-                                double weight = .1;
-//            double weight = e_center.distance(e_center_proj);
+//                                double weight = .1;
+            double weight = e_center.distance(e_center_proj);
+            if(std::abs(weight) < 0.01) {
+                weight = 0.01;
+            }
 
                                 g.addEdge(ei_nodes[0].id(), ei_nodes[1].id(), weight);
                             }

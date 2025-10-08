@@ -103,7 +103,7 @@ BlockingState::win()
 	/* we win if we don't have anymore classification errors. It means that the
 	   state score, which is the last element of the memory scores, is equal to
 	   0.*/
-	return (m_memory_scores.back() == m_expected_optimal_score && m_blocking->is_valid_connected());
+	return (m_memory_scores.back() == m_expected_optimal_score && m_blocking->is_valid_connected() && computeMinEdgeLenght()>0.001);
 } /*----------------------------------------------------------------------------*/
 bool
 BlockingState::lost()
@@ -114,7 +114,7 @@ BlockingState::lost()
  		return true;
 	else if ((m_memory_scores.size() > 1 && m_memory_scores[m_memory_scores.size()-1] < m_memory_scores[m_memory_scores.size()-2]) ||
 		computeMinEdgeLenght()<0.001) {
-		return false;
+		return true;
 	}
 	return false;
 	// We lost if the new score have a worst quality than the previous one
@@ -183,6 +183,10 @@ double
 BlockingState::computeMinEdgeLenght() const
 {
 	double minusEdge = 1000;
+
+    std::map<int, gmds::math::Point> pos;
+    m_blocking->snapNodes(pos);
+
 	std::vector<gecko::blocking::Blocking::Edge> listEdges;
 	m_blocking->mesh().getAll<Edge>(listEdges);
 
@@ -194,6 +198,7 @@ BlockingState::computeMinEdgeLenght() const
 			minusEdge=edgeLength;
 		}
 	}
+    m_blocking->restoreNodes(pos);
 
 	return minusEdge;
 

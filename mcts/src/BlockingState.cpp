@@ -103,7 +103,7 @@ BlockingState::win()
 	/* we win if we don't have anymore classification errors. It means that the
 	   state score, which is the last element of the memory scores, is equal to
 	   0.*/
-	return (m_memory_scores.back() == m_expected_optimal_score && m_blocking->is_valid_connected());
+	return (m_memory_scores.back() == m_expected_optimal_score && m_blocking->is_valid_connected() && computeMinEdgeLenght()>0.001);
 } /*----------------------------------------------------------------------------*/
 bool
 BlockingState::lost()
